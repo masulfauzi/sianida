@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Modules\Prestasi\Models;
+
+use App\Helpers\UsesUuid;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+
+class Prestasi extends Model
+{
+	use SoftDeletes;
+	use UsesUuid;
+
+	protected $dates      = ['deleted_at'];
+	protected $table      = 'prestasi';
+	protected $fillable   = ['*'];	
+
+	
+}
