@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ config('app.name') }} | {{ @$title ?? 'Dashboard' }}</title>
     
-    <link rel="stylesheet" href="{{ asset('assets/css/main/app.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('assets/css/main/app.css') }}">
     {{-- <link rel="stylesheet" href="assets/css/main/app-dark.css"> --}}
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}" type="image/png">
-    <link rel="stylesheet" href="{{ asset('assets/css/pages/fontawesome.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/tempus-dominus.css') }}">
-    {{-- <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"> --}}
+    <link rel="shortcut icon" href="{{ secure_asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ secure_asset('assets/images/logo/favicon.png') }}" type="image/png">
+    <link rel="stylesheet" href="{{ secure_asset('assets/css/pages/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('assets/css/tempus-dominus.css') }}">
+    {{-- <link rel="stylesheet" href="{{ secure_asset('assets/css/select2.css') }}"> --}}
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/base.min.css"/> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/css/selectize.bootstrap5.min.css"/>
     
-    <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/sweetalert.js') }}"></script>
     <style>
         .ck-editor__editable {
             min-height: 300px;
@@ -155,13 +155,13 @@
             </footer>
         </div>
     </div>
-    <script src="{{ asset('assets/js/app.js') }}"></script>
-    {{-- <script src="{{ asset('assets/js/select2.js') }}"></script> --}}
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
-    <script src="{{ asset('assets/js/mine.js') }}"></script>
-    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
-    <script src="{{ asset('assets/js/tempus-dominus.js') }}"></script>
-    <script src="{{ asset('assets/js/moment.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/app.js') }}"></script>
+    {{-- <script src="{{ secure_asset('assets/js/select2.js') }}"></script> --}}
+    <script src="{{ secure_asset('js/jquery.min.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/mine.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/tempus-dominus.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/moment.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/js/standalone/selectize.min.js"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
     <script>
