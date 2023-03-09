@@ -17,4 +17,5 @@ Route::controller(UjiansekolahController::class)->middleware(['web','auth'])->na
 	Route::get('/us/kelengkapan', 'index_guru')->name('guru.index');
 	Route::get('/us/upload/{id}', 'upload')->name('guru.upload.index');
 	Route::post('/us/upload', 'aksi_upload')->name('guru.aksi_upload.index');
+	Route::post('/us/upload_excel', 'upload_excel')->name('guru.upload_excel.index');
 });

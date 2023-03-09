@@ -51,7 +51,7 @@
                         {!! $item->opsi_d !!}</td>
                     </tr>
                     <tr>
-                        <td colspan="3">Kunci: D</td>
+                        <td colspan="3">Kunci: {{ $item->kunci }}</td>
                     </tr>
                 @endforeach
                 

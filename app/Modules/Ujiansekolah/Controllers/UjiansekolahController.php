@@ -15,6 +15,13 @@ use App\Modules\Soal\Models\Soal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Reader\Exception;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
+use Illuminate\Support\Str;
+
 class UjiansekolahController extends Controller
 {
 	use Logger;
@@ -96,6 +103,55 @@ class UjiansekolahController extends Controller
 		$text = 'mengupload '.$this->title; //' baru '.$gurumapel->what;
 		$this->log($request, $text);
 		return redirect()->route('ujiansekolah.guru.upload.index', $request->get('id'))->with('message_success', 'Berkas berhasil diupload!');
+	}
+
+	public function upload_excel(Request $request)
+	{
+		$request->validate([
+            'file' => 'required|mimes:xls,xlsx|max:10240'
+        ]);
+
+		// dd($request);
+
+		$soal = $request->file('file');
+
+		try{
+			$spreadsheet = IOFactory::load($soal->getRealPath());
+			$sheet        = $spreadsheet->getActiveSheet();
+			$row_limit    = $sheet->getHighestDataRow();
+			$column_limit = $sheet->getHighestDataColumn();
+			$row_range    = range( 2, $row_limit );
+			$column_range = range( 'F', $column_limit );
+			$startcount = 2;
+			$data = array();
+			foreach ( $row_range as $row ) {
+				$data[] = [
+					'id'				=> Str::uuid(),
+					'id_ujiansekolah'	=> $request->input('id'),
+					'id_jenissoal'		=> $request->input('id_jenissoal'),
+					'no_soal' =>$sheet->getCell( 'A' . $row )->getValue(),
+					'soal' => $sheet->getCell( 'B' . $row )->getValue(),
+					'opsi_a' => $sheet->getCell( 'C' . $row )->getValue(),
+					'opsi_b' => $sheet->getCell( 'D' . $row )->getValue(),
+					'opsi_c' => $sheet->getCell( 'E' . $row )->getValue(),
+					'opsi_d' =>$sheet->getCell( 'F' . $row )->getValue(),
+					'opsi_e' =>$sheet->getCell( 'G' . $row )->getValue(),
+					'kunci' =>$sheet->getCell( 'H' . $row )->getValue(),
+				];
+				$startcount++;
+			}
+			Soal::insert($data);
+
+			$text = 'mengupload soal'.$this->title; //' baru '.$gurumapel->what;
+			$this->log($request, $text);
+			return redirect()->route('ujiansekolah.guru.upload.index', $request->get('id'))->with('message_success', 'Soal berhasil diupload!');
+
+		} catch (Exception $e) {
+			$error_code = $e->errorInfo[1];
+			return back()->withErrors('There was a problem uploading the data!');
+		}
+
+		
 	}
 
 	public function create(Request $request)

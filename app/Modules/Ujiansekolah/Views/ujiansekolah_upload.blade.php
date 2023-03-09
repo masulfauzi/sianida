@@ -105,6 +105,14 @@
                                 <td>
                                     @if ($data->norma_penilaian)
                                         <a href="{{ route('soal.input_soal.create', array('id_ujian' => $data->id, 'id_jenissoal' => 'c365b003-7203-4e5d-b215-1f934238db2f', 'no_soal' => '1')) }}" class="btn btn-primary">Input Soal</a>
+                                        <hr>
+                                        <form action="{{ route('ujiansekolah.guru.upload_excel.index') }}"  method="POST" enctype="multipart/form-data">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $data->id }}">
+                                            <input type="hidden" name="id_jenissoal" value="c365b003-7203-4e5d-b215-1f934238db2f">
+                                            <input type="file" name="file" class="form-control">
+                                            <button type="submit" class="btn btn-primary mt-1">Upload</button>
+                                        </form>
                                     @else
                                         Kunci & Norma belum di upload.
                                     @endif
