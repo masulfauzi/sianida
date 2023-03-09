@@ -50,8 +50,24 @@
 									<td>{{ $item->guru['nama'] }}</td>
 									<td>{{ $item->mapel['mapel'] }}</td>
                                     <td>{{ $item->jurusan['jurusan'] }}</td>
-									<td>{{ $item->kisi_kisi }}</td>
-									<td>{{ $item->norma_penilaian }}</td>
+									<td>
+                                        @if ($item->kisi_kisi)
+                                        <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->kisi_kisi.'/lihat/kisikisi') }}');">
+                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                        </a>
+                                    @else
+                                        <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                    @endif
+                                    </td>
+									<td>
+                                        @if ($item->norma_penilaian)
+                                        <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->norma_penilaian.'/lihat/norma') }}');">
+                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                        </a>
+                                    @else
+                                        <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                    @endif
+                                    </td>
 									
 									
                                     <td>
@@ -75,6 +91,13 @@
 @endsection
 
 @section('page-js')
+    <script type="text/javascript">
+        // Popup window code
+        function newPopup(url) {
+            popupWindow = window.open(
+                url,'popUpWindow','height=300,width=400,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes')
+        }
+    </script>
 @endsection
 
 @section('inline-js')

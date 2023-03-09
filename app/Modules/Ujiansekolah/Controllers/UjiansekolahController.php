@@ -140,6 +140,9 @@ class UjiansekolahController extends Controller
 				];
 				$startcount++;
 			}
+
+			// Soal::where(['id_ujiansekolah' => $request->input('id'), 'id_jenissoal' => $request->input('id_jenissoal')])->delete();
+			Soal::where('id_ujiansekolah', $request->input('id'))->where('id_jenissoal', $request->input('id_jenissoal'))->forceDelete();
 			Soal::insert($data);
 
 			$text = 'mengupload soal'.$this->title; //' baru '.$gurumapel->what;
