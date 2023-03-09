@@ -66,8 +66,24 @@
 									<td>{{ $item->mapel['mapel'] }}</td>
                                     <td>{{ $item->jurusan['jurusan'] }}</td>
                                     <td>{{ $item->jml_soal }}</td>
-									<td>{{ $item->kisi_kisi }}</td>
-									<td>{{ $item->norma_penilaian }}</td>
+									<td>
+                                        @if ($item->kisi_kisi)
+                                            <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->kisi_kisi.'/lihat/kisikisi') }}');">
+                                                <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                            </a>
+                                        @else
+                                            <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                        @endif
+                                    </td>
+									<td>
+                                        @if ($item->norma_penilaian)
+                                            <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->norma_penilaian.'/lihat/kisikisi') }}');">
+                                                <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                            </a>
+                                        @else
+                                            <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                        @endif
+                                    </td>
 									
 									
                                     <td>
