@@ -14,3 +14,4 @@ yarn-error.log
 /.vscode
 /public/uploads/*
 /public/ujian/*
+public/tmp/*
