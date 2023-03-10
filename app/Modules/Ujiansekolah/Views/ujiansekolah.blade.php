@@ -52,6 +52,8 @@
                                 <td>Jml Soal</td>
 								<td>Kisi Kisi</td>
 								<td>Norma Penilaian</td>
+								<td>Soal Utama</td>
+								<td>Soal Susulan</td>
 								
 								
                                 <th width="20%">Aksi</th>
@@ -84,6 +86,18 @@
                                             <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
                                         @endif
                                     </td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="window.open('{{ route('soal.lihat_soal.index', [$item->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}', '_blank', 'width=auto,height=auto');">
+                                        {{-- <a href="{{ route('soal.lihat_soal.index', [$data->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}"> --}}
+                                            Lihat Soal
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="window.open('{{ route('soal.lihat_soal.index', [$item->id, '068aa935-e996-4f86-9689-3da4a9aee8f5']) }}', '_blank', 'width=auto,height=auto');">
+                                        {{-- <a href="{{ route('soal.lihat_soal.index', [$data->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}"> --}}
+                                            Lihat Soal
+                                        </a>
+                                    </td>
 									
 									
                                     <td>
@@ -109,6 +123,13 @@
 @endsection
 
 @section('page-js')
+    <script type="text/javascript">
+        // Popup window code
+        function newPopup(url) {
+            popupWindow = window.open(
+                url,'popUpWindow','height=300,width=400,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes')
+        }
+    </script>
 @endsection
 
 @section('inline-js')
