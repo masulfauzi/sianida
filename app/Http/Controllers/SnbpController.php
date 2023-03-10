@@ -14,9 +14,10 @@ use App\Modules\Snmptn\Models\Snmptn;
 
 class SnbpController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('snbp');
+        // return view('snbp');
+        return $request;
     }
 
     public function cek_siswa(Request $request)
