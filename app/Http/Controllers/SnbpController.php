@@ -17,7 +17,7 @@ class SnbpController extends Controller
     public function index(Request $request)
     {
         // return view('snbp');
-        return $request;
+        return $request->userAgent();
     }
 
     public function cek_siswa(Request $request)
