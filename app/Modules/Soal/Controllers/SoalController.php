@@ -99,11 +99,6 @@ class SoalController extends Controller
 			'id_ujiansekolah' => 'required',
 			'id_jenissoal' => 'required',
 			'no_soal' => 'required',
-			'soal' => 'required',
-			'opsi_a' => 'required',
-			'opsi_b' => 'required',
-			'opsi_c' => 'required',
-			'opsi_d' => 'required',
 			'kunci' => 'required',
 		]);
 
