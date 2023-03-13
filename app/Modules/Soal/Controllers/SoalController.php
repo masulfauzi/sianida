@@ -215,11 +215,8 @@ class SoalController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validate($request, [
-			'soal' => 'required',
-			'opsi_a' => 'required',
-			'opsi_b' => 'required',
-			'opsi_c' => 'required',
-			'opsi_d' => 'required',
+			'no_soal' => 'required',
+			'kunci' => 'required',
 			
 		]);
 		
