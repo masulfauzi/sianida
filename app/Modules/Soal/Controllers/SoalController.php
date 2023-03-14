@@ -37,14 +37,15 @@ class SoalController extends Controller
 		return view('Soal::soal', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function input_soal(Request $request, $id_ujian, $id_jenissoal, $no_soal)
+public function input_soal(Request $request, $id_ujian, $id_jenissoal, $no_soal)
 	{
+
 		$soal = Soal::cek_soal($id_ujian, $id_jenissoal, $no_soal);
 
 		$data['id_ujian']		= $id_ujian;
 		$data['id_jenissoal']	= $id_jenissoal;
 		$data['no_soal']		= $no_soal;
-		$data['ujian']			= Ujiansekolah::find($id_ujian)->first();
+		$data['ujian']			= Ujiansekolah::find($id_ujian);
 		$data['soal_terinput']	= Soal::whereIdUjiansekolah($id_ujian)->whereIdJenissoal($id_jenissoal)->pluck("kunci", "no_soal");
 
 		if($soal->count() > 0)
