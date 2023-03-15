@@ -253,7 +253,7 @@
                         
                         <div class="offset-md-3 ps-2">
                             <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
-                            <a href="{{ route('soal.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ url()->previous() }}" class="btn btn-secondary">Batal</a>
                         </div>
                   </div>
                 </form>
