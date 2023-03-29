@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SnbpController;
 use App\Http\Controllers\AktivasiController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
