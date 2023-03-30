@@ -16,7 +16,7 @@
                         <td rowspan="4" width="20px;">{{ $item->no_soal }}</td>
                         <td colspan="6">
                             @if ($item->gambar)
-                                <img src="{{ asset('/ujian/soal/'. $item->gambar) }}" alt="Gambar Soal" width="300px;">
+                                <img src="{{ asset('/ujian/soal/'. $item->gambar) }}" alt="Gambar Soal" width="100%;">
                             @endif
                             {!! $item->soal !!}
                         </td>
