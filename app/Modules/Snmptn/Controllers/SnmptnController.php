@@ -37,7 +37,7 @@ class SnmptnController extends Controller
 	public function peringkat_kelas(Request $request)
 	{
 		$kelas = Snmptn::get_kelas_xii()->sortBy('kelas')->pluck('kelas','id');
-		$kelas->prepend('-PILIH SALAH SATU-', '');
+		$kelas->prepend('-SEMUA KELAS-', '');
 
 		$data['kelas'] = $kelas;
 		$data['id_kelas'] = $request->input('id_kelas');
