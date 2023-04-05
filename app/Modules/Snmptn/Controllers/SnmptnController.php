@@ -37,18 +37,22 @@ class SnmptnController extends Controller
 	public function peringkat_kelas(Request $request)
 	{
 		$kelas = Snmptn::get_kelas_xii()->sortBy('kelas')->pluck('kelas','id');
+		$jurusan = Jurusan::all()->sortBy('jurusan')->pluck('jurusan','id');
 		$kelas->prepend('-SEMUA KELAS-', '');
+		$jurusan->prepend('-PILIH SALAH SATU-', '');
 
 		$data['kelas'] = $kelas;
+		$data['jurusan'] = $jurusan;
 		$data['id_kelas'] = $request->input('id_kelas');
 		$data['semester'] = $request->input('semester');
+		$data['id_jurusan'] = $request->input('id_jurusan');
 
 		if($request->input('semester') == '')
 		{
 			$data['data'] =  FALSE;
 		}
 		else{
-			$data['data']	= Snmptn::get_data_peringkat($request->input('id_kelas'), $request->input('semester'));
+			$data['data']	= Snmptn::get_data_peringkat($request->input('id_kelas'), $request->input('semester'), $request->input('id_jurusan'));
 		}
 
 		// dd($data['data']);

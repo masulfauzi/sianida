@@ -22,20 +22,42 @@ class Snmptn extends Model
 		return $this->belongsTo(Pesertadidik::class,"id_pesertadidik","id");
 	}
 
-	public static function get_data_peringkat($id_kelas = NULL, $semester)
+	public static function get_data_peringkat($id_kelas = NULL, $semester, $id_jurusan)
 	{
 		$nilai = "jml_nilai_".$semester;
 		$pembagi = "pembagi_".$semester;
 
+		// $data = DB::table('siswa as a')
+		// 			->select('a.nama_siswa', 'a.nisn')
+		// 			->selectRaw("c.$nilai / c.$pembagi as nilai")
+		// 			->join('pesertadidik as b', 'a.id', 'b.id_siswa')
+		// 			->join('snmptn as c', 'b.id', 'c.id_pesertadidik')
+		// 			->join('kelas as d', 'b.id_kelas', 'd.id');
+
+		// if($id_kelas == NULL)
+		// {
+		// 	$data->where('d.id_jurusan', $id_jurusan);
+		// }
+		// else
+		// {
+		// 	$data->where('b.id_kelas', $id_kelas);
+		// }
+
+		// $data->orderBy('nilai', 'desc')->get();
+
+		// return $data;
+
 		if($id_kelas == NULL)
 		{
 			return DB::table('siswa as a')
-			->select('a.nama_siswa', 'a.nisn')
-			->selectRaw("c.$nilai / c.$pembagi as nilai")
-			->join('pesertadidik as b', 'a.id', 'b.id_siswa')
-			->join('snmptn as c', 'b.id', 'c.id_pesertadidik')
-			->orderBy('nilai', 'desc')
-			->get();
+					->select('a.nama_siswa', 'a.nisn')
+					->selectRaw("c.$nilai / c.$pembagi as nilai")
+					->join('pesertadidik as b', 'a.id', 'b.id_siswa')
+					->join('snmptn as c', 'b.id', 'c.id_pesertadidik')
+					->join('kelas as d', 'b.id_kelas', 'd.id')
+					->where('d.id_jurusan', $id_jurusan)
+					->orderBy('nilai', 'desc')
+					->get();
 		}
 		else
 		{
@@ -44,7 +66,9 @@ class Snmptn extends Model
 					->selectRaw("c.$nilai / c.$pembagi as nilai")
 					->join('pesertadidik as b', 'a.id', 'b.id_siswa')
 					->join('snmptn as c', 'b.id', 'c.id_pesertadidik')
+					->join('kelas as d', 'b.id_kelas', 'd.id')
 					->where('b.id_kelas', $id_kelas)
+					->where('d.id_jurusan', $id_jurusan)
 					->orderBy('nilai', 'desc')
 					->get();
 		}

@@ -52,6 +52,16 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-6 has-icon-left position-relative">
+                                <label for="id_jurusan">Jurusan</label>
+                                <select name="id_jurusan" id="" class="form-control">
+                                    @foreach ($jurusan as $key => $item)
+                                        <option @if ($id_jurusan == $key)
+                                            selected
+                                        @endif value="{{ $key }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group col-md-6 has-icon-left position-relative">
                                 <label for="id_kelas">Kelas</label>
                                 <select name="id_kelas" id="" class="form-control">
                                     @foreach ($kelas as $keys => $items)
