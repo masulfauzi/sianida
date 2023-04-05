@@ -2,7 +2,7 @@
 
 return [
 	'module_exception' => ['login', 'register', 'password', 'verification', 'logout', // auth
-							'dashboard', 'frontend', 'snbp', 'aktivasi', 'registrasi'],
+							'dashboard', 'frontend', 'snbp', 'aktivasi', 'registrasi', 'kirimemail'],
 
 	'translate_action' => [
 		'index'   => 'read',

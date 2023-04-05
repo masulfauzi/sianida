@@ -34,4 +34,13 @@ public function agama(){
 					->where('nik', $data->nik);
 	}
 
+	public static function get_id_siswa_by_id_user($id_user)
+	{
+		return DB::table('siswa as a')
+					->select('a.id as id_siswa')
+					->join('users as b', 'a.nik', '=', 'b.identitas')
+					->where('b.id', $id_user)
+					->get();
+	}
+
 }

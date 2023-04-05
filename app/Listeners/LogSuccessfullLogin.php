@@ -9,6 +9,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Modules\Guru\Models\Guru;
 use App\Modules\Semester\Models\Semester;
+use App\Modules\Siswa\Models\Siswa;
+
 
 class LogSuccessfullLogin
 {
@@ -72,6 +74,13 @@ class LogSuccessfullLogin
             if($guru = Guru::get_id_guru_by_id_user(Auth::user()->id)->first())
             {
                 session(['id_guru' => $guru->id_guru]);
+            }
+
+
+            //get session id_siswa
+            if($siswa = Siswa::get_id_siswa_by_id_user(Auth::user()->id)->first())
+            {
+                session(['id_siswa' => $siswa->id_siswa]);
             }
 
             
