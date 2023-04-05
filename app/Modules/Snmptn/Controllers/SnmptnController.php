@@ -34,6 +34,29 @@ class SnmptnController extends Controller
 		return view('Snmptn::snmptn', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function peringkat_kelas(Request $request)
+	{
+		$kelas = Snmptn::get_kelas_xii()->sortBy('kelas')->pluck('kelas','id');
+		$kelas->prepend('-PILIH SALAH SATU-', '');
+
+		$data['kelas'] = $kelas;
+		$data['id_kelas'] = $request->input('id_kelas');
+		$data['semester'] = $request->input('semester');
+
+		if($request->input('id_kelas') == '' OR $request->input('semester') == '')
+		{
+			$data['data'] =  FALSE;
+		}
+		else{
+			$data['data']	= Snmptn::get_data_peringkat($request->input('id_kelas'), $request->input('semester'));
+		}
+
+		// dd($data['data']);
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('Snmptn::peringkat_kelas', array_merge($data, ['title' => $this->title]));
+	}
+
 	public function peringkat(Request $request, $id_jurusan)
 	{
 		$data['siswa']	= Snmptn::get_peringkat($id_jurusan);

@@ -22,6 +22,30 @@ class Snmptn extends Model
 		return $this->belongsTo(Pesertadidik::class,"id_pesertadidik","id");
 	}
 
+	public static function get_data_peringkat($id_kelas, $semester)
+	{
+		$nilai = "jml_nilai_".$semester;
+		$pembagi = "pembagi_".$semester;
+
+		return DB::table('siswa as a')
+					->select('a.nama_siswa', 'a.nisn')
+					->selectRaw("c.$nilai / c.$pembagi as nilai")
+					->join('pesertadidik as b', 'a.id', 'b.id_siswa')
+					->join('snmptn as c', 'b.id', 'c.id_pesertadidik')
+					->where('b.id_kelas', $id_kelas)
+					->orderBy('nilai', 'desc')
+					->get();
+	}
+
+	public static function get_kelas_xii()
+	{
+		return DB::table('kelas as a')
+						->select('a.kelas', 'a.id')
+						->join('tingkat as b', 'a.id_tingkat', 'b.id')
+						->where('b.tingkat', 'XII')
+						->get();
+	}
+
 	public static function get_peringkat($id_jurusan)
 	{
 		return DB::table('snmptn as a')

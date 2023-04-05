@@ -18,4 +18,8 @@ Route::controller(SnmptnController::class)->middleware(['web','auth'])->name('sn
 	Route::get('/snmptn/{jurusan}/peringkat', 'peringkat')->name('peringkat.index');
 	Route::get('/snmptn/{jurusan}/hitung', 'hitung')->name('hitung.index');
 	Route::get('/snmptn/{jurusan}/edit_snmptn', 'edit_snmptn')->name('edit.index');
+	
+	
+	//peringkat
+	Route::get('/peringkat', 'peringkat_kelas')->name('peringkat.kelas.index');
 });
