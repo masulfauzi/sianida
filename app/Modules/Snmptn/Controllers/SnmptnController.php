@@ -43,7 +43,7 @@ class SnmptnController extends Controller
 		$data['id_kelas'] = $request->input('id_kelas');
 		$data['semester'] = $request->input('semester');
 
-		if($request->input('id_kelas') == '' OR $request->input('semester') == '')
+		if($request->input('semester') == '')
 		{
 			$data['data'] =  FALSE;
 		}
