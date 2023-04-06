@@ -119,7 +119,7 @@ class SiswaController extends Controller
 
 		// return view("Siswa::download_biodata", array_merge($data, ['title' => $this->title]));
 		$pdf = PDF::loadview('Siswa::download_biodata',$data);
-    	return $pdf->download('laporan-pegawai-pdf');
+    	return $pdf->download('BiodataPesertaUjian');
 	}
 
 	public function lihat_file(Request $request, $file, $jenis)
