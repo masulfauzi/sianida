@@ -8,7 +8,7 @@
     <div class="page-title">
         <div class="row mb-2">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Data Pengumpulan Soal Ujian Sekolah</h3>
+                <h3>Data Pengumpulan File Ijazah SMP</h3>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
