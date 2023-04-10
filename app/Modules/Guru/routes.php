@@ -12,4 +12,9 @@ Route::controller(GuruController::class)->middleware(['web','auth'])->name('guru
 	Route::get('/guru/{guru}/edit', 'edit')->name('edit');
 	Route::patch('/guru/{guru}', 'update')->name('update');
 	Route::get('/guru/{guru}/delete', 'destroy')->name('destroy');
+
+
+	//custom route untuk TPG
+	Route::get('/tpg', 'index_tpg')->name('tpg.index');
+	Route::get('/tpg/skab', 'download_skab')->name('tpg.skab.index');
 });

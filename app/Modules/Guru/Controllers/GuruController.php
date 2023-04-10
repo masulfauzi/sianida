@@ -35,6 +35,18 @@ class GuruController extends Controller
 		return view('Guru::guru', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function index_tpg(Request $request)
+	{
+		return view('Guru::guru_tpg');
+	}
+
+	public function download_skab(Request $request)
+	{
+		$data['guru']	= Guru::all()->sortBy('nama');
+
+		return view('Guru::guru_skab', $data);
+	}
+
 	public function create(Request $request)
 	{
 		$ref_agama = Agama::all()->pluck('agama','id');
