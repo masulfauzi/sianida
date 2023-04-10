@@ -27,7 +27,7 @@
         @foreach ($guru as $item)
             <table width="100%">
                 <tr>
-                    <td><img src="{{ asset('assets/images/logo/logo_jateng.png') }}" alt="" width="100px"></td>
+                    <td><img src="{{ asset('assets/images/logo/logo_jateng_bw.png') }}" alt="" width="100px"></td>
                     <td class="center"><font style="font-weight: bold; font-size: 12pt;">PEMERINTAH PROVINSI JAWA TENGAH</font><br>
                         <font style="font-weight: bold; font-size: 12pt;">DINAS PENDIDIKAN DAN KEBUDAYAAN</font><br>
                         <font style="font-weight: bold; font-size: 14pt;">SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</font><br>
@@ -129,7 +129,7 @@
                 </tr>
             </table>
 
-            <br>
+            <br><br><br>
 
             <table>
                 <tr>

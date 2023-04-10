@@ -11,6 +11,8 @@ use App\Modules\Agama\Models\Agama;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
+use PDF;
+
 class GuruController extends Controller
 {
 	use Logger;
@@ -45,6 +47,8 @@ class GuruController extends Controller
 		$data['guru']	= Guru::all()->sortBy('nama');
 
 		return view('Guru::guru_skab', $data);
+		// $pdf = PDF::loadview('Guru::guru_skab',$data);
+    	// return $pdf->download('SKAB');
 	}
 
 	public function create(Request $request)
