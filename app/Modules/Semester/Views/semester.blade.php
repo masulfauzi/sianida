@@ -49,6 +49,7 @@
                                 <td>Semester</td>
 								<td>Tgl Mulai</td>
 								<td>Tgl Selesai</td>
+								<td>Waktu Kelulusan</td>
 								<td>Keterangan</td>
 								
                                 <th width="20%">Aksi</th>
@@ -62,6 +63,7 @@
                                     <td>{{ $item->semester }}</td>
 									<td>{{ $item->tgl_mulai }}</td>
 									<td>{{ $item->tgl_selesai }}</td>
+									<td>{{ $item->wkt_kelulusan }}</td>
 									<td>{{ $item->keterangan }}</td>
 									
                                     <td>

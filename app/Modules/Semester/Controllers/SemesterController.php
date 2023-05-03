@@ -39,8 +39,9 @@ class SemesterController extends Controller
 		
 		$data['forms'] = array(
 			'semester' => ['Semester', Form::text("semester", old("semester"), ["class" => "form-control","placeholder" => ""]) ],
-			'tgl_mulai' => ['Tgl Mulai', Form::text("tgl_mulai", old("tgl_mulai"), ["class" => "form-control datepicker"]) ],
-			'tgl_selesai' => ['Tgl Selesai', Form::text("tgl_selesai", old("tgl_selesai"), ["class" => "form-control datepicker"]) ],
+			'tgl_mulai' => ['Tgl Mulai', Form::date("tgl_mulai", old("tgl_mulai"), ["class" => "form-control"]) ],
+			'tgl_selesai' => ['Tgl Selesai', Form::date("tgl_selesai", old("tgl_selesai"), ["class" => "form-control"]) ],
+			'wkt_kelulusan' => ['Waktu Kelulusan', Form::datetimeLocal("wkt_kelulusan", old("wkt_kelulusan"), ["class" => "form-control"]) ],
 			'keterangan' => ['Keterangan', Form::textarea("keterangan", old("keterangan"), ["class" => "form-control rich-editor"]) ],
 			
 		);
@@ -56,6 +57,7 @@ class SemesterController extends Controller
 			'tgl_mulai' => 'required',
 			'tgl_selesai' => 'required',
 			'keterangan' => 'required',
+			'wkt_kelulusan' => 'required',
 			
 		]);
 
@@ -64,6 +66,7 @@ class SemesterController extends Controller
 		$semester->tgl_mulai = $request->input("tgl_mulai");
 		$semester->tgl_selesai = $request->input("tgl_selesai");
 		$semester->keterangan = $request->input("keterangan");
+		$semester->wkt_kelulusan = $request->input("wkt_kelulusan");
 		
 		$semester->created_by = Auth::id();
 		$semester->save();
@@ -89,8 +92,9 @@ class SemesterController extends Controller
 		
 		$data['forms'] = array(
 			'semester' => ['Semester', Form::text("semester", $semester->semester, ["class" => "form-control","placeholder" => "", "id" => "semester"]) ],
-			'tgl_mulai' => ['Tgl Mulai', Form::text("tgl_mulai", $semester->tgl_mulai, ["class" => "form-control datepicker", "id" => "tgl_mulai"]) ],
-			'tgl_selesai' => ['Tgl Selesai', Form::text("tgl_selesai", $semester->tgl_selesai, ["class" => "form-control datepicker", "id" => "tgl_selesai"]) ],
+			'tgl_mulai' => ['Tgl Mulai', Form::date("tgl_mulai", $semester->tgl_mulai, ["class" => "form-control", "id" => "tgl_mulai"]) ],
+			'tgl_selesai' => ['Tgl Selesai', Form::date("tgl_selesai", $semester->tgl_selesai, ["class" => "form-control", "id" => "tgl_selesai"]) ],
+			'wkt_kelulusan' => ['Waktu Kelulusan', Form::datetimeLocal("wkt_kelulusan", $semester->wkt_kelulusan, ["class" => "form-control", "id" => "wkt_kelulusan"]) ],
 			'keterangan' => ['Keterangan', Form::textarea("keterangan", $semester->keterangan, ["class" => "form-control rich-editor"]) ],
 			
 		);
@@ -107,6 +111,7 @@ class SemesterController extends Controller
 			'tgl_mulai' => 'required',
 			'tgl_selesai' => 'required',
 			'keterangan' => 'required',
+			'wkt_kelulusan' => 'required',
 			
 		]);
 		
@@ -115,6 +120,7 @@ class SemesterController extends Controller
 		$semester->tgl_mulai = $request->input("tgl_mulai");
 		$semester->tgl_selesai = $request->input("tgl_selesai");
 		$semester->keterangan = $request->input("keterangan");
+		$semester->wkt_kelulusan = $request->input("wkt_kelulusan");
 		
 		$semester->updated_by = Auth::id();
 		$semester->save();
