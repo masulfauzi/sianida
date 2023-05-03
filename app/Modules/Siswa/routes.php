@@ -23,4 +23,7 @@ Route::controller(SiswaController::class)->middleware(['web','auth'])->name('sis
 	//custom route untuk download
 	Route::get('/downloads', 'downloads')->name('download.index');
 	Route::get('/downloads/biodata', 'download_biodata')->name('download.biodata.index');
+
+	//custom route untuk pengumuman kelulusan
+	Route::get('/kelulusan', 'kelulusan')->name('kelulusan.index');
 });

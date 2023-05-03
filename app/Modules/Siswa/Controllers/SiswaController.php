@@ -8,6 +8,7 @@ use App\Modules\Log\Models\Log;
 use App\Modules\Siswa\Models\Siswa;
 use App\Modules\Jeniskelamin\Models\Jeniskelamin;
 use App\Modules\Agama\Models\Agama;
+use App\Modules\Semester\Models\Semester;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,14 @@ class SiswaController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function kelulusan(Request $request)
+	{
+		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
+		$data['semester']	= Semester::find(get_semester('active_semester_id'));
+
+		return view('Siswa::siswa_kelulusan', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function upload_file(Request $request)
