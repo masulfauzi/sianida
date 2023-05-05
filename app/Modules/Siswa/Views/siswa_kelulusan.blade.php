@@ -40,6 +40,18 @@
         letter-spacing: 1px;
         }
     </style>
+    <style>
+        .blink {
+            animation: blinker 1.5s linear infinite;
+            color: red;
+            font-family: sans-serif;
+        }
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
 @endsection
 
 @section('main')
@@ -66,7 +78,7 @@
                 <div id="pengumuman">
                     <p style="text-align: center;">Waktu Pengumuman masih kurang :</p>
                 </div>
-                <div class="timer" id="timer">
+                <div class="timer" id="timer" style="margin: auto;">
                     <div>
                        <span class="days" id="day"></span> 
                        <div class="smalltext">Hari</div>
@@ -96,22 +108,6 @@
                                 <tr><td>Tempat & Tanggal Lahir</td><td>{{ $siswa->tempat_lahir }}, {{ \App\Helpers\Format::tanggal($siswa->tgl_lahir) }}</td></tr>
                                 <tr><td>Kompetensi Keahlian</td><td>{{ $siswa->jurusan }}</td></tr>
                             </table>
-                            {{-- <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Bahasa Indonesia</th>
-                                    <th>Bahasa Inggris</th>
-                                    <th>Matematika</th>
-                                    <th>Kejuruan</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    <td>45345</td>
-                                    <td>3453</td>
-                                    <td>345</td>
-                                    <td>456</td>
-                                </tbody>
-                            </table> --}}
 
                             @if ($siswa->is_lulus == 1)
                                 <div style="text-align: center;" class="alert alert-success" role="alert"><strong>SELAMAT !</strong> Anda dinyatakan LULUS.</div>
@@ -125,6 +121,26 @@
                         </div>
                     </div>
                 </div>
+                
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body" style="margin: auto;">
+                <div>
+                    
+                    <h1 style="text-align: center;" class="blink">HIMBAUAN</h1>
+                    <h2 style="text-align: center;">Kepada Siswa siswi Kelas XII SMK Negeri 2 Semarang.</h2>
+                    <p>Berdasarkan Surat Edaran Nomor 420/06343 Kepala Dinas Pendidikan dan Kebudayaan Provinsi Jawa Tengah tentang Pelaksanaan Pengumuman Kelulusan Peserta Didik Tahun Pelajaran 2022/2023 disampaikan hal-hal sebagai berikut: </p>
+                    <ol>
+                        <li>Pengumuman kelulusan secara daring/OL via web sekolah dapat diakses tgl 5 Mei 2023 mulai jam 16.00 WIB</li>
+                        <li>Dilarang hadir di sekolah ataupun berkumpul berkerumun di lingkungan sekitar sekolah</li>
+                        <li>Dilarang mengadakan konvoi perayaan kelulusan ataupun kegiatan corat coret baju / seragam atau berkumpul di suatu tempat tertentu</li>
+                        <li>Bilamana melakukan kegiatan dimaksud di atas maka dianggap melanggar tata tertib sekolah dan jika terkena razia pihak berwajib maka sekolah tidak bertanggung jawab</li>
+                        <li>Hadapi kegiatan kelulusan ini secara arif dan bijak, jangan bergembira secara berlebihan, perbanyak rasa syukur dengan kegiatan² yg positif</li>
+                    </ol>
+                    <p>Terima kasih anak² sukses buat kalian semuanya 🙏✌️💪</p>
+                </div>
+                
             </div>
         </div>
 
