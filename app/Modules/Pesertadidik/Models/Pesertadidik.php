@@ -45,4 +45,18 @@ public function kelas(){
 					->where('a.id', $id_pd);
 	}
 
+	public static function get_all($id_semester)
+	{
+		return DB::table('siswa as a')
+					->select('a.nama_siswa', 'c.kelas')
+					->join('pesertadidik as b', 'a.id', '=', 'b.id_siswa')
+					->join('kelas as c', 'b.id_kelas', '=', 'c.id')
+					->join('tingkat as d', 'c.id_tingkat', '=', 'd.id')
+					->where('b.id_semester', $id_semester)
+					->where('d.tingkat', 'XII')
+					->orderBy('c.kelas')
+					->orderBy('a.nama_siswa')
+					->get();
+	}
+
 }

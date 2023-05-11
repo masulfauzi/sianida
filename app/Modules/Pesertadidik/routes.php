@@ -12,4 +12,7 @@ Route::controller(PesertadidikController::class)->middleware(['web','auth'])->na
 	Route::get('/pesertadidik/{pesertadidik}/edit', 'edit')->name('edit');
 	Route::patch('/pesertadidik/{pesertadidik}', 'update')->name('update');
 	Route::get('/pesertadidik/{pesertadidik}/delete', 'destroy')->name('destroy');
+
+	Route::get('/mutasi', 'mutasi')->name('mutasi.index');
+	Route::get('/mutasi/cetak', 'cetak_mutasi')->name('mutasi.cetak.index');
 });

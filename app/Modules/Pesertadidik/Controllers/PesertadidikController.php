@@ -37,6 +37,18 @@ class PesertadidikController extends Controller
 		return view('Pesertadidik::pesertadidik', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function mutasi(Request $request)
+	{
+		return view('Pesertadidik::mutasi');
+	}
+
+	public function cetak_mutasi(Request $request)
+	{
+		$data['data'] = Pesertadidik::get_all(get_semester('active_semester_id'));
+
+		return view('Pesertadidik::cetak_mutasi', $data);
+	}
+
 	public function create(Request $request)
 	{
 		$ref_siswa = Siswa::all()->pluck('nama_siswa','id');
