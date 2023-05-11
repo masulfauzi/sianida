@@ -55,4 +55,37 @@ class Jurnal extends Model
 					->orderBy('a.tgl_pembelajaran', 'DESC');
 	}
 
+	public static function get_mapel_guru($id_guru, $id_semester)
+	{
+		return DB::table('jadwal as a')
+					->select('b.id', 'b.mapel')
+					->join('mapel as b', 'a.id_mapel', '=', 'b.id')
+					->where('a.id_guru', $id_guru)
+					->where('a.id_semester', $id_semester)
+					->orderBy('b.mapel')
+					->get();
+	}
+
+	public static function get_kelas_guru($id_guru, $id_semester)
+	{
+		return DB::table('jadwal as a')
+					->select('b.id', 'b.kelas')
+					->join('kelas as b', 'a.id_kelas', '=', 'b.id')
+					->where('a.id_guru', $id_guru)
+					->where('a.id_semester', $id_semester)
+					->orderBy('b.kelas')
+					->get();
+	}
+
+	public static function get_jurnal($id_jadwal)
+	{
+		return DB::table('jurnal as a')
+					->select('a.tgl_pembelajaran', 'c.jam_pelajaran as jam_mulai', 'd.jam_pelajaran as jam_selesai', 'a.materi', 'a.catatan')
+					->join('jadwal as b', 'a.id_jadwal', '=', 'b.id')
+					->join('jampelajaran as c', 'b.jam_mulai', '=', 'c.id')
+					->join('jampelajaran as d', 'b.jam_selesai', '=', 'd.id')
+					->whereIn('a.id_jadwal', $id_jadwal)
+					->get();
+	}
+
 }

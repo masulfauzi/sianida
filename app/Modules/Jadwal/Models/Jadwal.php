@@ -74,4 +74,18 @@ public function semester(){
 					->get();
 	}
 
+	public static function get_jadwal_by_kelas_mapel($id_kelas, $id_mapel, $id_semester)
+	{
+		return DB::table('jadwal as a')
+					->select('e.nama', 'c.kelas', 'd.semester', 'b.mapel', 'd.id as id_semester', 'a.id as id_jadwal')
+					->join('mapel as b', 'a.id_mapel', '=', 'b.id')
+					->join('kelas as c', 'a.id_kelas', '=', 'c.id')
+					->join('semester as d', 'a.id_semester', '=', 'd.id')
+					->join('guru as e', 'a.id_guru', '=', 'e.id')
+					->where('a.id_kelas', $id_kelas)
+					->where('a.id_mapel', $id_mapel)
+					->where('a.id_semester', $id_semester)
+					->get();
+	}
+
 }

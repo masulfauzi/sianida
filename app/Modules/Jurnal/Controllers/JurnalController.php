@@ -9,6 +9,9 @@ use App\Modules\Jurnal\Models\Jurnal;
 use App\Modules\Jadwal\Models\Jadwal;
 use App\Modules\Presensi\Models\Presensi;
 use App\Modules\Guru\Models\Guru;
+use App\Modules\Mapel\Models\Mapel;
+
+use PDF;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +87,36 @@ class JurnalController extends Controller
 
 		$this->log($request, 'membuka form tambah '.$this->title);
 		return view('Jurnal::jurnal_create', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function cetak_jurnal(Request $request)
+	{
+		$mapel = Jurnal::get_mapel_guru(session('id_guru'), get_semester('active_semester_id'))->pluck('mapel', 'id');
+		$kelas = Jurnal::get_kelas_guru(session('id_guru'), get_semester('active_semester_id'))->pluck('kelas', 'id');
+		$mapel->prepend('-PILIH SALAH SATU-', '');
+		$kelas->prepend('-PILIH SALAH SATU-', '');
+
+		$data['mapel'] = $mapel;
+		$data['kelas'] = $kelas;
+
+		return view('Jurnal::cetak', $data);
+	}
+
+	public function cetak_jurnalmengajar(Request $request)
+	{
+		$data['jadwal'] = Jadwal::get_jadwal_by_kelas_mapel($request->input('id_kelas'), $request->input('id_mapel'), get_semester('active_semester_id'));
+		$data['detail_jadwal'] = $data['jadwal']->first();
+		$id_jadwal = $data['jadwal']->pluck('id_jadwal')->toArray();
+
+		
+		$data['jurnal']	= Jurnal::get_jurnal($id_jadwal);
+		
+		return view('Jurnal::jurnal_mengajar', $data);
+
+		// $pdf = PDF::loadview('Jurnal::jurnal_mengajar',$data);
+    	// return $pdf->download('BiodataPesertaUjian');
+
+		
 	}
 
 	function store(Request $request)
