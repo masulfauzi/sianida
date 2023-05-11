@@ -17,8 +17,9 @@
             font-weight: bold;
         }
     </style>
-    <script>
+    <script type="text/javascript">
         window.print();
+window.close();
     </script>
 </head>
 <body>

@@ -26,7 +26,7 @@
             </h6>
             <div class="card-body">
                 @include('include.flash')
-                <form class="form form-horizontal" action="{{ route('jurnal.cetakjurnal.index') }}" method="GET">
+                <form class="form form-horizontal" action="{{ route('jurnal.cetakjurnal.index') }}" method="GET" onsubmit="target_popup(this)">
                     <div class="form-body">
                         {{-- @csrf  --}}
                         <div class="row">
@@ -66,4 +66,10 @@
 
     </section>
 </div>
+<script>
+    function target_popup(form) {
+    window.open('', 'formpopup', 'width=1200,height=800,resizeable,scrollbars');
+    form.target = 'formpopup';
+}
+</script>
 @endsection
