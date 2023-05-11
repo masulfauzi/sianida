@@ -85,6 +85,7 @@ class Jurnal extends Model
 					->join('jampelajaran as c', 'b.jam_mulai', '=', 'c.id')
 					->join('jampelajaran as d', 'b.jam_selesai', '=', 'd.id')
 					->whereIn('a.id_jadwal', $id_jadwal)
+					->orderBy('a.tgl_pembelajaran')
 					->get();
 	}
 
