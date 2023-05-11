@@ -67,7 +67,7 @@
                 <td class="border">{{ \App\Helpers\Format::tanggal($item->tgl_pembelajaran) }}</td>
                 <td class="border center">{{ $item->jam_mulai }} - {{ $item->jam_selesai }}</td>
                 <td class="border">{!! $item->materi !!}</td>
-                <td class="border">{{ $item->catatan }}</td>
+                <td class="border">{!! $item->catatan !!}</td>
             </tr>
         @endforeach
     </table>
