@@ -24,7 +24,7 @@
 <body>
     <table class="border" width="100%">
         <tr class="border">
-            <td rowspan="2" class="border" align="center"><img src="{{ asset('sianida/public/assets/images/logo/skanida.png') }}" alt="" width="80px"></td>
+            <td rowspan="2" class="border" align="center"><img src="{{ asset('assets/images/logo/skanida.png') }}" alt="" width="80px"></td>
             <td rowspan="2" class="border" align="center"><font style="font-weight: bold;">SMK NEGERI 2 SEMARANG</font></td>
             <td height="80%" class="border" align="right"><font style="font-weight: bold;">F-KUR.12</font></td>
         </tr>
