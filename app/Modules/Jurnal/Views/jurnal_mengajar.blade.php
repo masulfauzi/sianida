@@ -32,6 +32,7 @@
             <td align="center"><font style="font-weight: bold;">JURNAL MENGAJAR</font></td>
         </tr>
     </table>
+    <br>
     <table>
         <tr>
             <td>Mata Pelajaran</td>
@@ -54,7 +55,7 @@
             <td>{{ $detail_jadwal->nama }}</td>
         </tr>
     </table>
-
+    <br>
     <table width="100%" class="border">
         <tr class="border">
             <td class="border center bold">Hari/Tanggal</td>
