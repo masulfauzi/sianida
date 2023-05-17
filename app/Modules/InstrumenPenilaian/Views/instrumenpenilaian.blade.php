@@ -66,7 +66,7 @@
 									<td>
                                         <a href="{{ url('uploads/instrumen/'.$item->instrumen) }}">Download</a>
                                     </td>
-									<td>{{ $item->keterangan }}</td>
+									<td>{!! $item->keterangan !!}</td>
 									
                                     <td>
 										{{-- {!! button('instrumenpenilaian.show','', $item->id) !!} --}}
