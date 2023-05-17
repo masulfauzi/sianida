@@ -27,7 +27,7 @@ class InstrumenPenilaianController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = InstrumenPenilaian::query();
+		$query = InstrumenPenilaian::query()->whereIdGuru(session('id_guru'));
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
