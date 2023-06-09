@@ -48,21 +48,24 @@
                                 <th width="15">No</th>
 								<td>Mapel</td>
 								<td>Tingkat</td>
-								<td>File</td>
-								<td>Jenis Perangkat</td>
 								
+								<td>Jenis Perangkat</td>
+								<td>File</td>
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @php $no = $data->firstItem(); @endphp
+                            @php 
+                                $no = $data->firstItem(); 
+                            @endphp
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-									<td>{{ $item->mapel['mapel'] }}</td>
-									<td>{{ $item->tingkat['tingkat'] }}</td>
-									<td><a href="{{ url('/uploads/perangkat/'.$item->file) }}">{{ $item->file }}</a></td>
+									<td colspan="1">{{ $item->mapel['mapel'] }}</td>
+									<td colspan="1">{{ $item->tingkat['tingkat'] }}</td>
 									<td>{{ $item->jenisPerangkat['jenis_perangkat'] }}</td>
+                                    <td><a href="{{ url('/uploads/perangkat/'.$item->file) }}">{{ $item->file }}</a></td>
+
 									
                                     <td>
 										{{-- {!! button('perangkatpembelajaran.show','', $item->id) !!}
@@ -87,7 +90,28 @@
 @endsection
 
 @section('page-js')
+    
 @endsection
 
 @section('inline-js')
+<script>
+    let db = document.getElementById("table1");
+  let dbRows = db.rows;
+  let lastValue = "";
+  let lastCounter = 1;
+  let lastRow = 0;
+  for (let i = 0; i < dbRows.length; i++) {
+    let thisValue = dbRows[i].cells[0].innerHTML;
+    if (thisValue == lastValue) {
+      lastCounter++;
+      dbRows[lastRow].cells[0].rowSpan = lastCounter;
+      dbRows[i].cells[0].style.display = "none";
+    } else {
+      dbRows[i].cells[0].style.display = "table-cell";
+      lastValue = thisValue;
+      lastCounter = 1;
+      lastRow = i;
+    }
+  }
+</script>
 @endsection
