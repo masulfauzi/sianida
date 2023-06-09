@@ -28,7 +28,10 @@ class PerangkatPembelajaranController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = PerangkatPembelajaran::query()->whereIdGuru(session('id_guru'));
+		$query = PerangkatPembelajaran::query()
+										->whereIdGuru(session('id_guru'))
+										->orderBy(Tingkat::select('tingkat')->whereColumn('tingkat.id', 'perangkat_pembelajaran.id_tingkat'))
+										->orderBy(Mapel::select('mapel')->whereColumn('mapel.id', 'perangkat_pembelajaran.id_mapel'));
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");

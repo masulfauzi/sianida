@@ -35,7 +35,9 @@ class GurumapelController extends Controller
 		}
 
 
-		$query = Gurumapel::whereIdSemester(get_semester('active_semester_id'))->with('guru')->orderBy(Guru::select('nama')->whereColumn('guru.id', 'gurumapel.id_guru'));
+		$query = Gurumapel::whereIdSemester(get_semester('active_semester_id'))
+							->with('guru')
+							->orderBy(Guru::select('nama')->whereColumn('guru.id', 'gurumapel.id_guru'));
 		if($request->has('search')){
 			$search = $request->get('search');
 			//$query->where('nama', 'like', "%$search%");

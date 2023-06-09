@@ -46,8 +46,9 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-								<td>Mapel</td>
 								<td>Tingkat</td>
+
+								<td>Mapel</td>
 								
 								<td>Jenis Perangkat</td>
 								<td>File</td>
@@ -61,8 +62,9 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
+                                    <td colspan="1">{{ $item->tingkat['tingkat'] }}</td>
+
 									<td colspan="1">{{ $item->mapel['mapel'] }}</td>
-									<td colspan="1">{{ $item->tingkat['tingkat'] }}</td>
 									<td>{{ $item->jenisPerangkat['jenis_perangkat'] }}</td>
                                     <td><a href="{{ url('/uploads/perangkat/'.$item->file) }}">{{ $item->file }}</a></td>
 
