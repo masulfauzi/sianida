@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SnbpController;
 use App\Http\Controllers\AktivasiController;
+use App\Http\Controllers\ApiController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,7 @@ Route::post('/aktivasi', [AktivasiController::class, 'store'])->name('aktivasi.s
 Route::get('/aktivasi/inputdata/{id}', [AktivasiController::class, 'input_data'])->name('aktivasi.input')->middleware(['guest']);
 Route::get('/aktivasi/radius', [AktivasiController::class, 'radius'])->name('aktivasi.radius')->middleware(['guest']);
 Route::post('/registrasi', [AktivasiController::class, 'registrasi'])->name('registrasi')->middleware(['guest']);
+Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemail')->middleware(['guest']);
 
 Route::middleware(['auth'])->group(function(){
     Route::get('/', [DashboardController::class, 'index'])->name('frontend.index');
