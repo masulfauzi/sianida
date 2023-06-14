@@ -6,6 +6,7 @@ use App\Modules\PerangkatPembelajaran\Controllers\PerangkatPembelajaranControlle
 Route::controller(PerangkatPembelajaranController::class)->middleware(['web','auth'])->name('perangkatpembelajaran.')->group(function(){
 	//custome route
 	Route::get('/perangkatpembelajaran/admin', 'index_admin')->name('admin.index');
+	Route::get('/perangkatpembelajaran/detail/{id_guru}', 'detail_guru')->name('detail.index');
 	
 	//route bawaan
 	Route::get('/perangkatpembelajaran', 'index')->name('index');
