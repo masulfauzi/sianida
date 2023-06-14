@@ -28,7 +28,13 @@ class PerangkatPembelajaranController extends Controller
 
 	public function index(Request $request)
 	{
-		if(session('active_role')['id'] == "1fe8326c-22c4-4732-9c12-f7b83a16b842")
+
+		$id_role = [
+			"bf1548f3-295c-4d73-809d-66ab7c240091",
+			"1fe8326c-22c4-4732-9c12-f7b83a16b842"
+		];
+
+		if(in_array(session('active_role')['id'], $id_role))
 		{
 			return redirect(route('perangkatpembelajaran.admin.index'));
 		}
