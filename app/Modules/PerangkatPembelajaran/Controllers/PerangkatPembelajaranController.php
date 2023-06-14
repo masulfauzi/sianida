@@ -28,6 +28,11 @@ class PerangkatPembelajaranController extends Controller
 
 	public function index(Request $request)
 	{
+		if(session('active_role')['id'] == "1fe8326c-22c4-4732-9c12-f7b83a16b842")
+		{
+			return redirect(route('perangkatpembelajaran.admin.index'));
+		}
+
 		$query = PerangkatPembelajaran::query()
 										->whereIdGuru(session('id_guru'))
 										->orderBy(Tingkat::select('tingkat')->whereColumn('tingkat.id', 'perangkat_pembelajaran.id_tingkat'))
@@ -40,6 +45,21 @@ class PerangkatPembelajaranController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('PerangkatPembelajaran::perangkatpembelajaran', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function index_admin(Request $request)
+	{
+		$query = PerangkatPembelajaran::query()
+										->orderBy(Tingkat::select('tingkat')->whereColumn('tingkat.id', 'perangkat_pembelajaran.id_tingkat'))
+										->orderBy(Mapel::select('mapel')->whereColumn('mapel.id', 'perangkat_pembelajaran.id_mapel'));
+		if($request->has('search')){
+			$search = $request->get('search');
+			// $query->where('name', 'like', "%$search%");
+		}
+		$data['data'] = $query->paginate(20)->withQueryString();
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('PerangkatPembelajaran::perangkatpembelajaran_admin', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function create(Request $request)
