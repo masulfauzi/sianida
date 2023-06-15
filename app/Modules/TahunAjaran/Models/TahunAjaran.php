@@ -1,25 +1,21 @@
 <?php
 
-namespace App\Modules\Kosp\Models;
+namespace App\Modules\TahunAjaran\Models;
 
 use App\Helpers\UsesUuid;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Modules\TahunAjaran\Models\TahunAjaran;
 
 
-class Kosp extends Model
+class TahunAjaran extends Model
 {
 	use SoftDeletes;
 	use UsesUuid;
 
 	protected $dates      = ['deleted_at'];
-	protected $table      = 'kosp';
+	protected $table      = 'tahun_ajaran';
 	protected $fillable   = ['*'];	
 
-	public function tahunAjaran(){
-		return $this->belongsTo(TahunAjaran::class,"id_tahun_ajaran","id");
-	}
-
+	
 }

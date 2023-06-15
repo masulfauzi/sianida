@@ -8,14 +8,14 @@
     <div class="page-title">
         <div class="row mb-2">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <a href="{{ route('kosp.index') }}" class="btn btn-sm icon icon-left btn-outline-secondary"><i class="fa fa-arrow-left"></i> Kembali </a>
+                <a href="{{ route('tahunajaran.index') }}" class="btn btn-sm icon icon-left btn-outline-secondary"><i class="fa fa-arrow-left"></i> Kembali </a>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('kosp.index') }}">{{ $title }}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $kosp->nama }}</li>
+                        <li class="breadcrumb-item"><a href="{{ route('tahunajaran.index') }}">{{ $title }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ $tahunajaran->nama }}</li>
                     </ol>
                 </nav>
             </div>
@@ -25,15 +25,13 @@
     <section class="section">
         <div class="card">
             <h6 class="card-header">
-                Detail Data {{ $title }}: {{ $kosp->nama }}
+                Detail Data {{ $title }}: {{ $tahunajaran->nama }}
             </h6>
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-10 offset-lg-2">
                         <div class="row">
-                            <div class='col-lg-2'><p>Nama</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $kosp->nama }}</p></div>
-									<div class='col-lg-2'><p>Link</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $kosp->link }}</p></div>
-									<div class='col-lg-2'><p>Tahun Ajaran</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $kosp->tahunAjaran->id }}</p></div>
+                            <div class='col-lg-2'><p>Tahun Ajaran</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $tahunajaran->tahun_ajaran }}</p></div>
 									
                         </div>
                     </div>

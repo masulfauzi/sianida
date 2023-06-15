@@ -29,7 +29,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-9">
-                        <form action="{{ route('kosp.index') }}" method="get">
+                        <form action="{{ route('tahunajaran.index') }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
                                 <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
                                 <div class="form-control-icon"><i class="fa fa-search"></i></div>
@@ -37,7 +37,7 @@
                         </form>
                     </div>
                     <div class="col-3">  
-						{!! button('kosp.create', $title) !!}  
+						{!! button('tahunajaran.create', $title) !!}  
                     </div>
                 </div>
                 @include('include.flash')
@@ -46,9 +46,7 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-                                <td>Nama</td>
-								{{-- <td>Link</td> --}}
-								<td>Tahun Ajaran</td>
+                                <td>Tahun Ajaran</td>
 								
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -58,20 +56,17 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->nama }}</td>
-									{{-- <td>{{ $item->link }}</td> --}}
-									<td>{{ $item->tahunAjaran['tahun_ajaran'] }}</td>
+                                    <td>{{ $item->tahun_ajaran }}</td>
 									
                                     <td>
-                                        <a target="_blank" href="{{ $item->link }}" class="btn btn-primary">Upload</a>
-										{{-- {!! button('kosp.show','', $item->id) !!}
-										{!! button('kosp.edit', $title, $item->id) !!}
-                                        {!! button('kosp.destroy', $title, $item->id) !!} --}}
+										{!! button('tahunajaran.show','', $item->id) !!}
+										{!! button('tahunajaran.edit', $title, $item->id) !!}
+                                        {!! button('tahunajaran.destroy', $title, $item->id) !!}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center"><i>No data.</i></td>
+                                    <td colspan="3" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>
