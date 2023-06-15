@@ -47,7 +47,7 @@
                             <tr>
                                 <th width="15">No</th>
                                 <td>Nama</td>
-								{{-- <td>Link</td> --}}
+								<td>Link</td>
 								<td>Tahun Ajaran</td>
 								
                                 <th width="20%">Aksi</th>
@@ -59,7 +59,7 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->nama }}</td>
-									{{-- <td>{{ $item->link }}</td> --}}
+									<td>{{ $item->link }}</td>
 									<td>{{ $item->tahunAjaran['tahun_ajaran'] }}</td>
 									
                                     <td>
