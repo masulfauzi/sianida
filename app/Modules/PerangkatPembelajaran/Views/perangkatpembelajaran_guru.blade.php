@@ -8,7 +8,7 @@
     <div class="page-title">
         <div class="row mb-2">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>{{ $title }}</h3>
+                <h3>Manajemen Data {{ $title }}</h3>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -27,53 +27,77 @@
                 Tabel Data {{ $title }}
             </h6>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-9">
-                        <form action="{{ route('perangkatpembelajaran.index') }}" method="get">
-                            <div class="form-group col-md-3 has-icon-left position-relative">
-                                <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
-                                <div class="form-control-icon"><i class="fa fa-search"></i></div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-3">  
-						{!! button('perangkatpembelajaran.create', 'Data') !!}  
-                    </div>
-                </div>
+                
                 @include('include.flash')
                 <div class="table-responsive-md col-12">
                     <table class="table" id="table1">
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-								<td>Nama Guru</td>
-                                <th width="20%">Aksi</th>
+                                {{-- <td>Guru</td> --}}
+								<td>Mapel</td>
+								<td>Tingkat</td>
+								{{-- <td>Semester</td> --}}
+								{{-- <td>Jenis Kosp</td> --}}
+								<td>Jenis Perangkat</td>
+								<td>File Sekarang</td>
+								<td>Pilih File</td>
                             </tr>
                         </thead>
                         <tbody>
-                            @php 
-                                $no = $data->firstItem(); 
+                            @php
+                                $no = 1;
                             @endphp
                             @forelse ($data as $item)
-                                <input type="hidden" id="id-{{ $item->id }}" value="{{ url('/uploads/perangkat/'.$item->file) }}">
                                 <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $item->guru['nama'] }}</td>
-
-									
+                                    <td rowspan="2">{{ $no++ }}</td>
+                                    {{-- <td rowspan="2">{{ $item->guru['nama'] }}</td> --}}
+									<td rowspan="2">{{ $item->mapel['mapel'] }}</td>
+									<td rowspan="2">{{ $item->tingkat['tingkat'] }}</td>
+									{{-- <td>{{ $item->id_semester }}</td> --}}
+									{{-- <td>{{ $item->jenisKosp['jenis'] }}</td> --}}
+									<td>
+                                        File Silabus/ATP
+                                    </td>
                                     <td>
-                                        <a class="btn btn-primary" href="{{ route('perangkatpembelajaran.detail.index', $item->id_guru) }}">Detail</a>
+                                        @if ($item->file_atp)
+                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                        @else
+                                            <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                        @endif
+                                    </td>
+									<td>
+                                        <form action="">
+                                            <input type="file" class="form-control">
+                                            {{-- <br> --}}
+                                            <button type="submit" class="btn btn-primary mt-2">Simpan</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>File RPP/Module</td>
+                                    <td>
+                                        @if ($item->file_module)
+                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                        @else
+                                            <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <form action="">
+                                            <input type="file" class="form-control">
+                                            <button type="submit" class="btn btn-primary mt-2">Simpan</button>
+                                        </form>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center"><i>No data.</i></td>
+                                    <td colspan="9" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
-				{{ $data->links() }}
             </div>
         </div>
 
@@ -82,9 +106,7 @@
 @endsection
 
 @section('page-js')
-    
 @endsection
 
 @section('inline-js')
-
 @endsection

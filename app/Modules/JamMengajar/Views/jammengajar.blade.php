@@ -27,21 +27,24 @@
                 Tabel Data {{ $title }}
             </h6>
             <div class="card-body">
-                
+                <div class="row">
+                    <div class="col-9">
+                        
+                    </div>
+                    <div class="col-3">  
+						
+                    </div>
+                </div>
                 @include('include.flash')
                 <div class="table-responsive-md col-12">
                     <table class="table" id="table1">
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-                                {{-- <td>Semester</td> --}}
-								{{-- <td>Guru</td> --}}
-								<td>Mapel</td>
-								<td>Tingkat</td>
-								{{-- <td>Jenis Perangkat</td>
-								<td>File</td> --}}
+								<td>Guru</td>
+								<td>Jml Jam</td>
 								
-                                <th width="20%">Aksi</th>
+                                <th width="30%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -49,20 +52,16 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    {{-- <td>{{ $item->id_semester }}</td> --}}
-									{{-- <td>{{ $item->id_guru }}</td> --}}
-									<td>{{ $item->mapel }}</td>
-									<td>{{ $item->tingkat }}</td>
-									{{-- <td>{{ $item->id_jenis_perangkat }}</td> --}}
-									{{-- <td>{{ $item->file }}</td> --}}
+									<td>{{ $item->nama }}</td>
+									<td>{{ $item->jml_jam }}</td>
 									
                                     <td>
-										<a href="{{ route('perangkatpembelajaran.upload.index', $item->id) }}" class="btn btn-primary">Upload</a>
+										<a href="{{ route('jammengajar.guru.index', $item->id_guru) }}" class="btn btn-success">Detail</a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center"><i>No data.</i></td>
+                                    <td colspan="7" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -6,13 +6,14 @@ use App\Helpers\Logger;
 use Illuminate\Http\Request;
 use App\Modules\Log\Models\Log;
 use App\Modules\PerangkatPembelajaran\Models\PerangkatPembelajaran;
+use App\Modules\Semester\Models\Semester;
 use App\Modules\Guru\Models\Guru;
 use App\Modules\Mapel\Models\Mapel;
 use App\Modules\Tingkat\Models\Tingkat;
-use App\Modules\Semester\Models\Semester;
 use App\Modules\JenisPerangkat\Models\JenisPerangkat;
 
 use App\Http\Controllers\Controller;
+use App\Modules\JamMengajar\Models\JamMengajar;
 use Illuminate\Support\Facades\Auth;
 
 class PerangkatPembelajaranController extends Controller
@@ -28,6 +29,7 @@ class PerangkatPembelajaranController extends Controller
 
 	public function index(Request $request)
 	{
+		// dd(session('active_role')['id']);
 
 		$id_role = [
 			"bf1548f3-295c-4d73-809d-66ab7c240091",
@@ -36,108 +38,150 @@ class PerangkatPembelajaranController extends Controller
 
 		if(in_array(session('active_role')['id'], $id_role))
 		{
-			return redirect(route('perangkatpembelajaran.admin.index'));
+			return redirect()->route('perangkatpembelajaran.admin.index');
 		}
 
-		$query = PerangkatPembelajaran::query()
-										->whereIdGuru(session('id_guru'))
-										->orderBy(Tingkat::select('tingkat')->whereColumn('tingkat.id', 'perangkat_pembelajaran.id_tingkat'))
-										->orderBy(Mapel::select('mapel')->whereColumn('mapel.id', 'perangkat_pembelajaran.id_mapel'));
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$query = JamMengajar::get_mapel_perangkat(get_semester('active_semester_id'), session('id_guru'));
+		$data['data'] = $query;
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('PerangkatPembelajaran::perangkatpembelajaran', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function detail_guru(Request $request, $id_guru)
+	public function index_admin(Request $request)
 	{
-		$query = PerangkatPembelajaran::query()->whereIdGuru($id_guru)
-					->orderBy(Tingkat::select('tingkat')->whereColumn('tingkat.id', 'perangkat_pembelajaran.id_tingkat'))
-					->orderBy(Mapel::select('mapel')->whereColumn('mapel.id', 'perangkat_pembelajaran.id_mapel'));
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(20)->withQueryString();
+		$query = JamMengajar::get_mapel_perangkat(get_semester('active_semester_id'));
+		$data['data'] = $query;
+
+		// dd($data['data']);
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('PerangkatPembelajaran::perangkatpembelajaran_admin', array_merge($data, ['title' => $this->title]));
 	}
 
-	public function index_admin(Request $request)
+	public function upload(Request $request, $id)
 	{
-		$query = PerangkatPembelajaran::query()->groupBy('id_guru');
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(20)->withQueryString();
+		$data['data'] = JamMengajar::find($id);
+		$data['mapel'] = JamMengajar::query()
+							->whereIdMapel($data['data']->id_mapel)
+							->whereIdGuru($data['data']->id_guru)
+							->whereIdSemester($data['data']->id_semester)
+							->get();
+		$data['jns_perangkat'] = JenisPerangkat::get()->sortBy('jenis_perangkat')->pluck('jenis_perangkat', 'id');
+		$data['jns_perangkat']->prepend('-PILIH SALAH SATU-', '');
+		$data['perangkat'] = PerangkatPembelajaran::query()
+							->whereIdGuru($data['data']->id_guru)
+							->whereIdMapel($data['data']->id_mapel)
+							->whereIdSemester($data['data']->id_semester)
+							->get();
 
-		$this->log($request, 'melihat halaman manajemen data '.$this->title);
-		return view('PerangkatPembelajaran::perangkatpembelajaran_guru', array_merge($data, ['title' => $this->title]));
+		$this->log($request, 'melihat halaman upload data '.$this->title);
+		return view('PerangkatPembelajaran::perangkatpembelajaran_upload', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function create(Request $request)
 	{
-		$id_guru = session('id_guru');
+		$ref_semester = Semester::all()->pluck('semester','id');
+		$ref_guru = Guru::all()->pluck('nama','id');
 		$ref_mapel = Mapel::all()->pluck('mapel','id');
-		$ref_tingkat = Tingkat::all()->sortBy('tingkat')->pluck('tingkat','id');
-		$semester = get_semester('active_semester_id');
+		$ref_tingkat = Tingkat::all()->pluck('tingkat','id');
 		$ref_jenis_perangkat = JenisPerangkat::all()->pluck('jenis_perangkat','id');
-
-		$ref_mapel->prepend('-PILIH SALAH SATU-', '');
-		$ref_tingkat->prepend('-PILIH SALAH SATU-', '');
-		$ref_jenis_perangkat->prepend('-PILIH SALAH SATU-', '');
 		
 		$data['forms'] = array(
-			
+			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
+			'id_guru' => ['Guru', Form::select("id_guru", $ref_guru, null, ["class" => "form-control select2"]) ],
 			'id_mapel' => ['Mapel', Form::select("id_mapel", $ref_mapel, null, ["class" => "form-control select2"]) ],
 			'id_tingkat' => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, null, ["class" => "form-control select2"]) ],
 			'id_jenis_perangkat' => ['Jenis Perangkat', Form::select("id_jenis_perangkat", $ref_jenis_perangkat, null, ["class" => "form-control select2"]) ],
-			'file' => ['File', Form::file("file", ["class" => "form-control","placeholder" => ""]) ],
+			'file' => ['File', Form::text("file", old("file"), ["class" => "form-control","placeholder" => ""]) ],
 			
-			'id_guru' => ['', Form::hidden("id_guru", $id_guru) ],
-			'id_semester' => ['', Form::hidden("id_semester", $semester) ],
 		);
 
 		$this->log($request, 'membuka form tambah '.$this->title);
 		return view('PerangkatPembelajaran::perangkatpembelajaran_create', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function lihat_perangkat(Request $request, $id, $jenis)
+	{
+		$jenis_perangkat = JenisPerangkat::query()->whereSlug($jenis)->first();
+		$data['data'] = JamMengajar::find($id);
+		$data['perangkat'] = PerangkatPembelajaran::query()
+							->whereIdGuru($data['data']->id_guru)
+							->whereIdMapel($data['data']->id_mapel)
+							->whereIdSemester($data['data']->id_semester)
+							->whereIdJenisPerangkat($jenis_perangkat->id)
+							->get();
+							$data['mapel'] = JamMengajar::query()
+							->whereIdMapel($data['data']->id_mapel)
+							->whereIdGuru($data['data']->id_guru)
+							->whereIdSemester($data['data']->id_semester)
+							->get();
+							
+		return view('PerangkatPembelajaran::perangkatpembelajaran_lihat_perangkat', $data);
+	}
+
+	public function lihat(Request $request, $id)
+	{
+		$data['data'] = JamMengajar::find($id);
+		$data['mapel'] = JamMengajar::query()
+							->whereIdMapel($data['data']->id_mapel)
+							->whereIdGuru($data['data']->id_guru)
+							->whereIdSemester($data['data']->id_semester)
+							->get();
+		$data['jns_perangkat'] = JenisPerangkat::get()->sortBy('jenis_perangkat')->pluck('jenis_perangkat', 'id');
+		$data['jns_perangkat']->prepend('-PILIH SALAH SATU-', '');
+		$data['perangkat'] = PerangkatPembelajaran::query()
+							->whereIdGuru($data['data']->id_guru)
+							->whereIdMapel($data['data']->id_mapel)
+							->whereIdSemester($data['data']->id_semester)
+							->get();
+
+		$this->log($request, 'melihat halaman lihat data '.$this->title);
+		return view('PerangkatPembelajaran::perangkatpembelajaran_lihat', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function detail(Request $request, $id)
+	{
+		$data['data'] = PerangkatPembelajaran::find($id);
+
+		// dd($data['data']->file);
+
+		$this->log($request, 'melihat halaman detail data '.$this->title);
+		return view('PerangkatPembelajaran::perangkatpembelajaran_detail', array_merge($data, ['title' => $this->title]));
+	}
+
 	function store(Request $request)
 	{
 		$this->validate($request, [
+			'id_semester' => 'required',
 			'id_guru' => 'required',
 			'id_mapel' => 'required',
 			'id_tingkat' => 'required',
-			'id_semester' => 'required',
-			'file' => 'required',
 			'id_jenis_perangkat' => 'required',
+			'file' => 'required|mimes:pdf,doc,docx|max:10240',
+			'nama_perangkat' => 'required',
 			
 		]);
 
-		$fileName = time().'.'.$request->file->extension();  
+		$file = time().'.'.$request->file->extension();  
 
-        $request->file->move(public_path('uploads/perangkat/'), $fileName);
+        $request->file->move(public_path('uploads/perangkat/'), $file);
 
 		$perangkatpembelajaran = new PerangkatPembelajaran();
+		$perangkatpembelajaran->id_semester = $request->input("id_semester");
 		$perangkatpembelajaran->id_guru = $request->input("id_guru");
 		$perangkatpembelajaran->id_mapel = $request->input("id_mapel");
 		$perangkatpembelajaran->id_tingkat = $request->input("id_tingkat");
-		$perangkatpembelajaran->id_semester = $request->input("id_semester");
-		$perangkatpembelajaran->file = $fileName;
 		$perangkatpembelajaran->id_jenis_perangkat = $request->input("id_jenis_perangkat");
+		$perangkatpembelajaran->nama_perangkat = $request->input("nama_perangkat");
+		$perangkatpembelajaran->file = $file;
 		
 		$perangkatpembelajaran->created_by = Auth::id();
 		$perangkatpembelajaran->save();
 
 		$text = 'membuat '.$this->title; //' baru '.$perangkatpembelajaran->what;
 		$this->log($request, $text, ['perangkatpembelajaran.id' => $perangkatpembelajaran->id]);
-		return redirect()->route('perangkatpembelajaran.index')->with('message_success', 'Perangkat Pembelajaran berhasil ditambahkan!');
+		return redirect()->route('perangkatpembelajaran.upload.index', $request->input("id_jam_mengajar"))->with('message_success', 'Perangkat Pembelajaran berhasil ditambahkan!');
 	}
 
 	public function show(Request $request, PerangkatPembelajaran $perangkatpembelajaran)
@@ -153,19 +197,19 @@ class PerangkatPembelajaranController extends Controller
 	{
 		$data['perangkatpembelajaran'] = $perangkatpembelajaran;
 
+		$ref_semester = Semester::all()->pluck('semester','id');
 		$ref_guru = Guru::all()->pluck('nama','id');
 		$ref_mapel = Mapel::all()->pluck('mapel','id');
 		$ref_tingkat = Tingkat::all()->pluck('tingkat','id');
-		$ref_semester = Semester::all()->pluck('semester','id');
 		$ref_jenis_perangkat = JenisPerangkat::all()->pluck('jenis_perangkat','id');
 		
 		$data['forms'] = array(
+			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
 			'id_guru' => ['Guru', Form::select("id_guru", $ref_guru, null, ["class" => "form-control select2"]) ],
 			'id_mapel' => ['Mapel', Form::select("id_mapel", $ref_mapel, null, ["class" => "form-control select2"]) ],
 			'id_tingkat' => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, null, ["class" => "form-control select2"]) ],
-			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
-			'file' => ['File', Form::text("file", $perangkatpembelajaran->file, ["class" => "form-control","placeholder" => "", "id" => "file"]) ],
 			'id_jenis_perangkat' => ['Jenis Perangkat', Form::select("id_jenis_perangkat", $ref_jenis_perangkat, null, ["class" => "form-control select2"]) ],
+			'file' => ['File', Form::text("file", $perangkatpembelajaran->file, ["class" => "form-control","placeholder" => "", "id" => "file"]) ],
 			
 		);
 
@@ -177,22 +221,22 @@ class PerangkatPembelajaranController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validate($request, [
+			'id_semester' => 'required',
 			'id_guru' => 'required',
 			'id_mapel' => 'required',
 			'id_tingkat' => 'required',
-			'id_semester' => 'required',
-			'file' => 'required',
 			'id_jenis_perangkat' => 'required',
+			'file' => 'required',
 			
 		]);
 		
 		$perangkatpembelajaran = PerangkatPembelajaran::find($id);
+		$perangkatpembelajaran->id_semester = $request->input("id_semester");
 		$perangkatpembelajaran->id_guru = $request->input("id_guru");
 		$perangkatpembelajaran->id_mapel = $request->input("id_mapel");
 		$perangkatpembelajaran->id_tingkat = $request->input("id_tingkat");
-		$perangkatpembelajaran->id_semester = $request->input("id_semester");
-		$perangkatpembelajaran->file = $request->input("file");
 		$perangkatpembelajaran->id_jenis_perangkat = $request->input("id_jenis_perangkat");
+		$perangkatpembelajaran->file = $request->input("file");
 		
 		$perangkatpembelajaran->updated_by = Auth::id();
 		$perangkatpembelajaran->save();

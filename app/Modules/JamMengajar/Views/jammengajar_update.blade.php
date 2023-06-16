@@ -11,8 +11,8 @@
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('perangkatpembelajaran.index') }}">{{ $title }}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Form Tambah {{ $title }}</li>
+                        <li class="breadcrumb-item"><a href="{{ route('jammengajar.index') }}">{{ $title }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Form Edit {{ $title }}</li>
                     </ol>
                 </nav>
             </div>
@@ -22,13 +22,13 @@
     <section class="section">
         <div class="card">
             <h6 class="card-header">
-                Form Tambah Data {{ $title }}
+                Form Edit Data {{ $title }}
             </h6>
             <div class="card-body">
                 @include('include.flash')
-                <form class="form form-horizontal" action="{{ route('perangkatpembelajaran.store') }}" method="POST">
+                <form class="form form-horizontal" action="{{ route('jammengajar.update', $jammengajar->id) }}" method="POST">
                     <div class="form-body">
-                        @csrf 
+                        @csrf @method('patch')
                         @foreach ($forms as $key => $value)
                             <div class="row">
                                 <div class="col-md-3 text-sm-start text-md-end pt-2">
@@ -46,7 +46,7 @@
                         @endforeach
                         <div class="offset-md-3 ps-2">
                             <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
-                            <a href="{{ route('perangkatpembelajaran.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ route('jammengajar.index') }}" class="btn btn-secondary">Batal</a>
                         </div>
                   </div>
                 </form>

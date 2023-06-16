@@ -8,7 +8,7 @@
     <div class="page-title">
         <div class="row mb-2">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>{{ $title }}</h3>
+                <h3>Manajemen Data {{ $title }}</h3>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -27,56 +27,49 @@
                 Tabel Data {{ $title }}
             </h6>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-9">
-                        <form action="{{ route('perangkatpembelajaran.index') }}" method="get">
-                            <div class="form-group col-md-3 has-icon-left position-relative">
-                                <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
-                                <div class="form-control-icon"><i class="fa fa-search"></i></div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-3">  
-						{!! button('perangkatpembelajaran.create', 'Data') !!}  
-                    </div>
-                </div>
+                
                 @include('include.flash')
                 <div class="table-responsive-md col-12">
                     <table class="table" id="table1">
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-								<td>Nama Guru</td>
-								<td>Tingkat</td>
-
+                                {{-- <td>Semester</td> --}}
+								<td>Guru</td>
 								<td>Mapel</td>
+								<td>Tingkat</td>
+                                <td>Link ATP</td>
+                                <td>Link Modul</td>
+								{{-- <td>Jenis Perangkat</td>
+								<td>File</td> --}}
 								
-								<td>Jenis Perangkat</td>
-								<td>File</td>
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @php 
-                                $no = $data->firstItem(); 
-                            @endphp
+                            @php $no = 1; @endphp
                             @forelse ($data as $item)
-                                <input type="hidden" id="id-{{ $item->id }}" value="{{ url('/uploads/perangkat/'.$item->file) }}">
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->guru['nama'] }}</td>
-                                    <td colspan="1">{{ $item->tingkat['tingkat'] }}</td>
-
-									<td colspan="1">{{ $item->mapel['mapel'] }}</td>
-									<td>{{ $item->jenisPerangkat['jenis_perangkat'] }}</td>
-                                    <td><a href="{{ url('/uploads/perangkat/'.$item->file) }}">{{ $item->file }}</a></td>
-
+                                    {{-- <td>{{ $item->id_semester }}</td> --}}
+									<td>{{ $item->nama }}</td>
+									<td>{{ $item->mapel }}</td>
+									<td>{{ $item->tingkat }}</td>
+                                    <td>
+                                        <a href="{{ route('perangkat.atp.index', [$item->id, 'atp']) }}" target="_blank">
+                                            {{ route('perangkat.atp.index', [$item->id, 'atp']) }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('perangkat.atp.index', [$item->id, 'modul']) }}" target="_blank">
+                                            {{ route('perangkat.atp.index', [$item->id, 'modul']) }}
+                                        </a>
+                                    </td>
+									{{-- <td>{{ $item->id_jenis_perangkat }}</td> --}}
+									{{-- <td>{{ $item->file }}</td> --}}
 									
                                     <td>
-                                        <button class="btn btn-secondary" onclick="copyValue('id-{{ $item->id }}')">Copy URL</button>
-										{{-- {!! button('perangkatpembelajaran.show','', $item->id) !!}
-										{!! button('perangkatpembelajaran.edit', $title, $item->id) !!} --}}
-                                        {!! button('perangkatpembelajaran.destroy', $title, $item->id) !!}
+										<a href="{{ route('perangkatpembelajaran.lihat.index', $item->id) }}" class="btn btn-primary">Lihat Data</a>
                                     </td>
                                 </tr>
                             @empty
@@ -87,7 +80,6 @@
                         </tbody>
                     </table>
                 </div>
-				{{ $data->links() }}
             </div>
         </div>
 
@@ -96,31 +88,7 @@
 @endsection
 
 @section('page-js')
-    
 @endsection
 
 @section('inline-js')
-<script>
-    function copyValue(id) {
-
-        // console.log(id);
-
-        // // Get the text field
-        var copyText = document.getElementById(id);
-
-        // console.log(copyText);
-
-        // // Select the text field
-        // var data = copyText.select();
-        // console.log(copyText.value);
-
-        // copyText.setSelectionRange(0, 99999); // For mobile devices
-
-        // // Copy the text inside the text field
-        navigator.clipboard.writeText(copyText.value);
-
-        // // Alert the copied text
-        alert("Copied the text: " + copyText.value);
-    } 
-</script>
 @endsection

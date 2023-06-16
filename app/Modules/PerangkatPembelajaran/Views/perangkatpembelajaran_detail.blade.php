@@ -1,55 +1,11 @@
-@extends('layouts.app')
-
-@section('page-css')
-@endsection
-
-@section('main')
-<div class="page-heading">
-    <div class="page-title">
-        <div class="row mb-2">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <a href="{{ route('perangkatpembelajaran.index') }}" class="btn btn-sm icon icon-left btn-outline-secondary"><i class="fa fa-arrow-left"></i> Kembali </a>
-            </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('perangkatpembelajaran.index') }}">{{ $title }}</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $perangkatpembelajaran->nama }}</li>
-                    </ol>
-                </nav>
-            </div>
-        </div>
-    </div>
-
-    <section class="section">
-        <div class="card">
-            <h6 class="card-header">
-                Detail Data {{ $title }}: {{ $perangkatpembelajaran->nama }}
-            </h6>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-10 offset-lg-2">
-                        <div class="row">
-                            <div class='col-lg-2'><p>Guru</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $perangkatpembelajaran->guru->id }}</p></div>
-									<div class='col-lg-2'><p>Mapel</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $perangkatpembelajaran->mapel->id }}</p></div>
-									<div class='col-lg-2'><p>Tingkat</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $perangkatpembelajaran->tingkat->id }}</p></div>
-									<div class='col-lg-2'><p>Semester</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $perangkatpembelajaran->semester->id }}</p></div>
-									<div class='col-lg-2'><p>File</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $perangkatpembelajaran->file }}</p></div>
-									<div class='col-lg-2'><p>Jenis Perangkat</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $perangkatpembelajaran->jenisPerangkat->id }}</p></div>
-									
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </section>
-</div>
-@endsection
-
-@section('page-js')
-@endsection
-
-@section('inline-js')
-@endsection
+<!DOCTYPE html>
+<html>
+    <body>
+        <iframe
+            src="https://docs.google.com/gview?url={{ url('uploads/perangkat/'.$data->file) }}"
+            style="width: 90%; 
+            height: 1000px">
+            <p>Your browser does not support iframes.</p>
+        </iframe>
+    </body>
+</html>

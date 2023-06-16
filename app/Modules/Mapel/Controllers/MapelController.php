@@ -26,7 +26,7 @@ class MapelController extends Controller
 		$query = Mapel::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
+			$query->where('mapel', 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 

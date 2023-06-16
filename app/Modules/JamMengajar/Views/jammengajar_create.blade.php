@@ -11,7 +11,7 @@
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('perangkatpembelajaran.index') }}">{{ $title }}</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('jammengajar.index') }}">{{ $title }}</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Form Tambah {{ $title }}</li>
                     </ol>
                 </nav>
@@ -26,7 +26,7 @@
             </h6>
             <div class="card-body">
                 @include('include.flash')
-                <form class="form form-horizontal" action="{{ route('perangkatpembelajaran.store') }}" method="POST">
+                <form class="form form-horizontal" action="{{ route('jammengajar.store') }}" method="POST">
                     <div class="form-body">
                         @csrf 
                         @foreach ($forms as $key => $value)
@@ -46,7 +46,7 @@
                         @endforeach
                         <div class="offset-md-3 ps-2">
                             <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
-                            <a href="{{ route('perangkatpembelajaran.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ route('jammengajar.index') }}" class="btn btn-secondary">Batal</a>
                         </div>
                   </div>
                 </form>
