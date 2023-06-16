@@ -147,7 +147,8 @@ class PerangkatPembelajaranController extends Controller
 		// dd($data['data']->file);
 
 		$this->log($request, 'melihat halaman detail data '.$this->title);
-		return view('PerangkatPembelajaran::perangkatpembelajaran_detail', array_merge($data, ['title' => $this->title]));
+		return redirect('/uploads/perangkat/'.$data['data']->file);
+		// return view('PerangkatPembelajaran::perangkatpembelajaran_detail', array_merge($data, ['title' => $this->title]));
 	}
 
 	function store(Request $request)
