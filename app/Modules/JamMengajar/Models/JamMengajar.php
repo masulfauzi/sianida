@@ -57,7 +57,7 @@ public function kelas(){
 					->join('tingkat as e', 'd.id_tingkat','=','e.id')
 					->where('a.id_semester', $id_semester)
 					->where('a.id_guru', $id_guru)
-					->groupBy('e.id', 'c.id')
+					->groupBy('e.id', 'c.id', 'a.id_guru')
 					->orderBy('e.tingkat')
 					->orderBy('c.mapel')
 					->get();
