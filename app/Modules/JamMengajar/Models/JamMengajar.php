@@ -70,7 +70,7 @@ public function kelas(){
 					->join('kelas as d', 'a.id_kelas','=','d.id')
 					->join('tingkat as e', 'd.id_tingkat','=','e.id')
 					->where('a.id_semester', $id_semester)
-					->groupBy('e.id', 'c.id', 'b.id)
+					->groupBy('e.id', 'c.id', 'b.id')
 					->orderBy('b.nama')
 					->orderBy('e.tingkat')
 					->orderBy('c.mapel')
