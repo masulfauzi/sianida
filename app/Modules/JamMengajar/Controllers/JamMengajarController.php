@@ -43,7 +43,7 @@ class JamMengajarController extends Controller
 	{
 		$guru = Guru::find($id_guru);
 		$data['guru']	= $guru;
-		$data['data']	= JamMengajar::query()->whereIdGuru($id_guru)->get();
+		$data['data']	= JamMengajar::query()->whereIdGuru($id_guru)->orderBy('id_kelas')->get();
 
 		// dd($data['guru']);
 
