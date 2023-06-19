@@ -55,7 +55,7 @@ class JamMengajarController extends Controller
 	{
 		$guru = Guru::find($id_guru);
 		$ref_mapel = Mapel::all()->pluck('mapel','id');
-		$ref_kelas = Kelas::all()->pluck('kelas','id');
+		$ref_kelas = Kelas::all()->sortBy('kelas')->pluck('kelas','id');
 
 		$ref_mapel->prepend('-PILIH SALAH SATU-', '');
 		$ref_kelas->prepend('-PILIH SALAH SATU-', '');
