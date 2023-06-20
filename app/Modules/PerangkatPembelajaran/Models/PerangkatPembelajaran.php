@@ -41,12 +41,15 @@ public function jenisPerangkat(){
 	public static function cek_upload_perangkat($id)
 	{
 		$cek = DB::table('jam_mengajar as a')
-					->where('id', $id)
+					->join('kelas as b', 'a.id_kelas', '=', 'b.id')
+					->where('a.id', $id)
 					->first();
 
 		$data = DB::table('perangkat_pembelajaran as a')
 					->where('id_guru', $cek->id_guru)
 					->where('id_semester', $cek->id_semester)
+					->where('id_mapel', $cek->id_mapel)
+					->where('id_tingkat', $cek->id_tingkat)
 					->count();
 
 		return $data;
