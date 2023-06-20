@@ -38,4 +38,18 @@ public function jenisPerangkat(){
 		return $this->belongsTo(JenisPerangkat::class,"id_jenis_perangkat","id");
 	}
 
+	public static function cek_upload_perangkat($id)
+	{
+		$cek = DB::table('jam_mengajar as a')
+					->where('id', $id)
+					->first();
+
+		$data = DB::table('perangkat_pembelajaran as a')
+					->where('id_guru', $cek->id_guru)
+					->where('id_semester', $cek->id_semester)
+					->count();
+
+		return $data;
+	}
+
 }

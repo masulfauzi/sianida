@@ -38,6 +38,7 @@
 								<td>Guru</td>
 								<td>Mapel</td>
 								<td>Tingkat</td>
+								<td>Upload</td>
                                 <td>Link ATP</td>
                                 <td>Link Modul</td>
 								{{-- <td>Jenis Perangkat</td>
@@ -55,6 +56,17 @@
 									<td>{{ $item->nama }}</td>
 									<td>{{ $item->mapel }}</td>
 									<td>{{ $item->tingkat }}</td>
+									<td>
+                                        @php
+                                            $cek = App\Modules\PerangkatPembelajaran\Models\PerangkatPembelajaran::cek_upload_perangkat($item->id);
+                                        @endphp
+
+                                        @if ($cek > 0)
+                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                        @else
+                                            <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('perangkat.atp.index', [$item->id, 'atp']) }}" target="_blank">
                                             {{ route('perangkat.atp.index', [$item->id, 'atp']) }}
