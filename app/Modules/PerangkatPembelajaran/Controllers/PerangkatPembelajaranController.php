@@ -109,9 +109,10 @@ class PerangkatPembelajaranController extends Controller
 							->whereIdGuru($data['data']->id_guru)
 							->whereIdMapel($data['data']->id_mapel)
 							->whereIdSemester($data['data']->id_semester)
+							->whereIdTingkat($data['data']->kelas['id_tingkat'])
 							->whereIdJenisPerangkat($jenis_perangkat->id)
 							->get();
-							$data['mapel'] = JamMengajar::query()
+		$data['mapel'] = JamMengajar::query()
 							->whereIdMapel($data['data']->id_mapel)
 							->whereIdGuru($data['data']->id_guru)
 							->whereIdSemester($data['data']->id_semester)
