@@ -46,7 +46,7 @@
                             <div class="col-md-9 form-group">
                                 <ul>
                                     @foreach ($mapel as $item_mapel)
-                                        <li>{{ $item_mapel->kelas['kelas'] }}</li>
+                                        <li>{{ $item_mapel->kelas }}</li>
                                     @endforeach
                                 </ul>
                             </div>

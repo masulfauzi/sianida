@@ -55,4 +55,15 @@ public function jenisPerangkat(){
 		return $data;
 	}
 
+	public static function get_kelas_by_data($data)
+	{
+		return DB::table('jam_mengajar as a')
+					->join('mapel as b', 'a.id_mapel', '=', 'b.id')
+					->join('kelas as c', 'a.id_kelas', '=', 'c.id')
+					->where('a.id_mapel', $data->id_mapel)
+					->where('a.id_guru', $data->id_guru)
+					->where('a.id_semester', $data->id_semester)
+					->get();
+	}
+
 }
