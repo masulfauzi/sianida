@@ -57,12 +57,18 @@ public function jenisPerangkat(){
 
 	public static function get_kelas_by_data($data)
 	{
+		$cari = DB::table('jam_mengajar as a')
+					->join('kelas as b', 'a.id_kelas', '=', 'b.id')
+					->where('a.id', $data->id)
+					->first();
+
 		return DB::table('jam_mengajar as a')
 					->join('mapel as b', 'a.id_mapel', '=', 'b.id')
 					->join('kelas as c', 'a.id_kelas', '=', 'c.id')
 					->where('a.id_mapel', $data->id_mapel)
 					->where('a.id_guru', $data->id_guru)
 					->where('a.id_semester', $data->id_semester)
+					->where('c.id_tingkat', $cari->id_tingkat)
 					->get();
 	}
 
