@@ -105,6 +105,7 @@ class PerangkatPembelajaranController extends Controller
 	{
 		$jenis_perangkat = JenisPerangkat::query()->whereSlug($jenis)->first();
 		$data['data'] = JamMengajar::find($id);
+		$data['mapel'] = PerangkatPembelajaran::get_kelas_by_data($data['data']);
 		$data['perangkat'] = PerangkatPembelajaran::query()
 							->whereIdGuru($data['data']->id_guru)
 							->whereIdMapel($data['data']->id_mapel)
@@ -112,7 +113,6 @@ class PerangkatPembelajaranController extends Controller
 							->whereIdTingkat($data['data']->kelas['id_tingkat'])
 							->whereIdJenisPerangkat($jenis_perangkat->id)
 							->get();
-		$data['mapel'] = PerangkatPembelajaran::get_kelas_by_data($data['data']);
 							
 		return view('PerangkatPembelajaran::perangkatpembelajaran_lihat_perangkat', $data);
 	}

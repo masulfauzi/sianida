@@ -49,6 +49,9 @@
                                     <option @if ($semester == 5)
                                     selected
                                     @endif value="5">Semester 5</option>
+                                    <option @if ($semester == 6)
+                                    selected
+                                    @endif value="6">Semester 6</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6 has-icon-left position-relative">
