@@ -26,7 +26,7 @@ class PesertadidikController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = Pesertadidik::query();
+		$query = Pesertadidik::query()->whereIdSemester(get_semester('active_semester_id'));
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
