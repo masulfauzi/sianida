@@ -53,10 +53,15 @@ class JadwalController extends Controller
 		$query = Jadwal::query()->where('id_guru', $id_guru);
 		$guru = Guru::find($id_guru);
 		$ref_hari = Hari::all()->sortBy('urutan')->pluck('hari','id');
+		$ref_hari->prepend('-PILIH SALAH SATU-', '');
 		$ref_kelas = Kelas::all()->sortBy('kelas')->pluck('kelas','id');
+		$ref_kelas->prepend('-PILIH SALAH SATU-', '');
 		$ref_jampelajaran = Jampelajaran::all()->sortBy('jam_pelajaran')->pluck('jam_pelajaran','id');
+		$ref_jampelajaran->prepend('-PILIH SALAH SATU-', '');
 		$ref_mapel = Mapel::all()->sortBy('mapel')->pluck('mapel','id');
+		$ref_mapel->prepend('-PILIH SALAH SATU-', '');
 		$ref_ruang = Ruang::all()->sortBy('ruang')->pluck('ruang','id');
+		$ref_ruang->prepend('-PILIH SALAH SATU-', '');
 		
 		$data['forms'] = array(
 			'guru' => ['Guru', Form::text("guru", $guru->nama, ["class" => "form-control", "disabled"]) ],
