@@ -30,11 +30,12 @@ public function kelas(){
 		return $this->belongsTo(Kelas::class,"id_kelas","id");
 	}
 
-	public static function get_pd_by_idkelas($id_kelas)
+	public static function get_pd_by_idkelas($id_kelas, $id_semester)
 	{
 		return DB::table('pesertadidik')
 					->where('id_kelas', $id_kelas)
 					->where('is_magang', '0')
+					->where('id_semester', $id_semester)
 					->get();
 	}
 

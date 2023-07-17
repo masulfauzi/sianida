@@ -50,7 +50,7 @@ class PresensiController extends Controller
 
 		if($data_siswa->count() == 0)
 		{
-			$this->insert_presensi_by_idkelas($data_jurnal->id_kelas, $data_jurnal->id);
+			$this->insert_presensi_by_idkelas($data_jurnal->id_kelas, $data_jurnal->id, get_semester('active_semester_id'));
 		}
 
 		$data['siswa']	= Presensi::get_presensi_by_idjurnal($data_jurnal->id);
@@ -77,9 +77,9 @@ class PresensiController extends Controller
 		return redirect()->route('presensi.jurnal.index', $request->get('id_jurnal'))->with('message_success', 'Presensi berhasil disimpan!');
 	}
 
-	public function insert_presensi_by_idkelas($id_kelas, $id_jurnal)
+	public function insert_presensi_by_idkelas($id_kelas, $id_jurnal, $id_semester)
 	{
-		$siswa = Pesertadidik::get_pd_by_idkelas($id_kelas);
+		$siswa = Pesertadidik::get_pd_by_idkelas($id_kelas, $id_semester);
 
 		foreach($siswa as $data)
 		{
