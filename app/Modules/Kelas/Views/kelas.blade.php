@@ -66,6 +66,7 @@
 										{!! button('kelas.show','', $item->id) !!}
 										{!! button('kelas.edit', $title, $item->id) !!}
                                         {!! button('kelas.destroy', $title, $item->id) !!}
+                                        <a href="{{ route('kelas.naik.index', $item->id) }}" class="btn btn-primary">Naik Kelas</a>
                                     </td>
                                 </tr>
                             @empty

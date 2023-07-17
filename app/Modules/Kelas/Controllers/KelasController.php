@@ -10,7 +10,11 @@ use App\Modules\Tingkat\Models\Tingkat;
 use App\Modules\Jurusan\Models\Jurusan;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
+use App\Modules\Semester\Models\Semester;
+use App\Modules\Siswa\Models\Siswa;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class KelasController extends Controller
 {
@@ -34,6 +38,52 @@ class KelasController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Kelas::kelas', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function naik_kelas(Request $request, $id_kelas)
+	{
+		$data['data'] = Pesertadidik::query()
+						->whereIdSemester(get_semester('active_semester_id'))
+						->whereIdKelas($id_kelas)
+						->get();
+		$data['kelas'] = Kelas::find($id_kelas);
+		$data['data_kelas']	= Kelas::all()->sortBy('kelas')->pluck('kelas', 'id');
+		$data['data_kelas']->prepend('-PILIH SALAH SATU-', '');
+		$data['semester']		= get_semester('active_semester_id');
+		$data['data_semester']	= Semester::all()->pluck('semester', 'id');
+		$data['data_semester']->prepend('-PILIH SALAH SATU-', '');
+
+		
+		$this->log($request, 'melihat halaman naik kelas');
+		return view('Kelas::kelas_naik', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function aksi_naik_kelas(Request $request)
+	{
+		$request->validate([
+			"id_kelas" 			=> 'required',
+			'id_kelas_naik'		=> 'required',
+			'id_semester'		=> 'required',
+			'id_semester_naik'	=> 'required'
+		]);
+
+		foreach($request->input('id_pesertadidik') as $item)
+		{
+			$pesertadidik = Pesertadidik::find($item);
+			$siswa = Siswa::find($pesertadidik->id_siswa);
+
+			$data = [
+				'id'			=> Str::uuid(),
+				'id_semester'	=> $request->input('id_semester_naik'),
+				'id_siswa'		=> $siswa->id,
+				'id_kelas'		=> $request->input('id_kelas_naik'),
+				'created_at'	=> now()
+			];
+
+			Pesertadidik::insert($data);
+		}
+
+		return redirect()->route('kelas.naik.index', $request->input('id_kelas'))->with('message_success', 'Berhasil naik kelas.');
 	}
 
 	public function create(Request $request)
