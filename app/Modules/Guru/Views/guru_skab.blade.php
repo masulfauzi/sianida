@@ -44,7 +44,7 @@
                     <td class="center bold underline"><font style="font-size: 12pt;">SURAT KETERANGAN AKTIF BEKERJA</font></td>
                 </tr>
                 <tr>
-                    <td class="center"><font style="font-size: 14pt;">Nomor: 102 / 800 / IV / 2023</font></td>
+                    <td class="center"><font style="font-size: 14pt;">Nomor: 227.2 / 800 / VII / 2023</font></td>
                 </tr>
             </table>
 
@@ -134,7 +134,7 @@
             <table>
                 <tr>
                     <td width="65%"></td>
-                    <td>Semarang, 10 April 2023</td>
+                    <td>Semarang, 6 Juli 2023</td>
                 </tr>
                 <tr>
                     <td width="65%"></td>
