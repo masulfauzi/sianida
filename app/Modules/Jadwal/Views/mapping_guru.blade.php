@@ -27,21 +27,7 @@
                 Tabel Data {{ $title }}
             </h6>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-12">
-                        <form action="{{ route('jadwal.index') }}" method="get">
-                            <div class="form-group col-md-3 has-icon-left position-relative">
-                                <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
-                                <div class="form-control-icon"><i class="fa fa-search"></i></div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-12">  
-                        <a href="{{ route('jadwal.mapping_guru.index') }}" class="btn btn-secondary btn-md">Mapping Guru</a>
-                        <a href="{{ route('jadwal.import.index') }}" class="btn btn-secondary btn-md">Import Jadwal</a>
-						{!! button('jadwal.create', $title) !!}  
-                    </div>
-                </div>
+                
                 @include('include.flash')
                 <div class="table-responsive-md col-12">
                     <table class="table" id="table1">
@@ -50,18 +36,23 @@
                                 <th width="15">No</th>
                                 <td>Guru</td>
 								
-                                <th width="20%">Aksi</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @php $no = $data->firstItem(); @endphp
-                            @forelse ($data as $item)
+                            <form action="{{ route('jadwal.mapping_guru.store') }}" method="POST">
+                                @csrf
+                           @php
+                               $no = 1;
+                           @endphp
+                            @forelse ($teachers as $teacher)
+                                {!! Form::hidden('teacherids[]', $teacher->id) !!}
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->nama }}</td>
+                                    <td>{{ $teacher->name }}</td>
 									
                                     <td>
-										<a href="{{ route('jadwal.guru.detail.index', $item->id) }}" class="btn btn-danger">Jadwal</a>
+                                        {!! Form::select('id_guru[]', $guru, null, ["class" => "form-control select2", "required" => "required"]) !!}
                                     </td>
                                 </tr>
                             @empty
@@ -69,10 +60,13 @@
                                     <td colspan="10" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
+                            <tr>
+                                <td colspan="3" class="text-center"><button class="btn btn-primary" type="submit">Simpan</button></td>
+                            </tr>
+                        </form>
                         </tbody>
                     </table>
                 </div>
-				{{ $data->links() }}
             </div>
         </div>
 

@@ -8,6 +8,7 @@ use App\Modules\Log\Models\Log;
 use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Tingkat\Models\Tingkat;
 use App\Modules\Jurusan\Models\Jurusan;
+use App\Modules\Ruang\Models\Ruang;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
@@ -137,13 +138,21 @@ class KelasController extends Controller
 	{
 		$data['kelas'] = $kelas;
 
+		// dd($data['kelas']);
+
 		$ref_tingkat = Tingkat::all()->pluck('tingkat','id');
 		$ref_jurusan = Jurusan::all()->pluck('jurusan','id');
+		$ref_ruang	= Ruang::all()->pluck('ruang', 'id');
+
+		$ref_tingkat->prepend('-PILIH SALAH SATU-', '');
+		$ref_jurusan->prepend('-PILIH SALAH SATU-', '');
+		$ref_ruang->prepend('-PILIH SALAH SATU-', '');
 		
 		$data['forms'] = array(
 			'kelas' => ['Kelas', Form::text("kelas", $kelas->kelas, ["class" => "form-control","placeholder" => "", "id" => "kelas"]) ],
-			'id_tingkat' => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, null, ["class" => "form-control select2"]) ],
-			'id_jurusan' => ['Jurusan', Form::select("id_jurusan", $ref_jurusan, null, ["class" => "form-control select2"]) ],
+			'id_tingkat' => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, $kelas->id_tingkat, ["class" => "form-control select2"]) ],
+			'id_jurusan' => ['Jurusan', Form::select("id_jurusan", $ref_jurusan, $kelas->id_jurusan, ["class" => "form-control select2"]) ],
+			'id_ruang' => ['Ruang', Form::select("id_ruang", $ref_ruang, $kelas->id_ruang, ["class" => "form-control select2"]) ],
 			
 		);
 
@@ -165,6 +174,7 @@ class KelasController extends Controller
 		$kelas->kelas = $request->input("kelas");
 		$kelas->id_tingkat = $request->input("id_tingkat");
 		$kelas->id_jurusan = $request->input("id_jurusan");
+		$kelas->id_ruang = $request->input("id_ruang");
 		
 		$kelas->updated_by = Auth::id();
 		$kelas->save();

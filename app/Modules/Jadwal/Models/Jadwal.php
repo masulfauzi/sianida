@@ -88,4 +88,28 @@ public function semester(){
 					->get();
 	}
 
+	public static function get_teachers()
+	{
+		return DB::table('teachers')->orderBy('name')->get();
+	}
+
+	public static function get_lessons()
+	{
+		return DB::table('lessons as a')
+						->select('a.id', 'b.id as id_mapel', 'c.id as id_guru', 'd.kelas', 'e.ruang', 'd.id as id_kelas')
+						->join('mapel as b', 'a.subjectid', '=', 'b.subjectids')
+						->join('guru as c', 'a.teacherids', '=', 'c.teacherids')
+						->join('kelas as d', 'a.classids', '=', 'd.classids')
+						->join('ruang as e', 'a.classroomids', '=', 'e.classroomids', 'left')
+						->get();
+	}
+
+	public static function get_cards_by_lesson($id_lesson, $day)
+	{
+		return DB::table('cards')
+					->where('lessonid', $id_lesson)
+					->where('days', $day)
+					->get();
+	}
+
 }

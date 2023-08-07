@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 // Route::view('/', 'welcome')->name('frontend.index');
 Route::get('/snbp', [SnbpController::class, 'index'])->name('snbp')->middleware(['guest']);
-Route::post('/snbp', [SnbpController::class, 'cek_siswa'])->name('snbp')->middleware(['guest']);
+Route::post('/snbp', [SnbpController::class, 'cek_siswa'])->name('snbp.store')->middleware(['guest']);
 Route::get('/aktivasi', [AktivasiController::class, 'index'])->name('aktivasi')->middleware(['guest']);
 Route::post('/aktivasi', [AktivasiController::class, 'store'])->name('aktivasi.store')->middleware(['guest']);
 Route::get('/aktivasi/inputdata/{id}', [AktivasiController::class, 'input_data'])->name('aktivasi.input')->middleware(['guest']);

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Modules\Tingkat\Models\Tingkat;
 use App\Modules\Jurusan\Models\Jurusan;
+use App\Modules\Ruang\Models\Ruang;
 
 
 class Kelas extends Model
@@ -24,6 +25,10 @@ class Kelas extends Model
 	}
 public function jurusan(){
 		return $this->belongsTo(Jurusan::class,"id_jurusan","id");
+	}
+	public function ruang()
+	{
+		return $this->belongsTo(Ruang::class,"id_ruang","id");
 	}
 
 }

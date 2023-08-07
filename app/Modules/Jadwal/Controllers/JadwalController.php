@@ -48,6 +48,90 @@ class JadwalController extends Controller
 		return view('Jadwal::jadwal', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function mapping_guru(Request $request)
+	{
+		// echo "<pre>";
+		$data['teachers'] 	= Jadwal::get_teachers();
+		$data['guru']		= Guru::get()->sortBy('nama')->pluck('nama', 'id');
+		$data['guru']->prepend('-PILIH SALAH SATU-','');
+
+		$this->log($request, 'melihat halaman mapping guru');
+		return view('Jadwal::mapping_guru', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function aksi_mapping(Request $request)
+	{
+		// echo "<pre>";
+		$guru =  $request->input('id_guru');
+		$teacher =  $request->input('teacherids');
+
+		foreach($guru as $key => $item)
+		{
+
+			$guru = Guru::find($item);
+			$guru->teacherids = $teacher[$key];
+			$guru->save();
+		}
+
+		$text = 'Melakukan mapping guru untuk import jadwal dengan timetable';
+		$this->log($request, $text);
+		return redirect()->route('jadwal.index')->with('message_success', 'Data berhasil disimpan!');
+	}
+
+	public function import(Request $request)
+	{
+		$days = [
+			'1'=>'10000',
+			'2'=>'01000',
+			'3'=>'00100',
+			'4'=>'00010',
+			'5'=>'00001'
+		];
+
+		$kelas = Kelas::get()->pluck('id_ruang', 'id');
+		$hari = Hari::get()->pluck('id', 'urutan');
+		$jam = Jampelajaran::get()->pluck('id', 'jam_pelajaran');
+
+		echo "<pre>";
+		$lessons = Jadwal::get_lessons();
+
+		foreach($lessons as $lesson)
+		{
+			foreach($days as $key => $day)
+			{
+				$cards = Jadwal::get_cards_by_lesson($lesson->id, $day);
+
+				if(count($cards) > 0)
+				{
+
+					if($lesson->ruang)
+					{
+						$ruang = $lesson->ruang;
+					}
+					else
+					{
+						$ruang = $kelas[$lesson->id_kelas];
+					}
+
+					$data = [
+						'id_guru'	=> $lesson->id_guru,
+						'id_hari'	=> $hari[$key],
+						'id_kelas'	=> $lesson->id_kelas,
+						'jam_mulai'	=> $jam[$cards->min('period')],
+						'jam_selesai'	=> $jam[$cards->max('period')],
+						'id_mapel'	=> $lesson->id_mapel,
+						'id_ruang'	=> $ruang,
+						'id_semester'	=> get_semester('active_semester_id')
+					];
+
+					print_r($data);
+				}
+
+				
+			}
+		}
+	}
+
 	public function detail_guru(Request $request, $id_guru)
 	{
 		$query = Jadwal::query()->where('id_guru', $id_guru);

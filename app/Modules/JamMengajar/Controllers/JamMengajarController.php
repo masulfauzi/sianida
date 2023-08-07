@@ -10,6 +10,7 @@ use App\Modules\Semester\Models\Semester;
 use App\Modules\Guru\Models\Guru;
 use App\Modules\Mapel\Models\Mapel;
 use App\Modules\Kelas\Models\Kelas;
+use App\Modules\Tingkat\Models\Tingkat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,16 @@ class JamMengajarController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('JamMengajar::jammengajar', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function sk_mengajar(Request $request)
+	{
+		$data['guru'] = JamMengajar::get_guru_mapel();
+		$data['tingkat']	= Tingkat::get()->sortBy('tingkat');
+		$data['kelas']	= Kelas::get()->sortBy('kelas');
+
+		$this->log($request, 'melihat halaman generate SK mengajar');
+		return view('JamMengajar::sk_mengajar', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function guru(Request $request, $id_guru)

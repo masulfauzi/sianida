@@ -29,7 +29,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-9">
-                        
+                        <a href="{{ route('jammengajar.sk.index') }}" class="btn btn-primary">Generate SK</a>
                     </div>
                     <div class="col-3">  
 						

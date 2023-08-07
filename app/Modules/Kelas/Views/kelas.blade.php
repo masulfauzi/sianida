@@ -49,6 +49,7 @@
                                 <td>Kelas</td>
 								<td>Tingkat</td>
 								<td>Jurusan</td>
+								<td>Ruang</td>
 								
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -61,6 +62,7 @@
                                     <td>{{ $item->kelas }}</td>
 									<td>{{ $item->tingkat['tingkat'] }}</td>
 									<td>{{ $item->jurusan['jurusan'] }}</td>
+									<td>{{ $item->ruang['ruang'] }}</td>
 									
                                     <td>
 										{!! button('kelas.show','', $item->id) !!}

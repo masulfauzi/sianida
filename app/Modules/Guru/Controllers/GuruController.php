@@ -39,6 +39,7 @@ class GuruController extends Controller
 
 	public function index_tpg(Request $request)
 	{
+		// echo "sbmsdfmsdf s,jd fs,jd f,sjd f";
 		return view('Guru::guru_tpg');
 	}
 

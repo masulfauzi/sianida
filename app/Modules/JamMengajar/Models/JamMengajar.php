@@ -82,4 +82,15 @@ public function kelas(){
 		return $query;
 	}
 
+	public static function get_guru_mapel()
+	{
+		return DB::table('jam_mengajar as a')
+					->select('b.mapel', 'c.nama')
+					->join('mapel as b', 'a.id_mapel', '=', 'b.id')
+					->join('guru as c', 'a.id_guru', '=', 'c.id')
+					->groupBy('a.id_mapel', 'a.id_guru')
+					->orderBy('c.nama')
+					->get();
+	}
+
 }
