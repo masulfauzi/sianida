@@ -106,30 +106,51 @@ class JadwalController extends Controller
 
 					if($lesson->ruang)
 					{
-						$ruang = $lesson->ruang;
+						$ruang = $lesson->id_ruang;
 					}
 					else
 					{
 						$ruang = $kelas[$lesson->id_kelas];
 					}
 
-					$data = [
-						'id_guru'	=> $lesson->id_guru,
-						'id_hari'	=> $hari[$key],
-						'id_kelas'	=> $lesson->id_kelas,
-						'jam_mulai'	=> $jam[$cards->min('period')],
-						'jam_selesai'	=> $jam[$cards->max('period')],
-						'id_mapel'	=> $lesson->id_mapel,
-						'id_ruang'	=> $ruang,
-						'id_semester'	=> get_semester('active_semester_id')
-					];
+					// $data = [
+					// 	'id_guru'	=> $lesson->id_guru,
+					// 	'id_hari'	=> $hari[$key],
+					// 	'id_kelas'	=> $lesson->id_kelas,
+					// 	'jam_mulai'	=> $jam[$cards->min('period')],
+					// 	'jam_selesai'	=> $jam[$cards->max('period')],
+					// 	'id_mapel'	=> $lesson->id_mapel,
+					// 	'id_ruang'	=> $ruang,
+					// 	'id_semester'	=> get_semester('active_semester_id')
+					// ];
 
-					print_r($data);
+					// print_r($data);
+
+					$jadwal = new Jadwal();
+					$jadwal->id_guru = $lesson->id_guru;
+					$jadwal->id_hari = $hari[$key];
+					$jadwal->id_kelas = $lesson->id_kelas;
+					$jadwal->jam_mulai = $jam[$cards->min('period')];
+					$jadwal->jam_selesai = $jam[$cards->max('period')];
+					$jadwal->id_mapel = $lesson->id_mapel;
+					$jadwal->id_ruang = $ruang;
+					$jadwal->id_semester = get_semester('active_semester_id');
+					
+					$jadwal->created_by = Auth::id();
+					$jadwal->save();
+
+					
+
+					
 				}
 
 				
 			}
 		}
+
+		$text = 'Mengimport jadwal'; //' baru '.$jadwal->what;
+		$this->log($request, $text);
+		return redirect()->back()->with('message_success', 'Jadwal berhasil ditambahkan!');
 	}
 
 	public function detail_guru(Request $request, $id_guru)

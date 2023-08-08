@@ -96,7 +96,7 @@ public function semester(){
 	public static function get_lessons()
 	{
 		return DB::table('lessons as a')
-						->select('a.id', 'b.id as id_mapel', 'c.id as id_guru', 'd.kelas', 'e.ruang', 'd.id as id_kelas')
+						->select('a.id', 'b.id as id_mapel', 'c.id as id_guru', 'd.kelas', 'e.ruang', 'd.id as id_kelas', 'e.id as id_ruang')
 						->join('mapel as b', 'a.subjectid', '=', 'b.subjectids')
 						->join('guru as c', 'a.teacherids', '=', 'c.teacherids')
 						->join('kelas as d', 'a.classids', '=', 'd.classids')
