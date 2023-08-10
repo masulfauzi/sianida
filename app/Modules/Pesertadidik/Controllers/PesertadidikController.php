@@ -53,6 +53,9 @@ class PesertadidikController extends Controller
 	{
 		$ref_siswa = Siswa::all()->pluck('nama_siswa','id');
 		$ref_kelas = Kelas::all()->pluck('kelas','id');
+
+		$ref_siswa->prepend('-PILIH SALAH SATU-', '');
+		$ref_kelas->prepend('-PILIH SALAH SATU-', '');
 		
 		$data['forms'] = array(
 			'id_semester' => ['', Form::hidden("id_semester", get_semester('active_semester_id'), ["class" => "form-control"]) ],
