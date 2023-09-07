@@ -65,6 +65,53 @@
         </div>
 
     </section>
+    <section class="section">
+        <div class="card">
+            <h6 class="card-header">
+                Cetak Daftar Hadir Siswa
+            </h6>
+            <div class="card-body">
+                @include('include.flash')
+                <form class="form form-horizontal" action="{{ route('jurnal.cetakpresensi.index') }}" method="POST">
+                    <div class="form-body">
+                        @csrf 
+                        
+                        <div class="row">
+                            <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                <label>Pilih Kelas</label>
+                            </div>
+                            <div class="col-md-9 form-group">
+                                {!! Form::select("id_kelas", $kelas, old("id_kelas"), ["class" => "form-control", "required"]) !!}
+                                @error('id_kelas')
+                                    <div class="text-danger">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                <label>Pilih Mapel</label>
+                            </div>
+                            <div class="col-md-9 form-group">
+                                {!! Form::select("id_mapel", $mapel, old("id_mapel"), ["class" => "form-control", "required"]) !!}
+                                @error('id_mapel')
+                                    <div class="text-danger">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="offset-md-3 ps-2">
+                            <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
+                            <a href="{{ route('jurnal.index') }}" class="btn btn-secondary">Batal</a>
+                        </div>
+                  </div>
+                </form>
+            </div>
+        </div>
+
+    </section>
 </div>
 <script>
     function target_popup(form) {

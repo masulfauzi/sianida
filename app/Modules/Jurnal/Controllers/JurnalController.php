@@ -14,6 +14,8 @@ use App\Modules\Mapel\Models\Mapel;
 use PDF;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
+use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use Illuminate\Support\Facades\Auth;
 
 class JurnalController extends Controller
@@ -100,6 +102,38 @@ class JurnalController extends Controller
 		$data['kelas'] = $kelas;
 
 		return view('Jurnal::cetak', $data);
+	}
+
+	public function aksi_cetak_presensi(Request $request)
+	{
+		$jadwals = Jadwal::get_jadwal_by_kelas_mapel($request->input('id_kelas'), $request->input('id_mapel'), get_semester('active_semester_id'));
+		$data['jadwal'] = $jadwals->first();
+		// dd($data['jadwal']);
+		// $data['siswa']	= Pesertadidik::query()->where('id_kelas', $request->input('id_kelas'))->where('id_semester',get_semester('active_semester_id'))->get();
+		$data['siswa']	= Pesertadidik::get_pd_by_idkelas($request->input('id_kelas'), get_semester('active_semester_id'));
+		$data['status_kehadiran']	= Statuskehadiran::get();
+		// dd($data['status_kehadiran']);
+
+		//buat array jadwal
+		$jadwal = [];
+		foreach($jadwals as $jw)
+		{
+			array_push($jadwal,$jw->id_jadwal);
+		}
+
+		$data['jurnal'] = Jurnal::query()->whereIn('id_jadwal', $jadwal)->orderBy('tgl_pembelajaran')->get();
+
+		//buat array jurnal
+		$jurnal = [];
+		foreach($data['jurnal'] as $jn)
+		{
+			array_push($jurnal, $jn->id);
+		}
+
+		$data['presensi'] = Presensi::query()->whereIn('id_jurnal', $jurnal)->get();		
+		
+		return view('Jurnal::cetak_presensi', $data);
+		
 	}
 
 	public function cetak_jurnalmengajar(Request $request)

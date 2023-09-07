@@ -21,4 +21,7 @@ Route::controller(JurnalController::class)->middleware(['web','auth'])->name('ju
 	//custom route cetak jurnal
 	Route::get('/cetakjurnal', 'cetak_jurnal')->name('cetak.index');
 	Route::get('/cetakjurnal/jurnalmengajar', 'cetak_jurnalmengajar')->name('cetakjurnal.index');
+
+	//custom route cetak presensi
+	Route::post('/cetakpresensi', 'aksi_cetak_presensi')->name('cetakpresensi.index');
 });

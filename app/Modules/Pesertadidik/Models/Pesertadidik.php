@@ -32,10 +32,13 @@ public function kelas(){
 
 	public static function get_pd_by_idkelas($id_kelas, $id_semester)
 	{
-		return DB::table('pesertadidik')
-					->where('id_kelas', $id_kelas)
-					->where('is_magang', '0')
-					->where('id_semester', $id_semester)
+		return DB::table('pesertadidik as a')
+					->select('a.*', 'b.nama_siswa')
+					->join('siswa as b', 'a.id_siswa', 'b.id')
+					->where('a.id_kelas', $id_kelas)
+					->where('a.is_magang', '0')
+					->where('a.id_semester', $id_semester)
+					->orderBy('b.nama_siswa')
 					->get();
 	}
 
