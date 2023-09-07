@@ -26,19 +26,19 @@
             <td></td>
             <td>Mata Pelajaran</td>
             <td>:</td>
-            <td colspan="10">{{ $jadwal->mapel }}</td>
+            <td colspan="50">{{ $jadwal->mapel }}</td>
         </tr>
         <tr>
             <td></td>
             <td>Kelas</td>
             <td>:</td>
-            <td colspan="10">{{ $jadwal->kelas }}</td>
+            <td colspan="50">{{ $jadwal->kelas }}</td>
         </tr>
         <tr>
             <td></td>
             <td>Semester</td>
             <td>:</td>
-            <td colspan="10">{{ $jadwal->semester }}</td>
+            <td colspan="50">{{ $jadwal->semester }}</td>
         </tr>
     </table>
 
