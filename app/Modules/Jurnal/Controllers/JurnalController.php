@@ -373,7 +373,7 @@ class JurnalController extends Controller
 
 		$writer = new Xlsx($spreadsheet);
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="'. urlencode('hello_worlds.xlsx').'"');
+        header('Content-Disposition: attachment; filename="'. urlencode('Daftar_hadir-'.$jadwal->kelas.'-'.$jadwal->mapel.'.xlsx').'"');
         $writer->save('php://output');
 		
 	}
