@@ -17,6 +17,13 @@ use App\Http\Controllers\Controller;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
 use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+
+// use PhpOffice\PhpSpreadsheet\Shared\Drawing;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class JurnalController extends Controller
 {
@@ -105,6 +112,273 @@ class JurnalController extends Controller
 	}
 
 	public function aksi_cetak_presensi(Request $request)
+	{
+		$jadwals = Jadwal::get_jadwal_by_kelas_mapel($request->input('id_kelas'), $request->input('id_mapel'), get_semester('active_semester_id'));
+		$jadwal = $jadwals->first();
+		// dd($jadwal);
+		$siswa	= Pesertadidik::get_pd_by_idkelas($request->input('id_kelas'), get_semester('active_semester_id'));
+		$status_kehadiran	= Statuskehadiran::get();
+		
+		$id_jadwal = [];
+		foreach($jadwals as $jw)
+		{
+			array_push($id_jadwal,$jw->id_jadwal);
+		}
+
+		// $pertemuan = $jadwals->pluck('id_jadwal', '');
+		// dd($pertemuan);
+
+		$pertemuan = Jurnal::query()->whereIn('id_jadwal', $id_jadwal)->orderBy('tgl_pembelajaran')->get();
+
+		// dd($pertemuan);
+
+		// //buat array jurnal
+		$id_jurnal = [];
+		foreach($pertemuan as $jn)
+		{
+			array_push($id_jurnal, $jn->id);
+		}
+
+		$presensi = Presensi::query()->whereIn('id_jurnal', $id_jurnal)->get();	
+		
+		$spreadsheet = new Spreadsheet();
+		$styleArray = array(
+			'font'  => array(
+				 'name'  => 'Times New Roman'
+			 ));      
+		$spreadsheet->getDefaultStyle()->applyFromArray($styleArray);
+
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+		$activeWorksheet->mergeCells('B1:B5');
+		$activeWorksheet->mergeCells('C1:L5');
+		$activeWorksheet->getCell('C1')->setValue('SMK NEGERI 2 SEMARANG');
+		$activeWorksheet->getStyle('C1')->getAlignment()->setHorizontal('center')->setVertical('center')->setWrapText(true);
+		$activeWorksheet->getStyle("C1")->getFont()->setSize(16)->setBold(true);
+
+		$image = file_get_contents('https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png');
+		$imageName = 'logo';
+
+		//You can save the image wherever you want
+		//I would highly recommand using a temporary directory
+		$temp_image=tempnam(sys_get_temp_dir(), $imageName);
+		file_put_contents($temp_image, $image);
+
+		// And then PhpSpreadsheet acts just like it would do with a local image
+		$drawing = new Drawing();
+		$drawing->setPath($temp_image);
+		$drawing->setHeight(100);
+		$drawing->setWorksheet($activeWorksheet);
+		$drawing->setCoordinates('B1');
+		$drawing->setOffsetX(100);    // this is how
+		// $drawing->setOffsetY(3);    // this is how
+		
+		$activeWorksheet->mergeCells('M1:U1');
+		$activeWorksheet->getCell('M1')->setValue('F KUR-15');
+		$activeWorksheet->getStyle('M1')->getAlignment()->setHorizontal('right')->setVertical('center');
+		$activeWorksheet->getStyle("M1")->getFont()->setSize(12)->setBold(true);
+		
+		$activeWorksheet->mergeCells('M2:U5');
+		$activeWorksheet->getCell('M2')->setValue('DAFTAR HADIR');
+		$activeWorksheet->getStyle('M2')->getAlignment()->setHorizontal('center')->setVertical('center');
+		$activeWorksheet->getStyle("M2")->getFont()->setSize(16)->setBold(true);
+
+		
+		$activeWorksheet->getCell('B7')->setValue('Mata Pelajaran');
+		$activeWorksheet->getCell('C7')->setValue(':');
+		$activeWorksheet->mergeCells('D7:U7');
+		$activeWorksheet->getCell('D7')->setValue($jadwal->mapel);
+
+		$activeWorksheet->getCell('B8')->setValue('Kelas');
+		$activeWorksheet->getCell('C8')->setValue(':');
+		$activeWorksheet->mergeCells('D8:U8');
+		$activeWorksheet->getCell('D8')->setValue($jadwal->kelas);
+
+		$activeWorksheet->getCell('B9')->setValue('Semester');
+		$activeWorksheet->getCell('C9')->setValue(':');
+		$activeWorksheet->mergeCells('D9:U9');
+		$activeWorksheet->getCell('D9')->setValue($jadwal->semester);
+
+		$activeWorksheet->getCell('B10')->setValue('Guru Pengampu');
+		$activeWorksheet->getCell('C10')->setValue(':');
+		$activeWorksheet->mergeCells('D10:U10');
+		$activeWorksheet->getCell('D10')->setValue($jadwal->nama);
+
+		// mulai tabel
+		$activeWorksheet->mergeCells('A12:A15');
+		$activeWorksheet->getCell('A12')->setValue('NO');
+		$activeWorksheet->getStyle('A12')->getAlignment()->setHorizontal('center')->setVertical('center');
+		$activeWorksheet->getStyle("A12")->getFont()->setSize(12)->setBold(true);
+
+		$row = 16;
+		$no = 1;
+		$min_pertemuan = 16;
+		foreach($siswa as $sis)
+		{
+			
+
+			$activeWorksheet->getCell('A'.$row)->setValue($no);
+			$activeWorksheet->getCell('B'.$row)->setValue(strtoupper($sis->nama_siswa));
+
+			$sakit = 0;
+            $ijin = 0;
+            $alfa = 0;
+			$kolom = 'C';
+
+			foreach($pertemuan as $jurnal)
+			{
+				$id_status = $presensi->where('id_pesertadidik', $sis->id)->where('id_jurnal', $jurnal->id)->first()->id_statuskehadiran;
+            	$kehadiran = $status_kehadiran->where('id', $id_status)->first()->status_kehadiran_pendek;
+
+				if($kehadiran == 'H')
+				{
+
+				}
+				else if($kehadiran == 'S')
+				{
+					$sakit++;
+				}
+				else if($kehadiran == 'I')
+				{
+					$ijin++;
+				}
+				else if($kehadiran == 'A')
+				{
+					$alfa++;
+				}
+
+				$activeWorksheet->getCell($kolom.$row)->setValue($kehadiran);
+
+				
+
+
+
+				$kolom++;
+				
+
+			}
+
+			if(count($pertemuan) < $min_pertemuan)
+			{
+				$kurang = $min_pertemuan - count($pertemuan);
+			}
+
+			for($i = 1; $i <= $kurang; $i++)
+			{
+				$kolom ++;
+			}
+
+			$activeWorksheet->getCell($kolom.$row)->setValue($sakit);
+			$kolom++;
+			$activeWorksheet->getCell($kolom.$row)->setValue($ijin);
+			$kolom++;
+			$activeWorksheet->getCell($kolom.$row)->setValue($alfa);
+			$kolom++;
+
+
+
+
+			$row++;
+			$no++;
+		}
+
+		$activeWorksheet->mergeCells('B12:B15');
+		$activeWorksheet->getCell('B12')->setValue('NAMA PESERTA DIDIK');
+		$activeWorksheet->getStyle('B12')->getAlignment()->setHorizontal('center')->setVertical('center');
+		$activeWorksheet->getStyle("B12")->getFont()->setSize(12)->setBold(true);
+
+
+		//mulai presensi
+		$kolom = 'B';
+		$no = 1;
+		
+		foreach($pertemuan as $pert)
+		{
+			$kolom++;
+			$activeWorksheet->getCell($kolom.'13')->setValue($no);
+			$activeWorksheet->getCell($kolom.'14')->setValue($pert->tgl_pembelajaran);
+			$activeWorksheet->getStyle($kolom.'14')->getAlignment()->setTextRotation(90);
+			$no++;
+		}
+
+		if(count($pertemuan) < $min_pertemuan)
+		{
+			$kurang = $min_pertemuan - count($pertemuan);
+		}
+
+		for($i = 1; $i <= $kurang; $i++)
+		{
+			$kolom ++;
+			$activeWorksheet->getCell($kolom.'13')->setValue($no);
+			$no++;
+		}
+
+		
+
+
+		$activeWorksheet->mergeCells('C12:'.$kolom.'12');
+		$activeWorksheet->getCell('C12')->setValue('PERTEMUAN KE-');
+		$activeWorksheet->getStyle('C12')->getAlignment()->setHorizontal('center')->setVertical('center');
+
+		// for($i = 1; $i <= 3; $i++)
+		// {
+		// 	$kolom ++;
+		// 	$activeWorksheet->getCell($kolom.'15')->setValue($no);
+		// 	$no++;
+		// }
+
+		$kolom_jumlah = $kolom;
+		$kolom++;
+
+		for($i = 1; $i <= 3; $i++)
+		{
+			$kolom_jumlah++;
+			if($i == 1)
+			{
+				$activeWorksheet->getCell($kolom_jumlah.'15')->setValue('S');
+			}
+			else if($i == 2)
+			{
+				$activeWorksheet->getCell($kolom_jumlah.'15')->setValue('I');
+			}
+			else{
+				$activeWorksheet->getCell($kolom_jumlah.'15')->setValue('A');
+			}
+			
+			
+		}
+
+		// dd($kolom_jumlah);
+
+		$activeWorksheet->mergeCells($kolom.'12:'.$kolom_jumlah.'14');
+		$activeWorksheet->getCell($kolom.'12')->setValue('JUMLAH');
+		$activeWorksheet->getStyle($kolom.'12')->getAlignment()->setHorizontal('center')->setVertical('center');
+		$kolom_jumlah++;
+		$activeWorksheet->getCell($kolom_jumlah.'12')->setValue('');
+		$kolom++;
+		$kolom++;
+		$row--;
+		
+
+		// dd($kolom);
+
+		$activeWorksheet->getStyle('B1:U5')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_MEDIUM);
+		$activeWorksheet->getStyle('A12:'.$kolom.$row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_MEDIUM);
+
+
+		for ($i = 'A'; $i !=  $activeWorksheet->getHighestColumn(); $i++) {
+			$activeWorksheet->getColumnDimension($i)->setAutoSize(TRUE);
+		}
+
+		
+
+		$writer = new Xlsx($spreadsheet);
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode('hello_worlds.xlsx').'"');
+        $writer->save('php://output');
+		
+	}
+
+	public function aksi_cetak_presensi2(Request $request)
 	{
 		$jadwals = Jadwal::get_jadwal_by_kelas_mapel($request->input('id_kelas'), $request->input('id_mapel'), get_semester('active_semester_id'));
 		$data['jadwal'] = $jadwals->first();
