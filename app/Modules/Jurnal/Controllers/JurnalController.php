@@ -155,17 +155,17 @@ class JurnalController extends Controller
 		$activeWorksheet->getStyle('C1')->getAlignment()->setHorizontal('center')->setVertical('center')->setWrapText(true);
 		$activeWorksheet->getStyle("C1")->getFont()->setSize(16)->setBold(true);
 
-		$image = file_get_contents('https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png');
-		$imageName = 'logo';
+		// $image = file_get_contents('https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png');
+		// $imageName = 'logo';
 
 		//You can save the image wherever you want
 		//I would highly recommand using a temporary directory
-		$temp_image=tempnam(sys_get_temp_dir(), $imageName);
-		file_put_contents($temp_image, $image);
+		// $temp_image=tempnam(sys_get_temp_dir(), $imageName);
+		// file_put_contents($temp_image, $image);
 
 		// And then PhpSpreadsheet acts just like it would do with a local image
 		$drawing = new Drawing();
-		$drawing->setPath($temp_image);
+		$drawing->setPath('assets/images/logo/skanida.png');
 		$drawing->setHeight(100);
 		$drawing->setWorksheet($activeWorksheet);
 		$drawing->setCoordinates('B1');
