@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('page-css')
+<style>
+    .tableFixHead          { overflow: auto; height: 100px; }
+    .tableFixHead thead th { position: sticky; top: 0; z-index: 1; }
+
+    /* Just common table stuff. Really. */
+    table  { border-collapse: collapse; width: 100%; }
+    th, td { padding: 8px 16px; }
+    th     { background:#eee; }
+</style>
 @endsection
 
 @section('main')
@@ -63,17 +72,17 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" >
                 <h6 class="card-header">
                     Monitoring Jurnal
                 </h6>
-                <div class="card-body">
+                <div class="card-body" >
 
                     @include('include.flash')
 
 
-                    <div class="table-responsive-md col-12">
-                        <div class="table-responsive">
+                    <div class="table-responsive-md col-12" >
+                        <div class="table-responsive tableFixHead" style="min-height: 500px">
                             <table class="table" id="table1">
                                 <thead>
                                     <tr>
@@ -83,7 +92,7 @@
                                     </tr>
                                     <tr>
                                         @for ($i = 1; $i <= 31; $i++)
-                                            <td>{{ $i }}</td>
+                                            <th>{{ $i }}</th>
                                         @endfor
                                     </tr>
                                 </thead>
