@@ -4,86 +4,139 @@
 @endsection
 
 @section('main')
-<div class="page-heading">
-    <div class="page-title">
-        <div class="row mb-2">
-            <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Manajemen Data {{ $title }}</h3>
-            </div>
-            <div class="col-12 col-md-6 order-md-2 order-first">
-                <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
-                    </ol>
-                </nav>
+    <div class="page-heading">
+        <div class="page-title">
+            <div class="row mb-2">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Manajemen Data {{ $title }}</h3>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
+                        </ol>
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
 
-    <section class="section">
-        <div class="card">
-            <h6 class="card-header">
-                Tabel Data {{ $title }}
-            </h6>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-9">
-                        <form action="{{ route('jurnal.index') }}" method="get">
-                            <div class="form-group col-md-3 has-icon-left position-relative">
-                                <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
-                                <div class="form-control-icon"><i class="fa fa-search"></i></div>
+        <section class="section">
+
+            <div class="card">
+                <h6 class="card-header">
+                    Filter Data
+                </h6>
+                <div class="card-body">
+                    <form action="" method="GET">
+                    <div class="row">
+                        
+                            <div class="col-3">
+                                <select name="bulan" id="bulan" class="form-select">
+                                    <option @if ($bulan == '01') selected @endif value="01">Januari</option>
+                                    <option @if ($bulan == '02') selected @endif value="02">Februari</option>
+                                    <option @if ($bulan == '03') selected @endif value="03">Maret</option>
+                                    <option @if ($bulan == '04') selected @endif value="04">April</option>
+                                    <option @if ($bulan == '05') selected @endif value="05">Mei</option>
+                                    <option @if ($bulan == '06') selected @endif value="06">Juni</option>
+                                    <option @if ($bulan == '07') selected @endif value="07">Juli</option>
+                                    <option @if ($bulan == '08') selected @endif value="08">Agustus</option>
+                                    <option @if ($bulan == '09') selected @endif value="09">September</option>
+                                    <option @if ($bulan == '10') selected @endif value="10">Oktober</option>
+                                    <option @if ($bulan == '11') selected @endif value="11">November</option>
+                                    <option @if ($bulan == '12') selected @endif value="12">Desember</option>
+                                </select>
                             </div>
-                        </form>
+                            <div class="col-3">
+                                <select name="tahun" id="tahun" class="form-select">
+                                    @for ($i = 2022; $i <= date('Y'); $i++)
+                                        <option @if ($tahun == $i) selected @endif value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-3">
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </div>
+                        
                     </div>
-                    <div class="col-3">  
-						{!! button('jurnal.create', $title) !!}  
-                    </div>
+                </form>
                 </div>
-                @include('include.flash')
-                <div class="table-responsive-md col-12">
-                    <table class="table" id="table1">
-                        <thead>
-                            <tr>
-                                <th width="15">No</th>
-                                <td>Jadwal</td>
-								<td>Materi</td>
-								<td>Tgl Pembelajaran</td>
-								<td>Catatan</td>
-								
-                                <th width="20%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php $no = $data->firstItem(); @endphp
-                            @forelse ($data as $item)
-                                <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $item->id_jadwal }}</td>
-									<td>{{ $item->materi }}</td>
-									<td>{{ $item->tgl_pembelajaran }}</td>
-									<td>{{ $item->catatan }}</td>
-									
-                                    <td>
-										{!! button('jurnal.show','', $item->id) !!}
-										{!! button('jurnal.edit', $title, $item->id) !!}
-                                        {!! button('jurnal.destroy', $title, $item->id) !!}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="text-center"><i>No data.</i></td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-				{{ $data->links() }}
             </div>
-        </div>
 
-    </section>
-</div>
+            <div class="card">
+                <h6 class="card-header">
+                    Monitoring Jurnal
+                </h6>
+                <div class="card-body">
+
+                    @include('include.flash')
+
+
+                    <div class="table-responsive-md col-12">
+                        <div class="table-responsive">
+                            <table class="table" id="table1">
+                                <thead>
+                                    <tr>
+                                        <th width="15" rowspan="2">No</th>
+                                        <th rowspan="2">Nama</th>
+                                        <th colspan="31" class="text-center">Tanggal</th>
+                                    </tr>
+                                    <tr>
+                                        @for ($i = 1; $i <= 31; $i++)
+                                            <td>{{ $i }}</td>
+                                        @endfor
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php $no = 1; @endphp
+                                    @forelse ($guru as $item)
+                                        <tr>
+                                            <td>{{ $no++ }}</td>
+                                            <td>{{ $item->nama }}</td>
+
+                                            @for ($i = 1; $i <= 31; $i++)
+                                                @if (strlen($i) < 2)
+                                                    @php
+                                                        $tgl = '0' . $i;
+                                                    @endphp
+                                                @else
+                                                    @php
+                                                        $tgl = $i;
+                                                    @endphp
+                                                @endif
+
+                                                @php
+                                                    $cek = $jurnal
+                                                        ->where('id_guru', $item->id)
+                                                        ->where('tgl_pembelajaran', 'like', "$tahun-$bulan-$tgl")
+                                                        ->first();
+                                                @endphp
+
+                                                @if ($cek)
+                                                    <td><img width="20px"
+                                                            src="{{ asset('assets/images/icon/check.png') }}"
+                                                            alt=""></td>
+                                                @else
+                                                    <td></td>
+                                                @endif
+                                            @endfor
+
+
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center"><i>No data.</i></td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </div>
 @endsection
 
 @section('page-js')

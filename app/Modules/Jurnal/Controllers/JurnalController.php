@@ -43,14 +43,33 @@ class JurnalController extends Controller
 			return redirect(route('jurnal.guru.index'));
 		}
 
-		$query = Jurnal::query();
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
+		if($request->input('bulan') == NULL)
+		{
+			$data['bulan'] = date('m');
 		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		else{
+			$data['bulan'] = $request->input('bulan');
+		}
 
-		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		if($request->input('tahun') == NULL)
+		{
+			$data['tahun'] = date('Y');
+		}
+		else{
+			$data['tahun'] = $request->input('tahun');
+		}
+
+		$data['guru'] = Guru::query()->orderBy('nama')->get();
+		
+		$cari = $data['tahun'] . "-" . $data['bulan'];
+		$data['jurnal'] = Jurnal::query()
+								->join('jadwal', 'jadwal.id', '=', 'jurnal.id_jadwal')
+								->where('tgl_pembelajaran', 'like', "%$cari%")
+								->get();
+
+		// dd($data['jurnal']);
+
+		$this->log($request, 'melihat halaman monitoring jurnal '.$this->title);
 		return view('Jurnal::jurnal', array_merge($data, ['title' => $this->title]));
 	}
 
