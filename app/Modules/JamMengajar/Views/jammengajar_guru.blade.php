@@ -57,7 +57,7 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
 									<td>{{ $item->mapel['mapel'] }}</td>
-									<td>{{ $item->kelas['kelas'] }}</td>
+									<td>{{ $item->kelas }}</td>
 									<td>{{ $item->jml_jam }}</td>
 									
                                     <td>
