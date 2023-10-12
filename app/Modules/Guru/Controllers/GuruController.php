@@ -27,7 +27,7 @@ class GuruController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = Guru::orderBy('is_aktif')->orderBy('nama');
+		$query = Guru::orderBy('is_aktif', 'desc')->orderBy('nama');
 		if($request->has('search')){
 			$search = $request->get('search');
 			$query->where('nama', 'like', "%$search%");
