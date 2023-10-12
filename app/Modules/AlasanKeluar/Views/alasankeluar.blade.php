@@ -29,7 +29,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-9">
-                        <form action="{{ route('guru.index') }}" method="get">
+                        <form action="{{ route('alasankeluar.index') }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
                                 <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
                                 <div class="form-control-icon"><i class="fa fa-search"></i></div>
@@ -37,7 +37,7 @@
                         </form>
                     </div>
                     <div class="col-3">  
-						{!! button('guru.create', $title) !!}  
+						{!! button('alasankeluar.create', $title) !!}  
                     </div>
                 </div>
                 @include('include.flash')
@@ -46,10 +46,7 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-                                <td>Nama</td>
-								<td>Nip</td>
-								<td>Status</td>
-								
+                                <td>Alasan Keluar</td>
 								
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -59,20 +56,17 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->nama }}</td>
-									<td>{{ $item->nip }}</td>
-									<td>{{ $aktif[$item->is_aktif] }}</td>
-									
+                                    <td>{{ $item->alasan_keluar }}</td>
 									
                                     <td>
-										{!! button('guru.show','', $item->id) !!}
-										{!! button('guru.edit', $title, $item->id) !!}
-                                        {!! button('guru.destroy', $title, $item->id) !!}
+										{!! button('alasankeluar.show','', $item->id) !!}
+										{!! button('alasankeluar.edit', $title, $item->id) !!}
+                                        {!! button('alasankeluar.destroy', $title, $item->id) !!}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="17" class="text-center"><i>No data.</i></td>
+                                    <td colspan="3" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

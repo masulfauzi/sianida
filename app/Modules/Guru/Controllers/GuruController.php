@@ -9,6 +9,7 @@ use App\Modules\Guru\Models\Guru;
 use App\Modules\Agama\Models\Agama;
 
 use App\Http\Controllers\Controller;
+use App\Modules\AlasanKeluar\Models\AlasanKeluar;
 use Illuminate\Support\Facades\Auth;
 
 use PDF;
@@ -26,12 +27,16 @@ class GuruController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = Guru::orderBy('nama');
+		$query = Guru::orderBy('is_aktif')->orderBy('nama');
 		if($request->has('search')){
 			$search = $request->get('search');
 			$query->where('nama', 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(20)->withQueryString();
+		$data['aktif'] = [
+			'0' => 'Tidak Aktif',
+			'1' => 'Aktif'
+		];
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Guru::guru', array_merge($data, ['title' => $this->title]));
@@ -139,6 +144,14 @@ class GuruController extends Controller
 		$data['guru'] = $guru;
 
 		$ref_agama = Agama::all()->pluck('agama','id');
+		$ref_agama->prepend('-PILIH SALAH SATU-', '');
+		$ref_tidak_aktif = AlasanKeluar::all()->pluck('alasan_keluar', 'id');
+		$ref_tidak_aktif->prepend('-PILIH SALAH SATU-', '');
+		$ref_aktif = [
+			'' => '-PILIH SALAH SATU-',
+			'1' => 'Aktif',
+			'0' => 'Tidak Aktif'
+		];
 		
 		$data['forms'] = array(
 			'nama' => ['Nama', Form::text("nama", $guru->nama, ["class" => "form-control","placeholder" => "", "id" => "nama"]) ],
@@ -148,7 +161,7 @@ class GuruController extends Controller
 			'no_hp' => ['No Hp', Form::text("no_hp", $guru->no_hp, ["class" => "form-control","placeholder" => "", "id" => "no_hp"]) ],
 			'tempat_lahir' => ['Tempat Lahir', Form::text("tempat_lahir", $guru->tempat_lahir, ["class" => "form-control","placeholder" => "", "id" => "tempat_lahir"]) ],
 			'tgl_lahir' => ['Tgl Lahir', Form::text("tgl_lahir", $guru->tgl_lahir, ["class" => "form-control datepicker", "id" => "tgl_lahir"]) ],
-			'id_agama' => ['Agama', Form::select("id_agama", $ref_agama, null, ["class" => "form-control select2"]) ],
+			'id_agama' => ['Agama', Form::select("id_agama", $ref_agama, $guru->id_agama, ["class" => "form-control select2"]) ],
 			'alamat' => ['Alamat', Form::textarea("alamat", $guru->alamat, ["class" => "form-control rich-editor"]) ],
 			'rt' => ['Rt', Form::text("rt", $guru->rt, ["class" => "form-control","placeholder" => "", "id" => "rt"]) ],
 			'rw' => ['Rw', Form::text("rw", $guru->rw, ["class" => "form-control","placeholder" => "", "id" => "rw"]) ],
@@ -156,6 +169,8 @@ class GuruController extends Controller
 			'kecamatan' => ['Kecamatan', Form::text("kecamatan", $guru->kecamatan, ["class" => "form-control","placeholder" => "", "id" => "kecamatan"]) ],
 			'kota' => ['Kota', Form::text("kota", $guru->kota, ["class" => "form-control","placeholder" => "", "id" => "kota"]) ],
 			'provinsi' => ['Provinsi', Form::text("provinsi", $guru->provinsi, ["class" => "form-control","placeholder" => "", "id" => "provinsi"]) ],
+			'is_aktif' => ['Status Aktif', Form::select("is_aktif", $ref_aktif, $guru->is_aktif, ["class" => "form-control select2"]) ],
+			'id_alasan_keluar' => ['Alasan Tidak Aktif', Form::select("id_alasan_keluar", $ref_tidak_aktif, $guru->id_alasan_keluar, ["class" => "form-control select2"]) ],
 			
 		);
 
@@ -166,7 +181,7 @@ class GuruController extends Controller
 
 	public function update(Request $request, $id)
 	{
-		$this->validate($request, [
+		$array_validation = [
 			'nama' => 'required',
 			'nip' => 'required',
 			'nik' => 'required',
@@ -182,8 +197,14 @@ class GuruController extends Controller
 			'kecamatan' => 'required',
 			'kota' => 'required',
 			'provinsi' => 'required',
-			
-		]);
+		];
+
+		if($request->input('is_aktif') == '0')
+		{
+			$array_validation['id_alasan_keluar'] = 'required';
+		}
+
+		$this->validate($request, $array_validation);
 		
 		$guru = Guru::find($id);
 		$guru->nama = $request->input("nama");
@@ -201,6 +222,8 @@ class GuruController extends Controller
 		$guru->kecamatan = $request->input("kecamatan");
 		$guru->kota = $request->input("kota");
 		$guru->provinsi = $request->input("provinsi");
+		$guru->is_aktif = $request->input("is_aktif");
+		$guru->id_alasan_keluar = $request->input("id_alasan_keluar");
 		
 		$guru->updated_by = Auth::id();
 		$guru->save();
