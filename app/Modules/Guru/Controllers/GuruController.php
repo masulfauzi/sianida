@@ -171,6 +171,7 @@ class GuruController extends Controller
 			'provinsi' => ['Provinsi', Form::text("provinsi", $guru->provinsi, ["class" => "form-control","placeholder" => "", "id" => "provinsi"]) ],
 			'is_aktif' => ['Status Aktif', Form::select("is_aktif", $ref_aktif, $guru->is_aktif, ["class" => "form-control select2"]) ],
 			'id_alasan_keluar' => ['Alasan Tidak Aktif', Form::select("id_alasan_keluar", $ref_tidak_aktif, $guru->id_alasan_keluar, ["class" => "form-control select2"]) ],
+			'tgl_keluar' => ['Tanggal Keluar', Form::text("tgl_keluar", $guru->tgl_keluar, ["class" => "form-control datepicker","placeholder" => "Masukan Tanggal Keluar", "id" => "tgl_keluar"]) ],
 			
 		);
 
@@ -202,6 +203,7 @@ class GuruController extends Controller
 		if($request->input('is_aktif') == '0')
 		{
 			$array_validation['id_alasan_keluar'] = 'required';
+			$array_validation['tgl_keluar'] = 'required';
 		}
 
 		$this->validate($request, $array_validation);
@@ -224,6 +226,7 @@ class GuruController extends Controller
 		$guru->provinsi = $request->input("provinsi");
 		$guru->is_aktif = $request->input("is_aktif");
 		$guru->id_alasan_keluar = $request->input("id_alasan_keluar");
+		$guru->tgl_keluar = $request->input("tgl_keluar");
 		
 		$guru->updated_by = Auth::id();
 		$guru->save();
