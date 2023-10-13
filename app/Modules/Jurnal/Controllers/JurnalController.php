@@ -280,6 +280,9 @@ class JurnalController extends Controller
 			{
 				$kurang = $min_pertemuan - count($pertemuan);
 			}
+			else{
+				$kurang = 0;
+			}
 
 			for($i = 1; $i <= $kurang; $i++)
 			{
