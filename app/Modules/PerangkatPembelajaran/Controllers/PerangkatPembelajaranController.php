@@ -77,6 +77,7 @@ class PerangkatPembelajaranController extends Controller
 							->whereIdGuru($data['data']->id_guru)
 							->whereIdMapel($data['data']->id_mapel)
 							->whereIdSemester($data['data']->id_semester)
+							->whereIdTingkat($data['data']->kelas->tingkat->id)
 							->get();
 
 		$this->log($request, 'melihat halaman upload data '.$this->title);
