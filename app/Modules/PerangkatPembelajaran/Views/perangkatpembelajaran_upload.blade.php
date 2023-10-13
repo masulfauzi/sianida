@@ -136,6 +136,7 @@
                                     <td>{{ $item->nama_perangkat }}</td>
                                     <td>{{ $item->jenisPerangkat['jenis_perangkat'] }}</td>
                                     <td>
+                                        <a target="_blank" href="{{ url('uploads/perangkat/'.$item->file) }}" class="btn btn-outline btn-outline-primary"><i class="fa fa-download" aria-hidden="true"></i> Download</a>
                                         {!! button('perangkatpembelajaran.destroy', 'Hapus', $item->id) !!}
                                     </td>
                                 </tr>
