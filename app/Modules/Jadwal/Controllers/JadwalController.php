@@ -52,7 +52,7 @@ class JadwalController extends Controller
 	{
 		// echo "<pre>";
 		$data['teachers'] 	= Jadwal::get_teachers();
-		$data['guru']		= Guru::get()->sortBy('nama')->pluck('nama', 'id');
+		$data['guru']		= Guru::get()->where('is_aktif', '1')->sortBy('nama')->pluck('nama', 'id');
 		$data['guru']->prepend('-PILIH SALAH SATU-','');
 
 		$this->log($request, 'melihat halaman mapping guru');
