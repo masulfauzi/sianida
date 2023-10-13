@@ -72,6 +72,7 @@ public function kelas(){
 					->join('tingkat as e', 'd.id_tingkat','=','e.id')
 					->where('a.id_semester', $id_semester)
 					->where('b.is_aktif', '1')
+					->whereNull('b.deleted_at')
 					->groupBy('e.id', 'c.id', 'b.id')
 					->orderBy('b.nama')
 					->orderBy('e.tingkat')
