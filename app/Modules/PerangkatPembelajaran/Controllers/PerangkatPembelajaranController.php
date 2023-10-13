@@ -62,7 +62,11 @@ class PerangkatPembelajaranController extends Controller
 	public function upload(Request $request, $id)
 	{
 		$data['data'] = JamMengajar::find($id);
-		$data['mapel'] = JamMengajar::query()
+		// dd($data['data']->kelas->tingkat->id);
+		$data['mapel'] = JamMengajar::join('kelas', 'kelas.id', 'jam_mengajar.id_kelas')
+							->join('tingkat', 'tingkat.id', 'kelas.id_tingkat')
+							->select('jam_mengajar.*')
+							->where('tingkat.id', $data['data']->kelas->tingkat->id)
 							->whereIdMapel($data['data']->id_mapel)
 							->whereIdGuru($data['data']->id_guru)
 							->whereIdSemester($data['data']->id_semester)
