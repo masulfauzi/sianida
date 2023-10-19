@@ -42,7 +42,7 @@ class DashboardController extends Controller
         // get user's privilege
         $privileges = Permission::getPrivilege($active_role);
         $privileges = $privileges->mapWithKeys(function ($item, $key) {
-                            return [$item['module'] => $item->only(['create', 'read', 'update', 'delete', 'show_menu'])];
+                            return [$item['module'] => $item->only(['create', 'read', 'show', 'update', 'delete', 'show_menu'])];
                         });
 
         // store to session

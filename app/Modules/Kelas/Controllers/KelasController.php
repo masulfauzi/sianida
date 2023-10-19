@@ -15,6 +15,7 @@ use App\Modules\Pesertadidik\Models\Pesertadidik;
 use App\Modules\Semester\Models\Semester;
 use App\Modules\Siswa\Models\Siswa;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class KelasController extends Controller
@@ -39,6 +40,137 @@ class KelasController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Kelas::kelas', array_merge($data, ['title' => $this->title]));
+	}
+	
+	public function asesmen(Request $request)
+	{
+		$query = Kelas::query()->orderBy('kelas');
+		$data['data'] = $query->paginate(10)->withQueryString();
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('Kelas::kelas_asesmen', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function detail_asesmen(Request $request, $id_kelas)
+	{
+		$data['kelas'] = Kelas::find($id_kelas);
+		$data_asesmen = DB::table('asesmen')->where('id_kelas', $id_kelas)->get();
+
+		// dd($data_asesmen);
+		
+		$mudah_sakit = $data_asesmen->sum('p_1');
+		$kurang_istirahat = $data_asesmen->sum('p_2');
+		$tidak_sarapan = $data_asesmen->sum('p_3');
+		$pendengaran_kurang = $data_asesmen->sum('p_4');
+		$penglihatan_kurang = $data_asesmen->sum('p_5');
+		$mudah_lelah = $data_asesmen->sum('p_6');
+		$mudah_ngantuk = $data_asesmen->sum('p_7');
+
+		$total_aspek_fisik = $mudah_sakit + $kurang_istirahat + $tidak_sarapan + $pendengaran_kurang + $penglihatan_kurang + $mudah_lelah + $mudah_ngantuk;
+
+		$data['aspek_fisik'] = [
+			"Mudah Sakit" => $mudah_sakit/$total_aspek_fisik*100,
+			"Kurang Istirahat" => $kurang_istirahat/$total_aspek_fisik*100,
+			"Tidak Sarapan" => $tidak_sarapan/$total_aspek_fisik*100,
+			"Pendengaran Kurang" => $pendengaran_kurang/$total_aspek_fisik*100,
+			"Penglihatan Kurang" => $penglihatan_kurang/$total_aspek_fisik*100,
+			"Mudah Lelah" => $mudah_lelah/$total_aspek_fisik*100,
+			"Mudah Ngantuk" => $mudah_ngantuk/$total_aspek_fisik*100
+		];
+
+		$senang = $data_asesmen->sum('p_8');
+		$ikhlas = $data_asesmen->sum('p_9');
+		$berusaha = $data_asesmen->sum('p_10');
+		$yakin = $data_asesmen->sum('p_11');
+		$berani = $data_asesmen->sum('p_12');
+		$percaya = $data_asesmen->sum('p_13');
+
+		$total_aspek_psikis = $senang + $ikhlas + $berusaha + $yakin + $berani + $percaya;
+
+		$data['aspek_psikis'] = [
+			"Senang" => $senang / $total_aspek_psikis * 100,
+			"Ikhlas Tanpa Paksaan" => $ikhlas / $total_aspek_psikis * 100,
+			"Berusaha Dengan Giat" => $berusaha / $total_aspek_psikis * 100,
+			"Yakin Atas Usaha" => $yakin / $total_aspek_psikis * 100,
+			"Berani Berpendapat, Bertanya, Menanggah" => $berani / $total_aspek_psikis * 100,
+			"Percaya Dengan Kemampuan" => $percaya / $total_aspek_psikis * 100,
+		];
+
+		$kamar = $data_asesmen->sum('p_14');
+		$tempat = $data_asesmen->sum('p_15');
+		$hp = $data_asesmen->sum('p_16');
+		$laptop = $data_asesmen->sum('p_17');
+		$buku = $data_asesmen->sum('p_18');
+		$akses = $data_asesmen->sum('p_19');
+		$support = $data_asesmen->sum('p_20');
+
+		$total_aspek_sarana = $kamar + $tempat + $hp + $laptop + $buku + $akses + $support;
+
+		$data['aspek_sarana'] = [
+			"Kamar Sendiri" => $kamar / $total_aspek_sarana * 100,
+			"Tempat Belajar Nyaman" => $tempat / $total_aspek_sarana * 100,
+			"HP" => $hp / $total_aspek_sarana * 100,
+			"Laptop" => $laptop / $total_aspek_sarana * 100,
+			"Buku Penunjang" => $buku / $total_aspek_sarana * 100,
+			"Akses Perjalanan" => $akses / $total_aspek_sarana * 100,
+			"Support Orang Tua" => $support / $total_aspek_sarana * 100
+		];
+
+		$visual = 0;
+		$auditorial = 0;
+		$kinestetik = 0;
+
+		foreach($data_asesmen as $item)
+		{
+			$item = collect($item);
+			$item->toArray();
+
+			// dd($item);
+
+			$a = 0;
+			$b = 0;
+			$c = 0;
+
+			foreach($item as $key => $value)
+			{
+				if($value == 'A')
+				{
+					$a ++;
+				}
+				else if($value == 'B')
+				{
+					$b ++;
+				}
+				else if($value == 'C')
+				{
+					$c ++;
+				}
+			}
+
+			if(($a > $b) && ($a > $c))
+			{
+				$visual ++;
+			}
+
+			if(($b > $a) && ($b > $c))
+			{
+				$auditorial ++;
+			}
+
+			if(($c > $a) && ($c > $b))
+			{
+				$kinestetik ++;
+			}
+		}
+
+		$data['gaya_belajar'] = [
+			'Visual' => $visual,
+			'Auditorial' => $auditorial,
+			'Kinestetik' => $kinestetik
+		];
+
+
+		return view('Kelas::detail_asesmen', array_merge($data, ['title' => $this->title])); 
 	}
 
 	public function naik_kelas(Request $request, $id_kelas)
