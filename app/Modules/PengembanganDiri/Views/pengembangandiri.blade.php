@@ -66,7 +66,7 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->jenisPengembangan->jenis_pengembangan }}</td>
-                                    @if (session('active_role')['id'] == '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+                                    @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
 									    <td>{{ $item->guru->nama }}</td>
                                     @endif
 									<td>{{ $item->nama_kegiatan }}</td>
