@@ -24,7 +24,7 @@ class PengembanganDiriController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = PengembanganDiri::query();
+		$query = PengembanganDiri::query()->orderBy('tgl_kegiatan', 'DESC');
 		if(session('active_role')['id'] == '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
 		{
 			$query->where('id_guru', session('id_guru'));
