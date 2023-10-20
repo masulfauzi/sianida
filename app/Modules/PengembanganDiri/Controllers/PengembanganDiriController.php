@@ -65,7 +65,7 @@ class PengembanganDiriController extends Controller
 			'id_jenis_pengembangan' => 'required',
 			'id_guru' => 'required',
 			'nama_kegiatan' => 'required',
-			'tgl_kegiatan' => 'required',
+			'tgl_kegiatan' => 'required|date',
 			'tempat' => 'required',
 			'sertifikat' => 'required|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
 			
