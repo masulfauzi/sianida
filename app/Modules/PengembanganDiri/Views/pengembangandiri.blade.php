@@ -47,7 +47,9 @@
                             <tr>
                                 <th width="15">No</th>
                                 <td>Jenis Pengembangan</td>
-								{{-- <td>Guru</td> --}}
+                                @if (session('active_role')['id'] == '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+                                    <td>Guru</td>
+                                @endif
 								<td>Nama Kegiatan</td>
 								<td>Tgl Kegiatan</td>
 								<td>Tempat</td>
@@ -64,7 +66,9 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->jenisPengembangan->jenis_pengembangan }}</td>
-									{{-- <td>{{ $item->guru->nama }}</td> --}}
+                                    @if (session('active_role')['id'] == '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+									    <td>{{ $item->guru->nama }}</td>
+                                    @endif
 									<td>{{ $item->nama_kegiatan }}</td>
 									<td>{{ \App\Helpers\Format::tanggal($item->tgl_kegiatan) }}</td>
 									<td>{{ $item->tempat }}</td>
