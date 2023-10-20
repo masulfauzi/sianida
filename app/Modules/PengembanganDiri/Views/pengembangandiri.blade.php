@@ -47,7 +47,7 @@
                             <tr>
                                 <th width="15">No</th>
                                 <td>Jenis Pengembangan</td>
-                                @if (session('active_role')['id'] == '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+                                @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
                                     <td>Guru</td>
                                 @endif
 								<td>Nama Kegiatan</td>
