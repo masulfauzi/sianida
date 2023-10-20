@@ -50,6 +50,7 @@ class PengembanganDiriController extends Controller
 			'tgl_kegiatan' => ['Tanggal Kegiatan (Tanggal Sertifikat)', Form::text("tgl_kegiatan", old("tgl_kegiatan"), ["class" => "form-control datepicker"]) ],
 			'tempat' => ['Tempat', Form::text("tempat", old("tempat"), ["class" => "form-control","placeholder" => ""]) ],
 			'sertifkat' => ['Sertifikat', Form::file("sertifikat", ["class" => "form-control","placeholder" => ""]) ],
+			'laporan' => ['Laporan (Tidak Wajib)', Form::file("laporan", ["class" => "form-control","placeholder" => ""]) ],
 			'id_guru' => ['', Form::hidden("id_guru", session('id_guru')) ],
 
 		);
@@ -70,6 +71,16 @@ class PengembanganDiriController extends Controller
 			
 		]);
 
+		if($request->has('laporan'))
+		{
+			$laporan = time().'.'.$request->laporan->extension();  
+
+        	$request->laporan->move(public_path('uploads/pengembangan_diri/'), $laporan);
+		}
+		else{
+			$laporan = NULL;
+		}
+
 		$tgl = explode('-', $request->input('tgl_kegiatan'));
 
 		$fileName = time().'.'.$request->sertifikat->extension();  
@@ -84,6 +95,7 @@ class PengembanganDiriController extends Controller
 		$pengembangandiri->tempat = $request->input("tempat");
 		$pengembangandiri->tahun = $tgl[0];
 		$pengembangandiri->sertifikat = $fileName;
+		$pengembangandiri->laporan = $laporan;
 		
 		$pengembangandiri->created_by = Auth::id();
 		$pengembangandiri->save();

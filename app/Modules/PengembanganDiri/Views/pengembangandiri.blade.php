@@ -53,6 +53,7 @@
 								<td>Tempat</td>
 								{{-- <td>Tahun</td> --}}
                                 <td>Sertifikat</td>
+                                <td>Laporan</td>
 								
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -69,6 +70,12 @@
 									<td>{{ $item->tempat }}</td>
 									{{-- <td>{{ $item->tahun }}</td> --}}
                                     <td><span class="badge bg-primary"><a target="_blank" href="{{ url('uploads/pengembangan_diri/'.$item->sertifikat) }}" class="text-white">Lihat</a></span></td>
+                                    <td>
+                                        @if ($item->laporan)
+                                            <span class="badge bg-success"><a target="_blank" href="{{ url('uploads/pengembangan_diri/'.$item->laporan) }}" class="text-white">Lihat</a></span></td>
+                                        @else
+                                            <span class="badge bg-warning">Belum Ada Laporan</span></td>
+                                        @endif
 									
                                     <td>
 										{{-- {!! button('pengembangandiri.show','', $item->id) !!}
