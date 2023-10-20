@@ -73,7 +73,7 @@ class PengembanganDiriController extends Controller
 
 		if($request->has('laporan'))
 		{
-			$laporan = time().'.'.$request->laporan->extension();  
+			$laporan = "laporan_".time().'.'.$request->laporan->extension();  
 
         	$request->laporan->move(public_path('uploads/pengembangan_diri/'), $laporan);
 		}
@@ -83,7 +83,7 @@ class PengembanganDiriController extends Controller
 
 		$tgl = explode('-', $request->input('tgl_kegiatan'));
 
-		$fileName = time().'.'.$request->sertifikat->extension();  
+		$fileName = "sertifikat_".time().'.'.$request->sertifikat->extension();  
 
         $request->sertifikat->move(public_path('uploads/pengembangan_diri/'), $fileName);
 
