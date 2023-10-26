@@ -38,7 +38,7 @@ class FileKegiatanController extends Controller
 	public function create(Request $request, $id_kegiatan)
 	{
 		$data['kegiatan'] = Kegiatan::find($id_kegiatan);
-		$query = FileKegiatan::query()->whereIdKegiatan($id_kegiatan);
+		$query = FileKegiatan::query()->whereIdKegiatan($id_kegiatan)->orderBy('nama_file');
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
