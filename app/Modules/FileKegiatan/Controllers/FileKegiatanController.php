@@ -47,8 +47,8 @@ class FileKegiatanController extends Controller
 		
 		$data['forms'] = array(
 			'id_kegiatan' => ['', Form::hidden("id_kegiatan", $id_kegiatan) ],
-			'nama_file' => ['Nama File', Form::text("nama_file", old('nama_file'), ["class" => "form-control"]) ],
-			'file' => ['File', Form::file("file", ["class" => "form-control"]) ],
+			// 'nama_file' => ['Nama File', Form::text("nama_file", old('nama_file'), ["class" => "form-control"]) ],
+			'file' => ['File', Form::file("file[]", ["class" => "form-control", "multiple"]) ],
 			
 		);
 
@@ -57,6 +57,40 @@ class FileKegiatanController extends Controller
 	}
 
 	function store(Request $request)
+	{
+		$request->validate([
+            'file' => 'required',
+            'file.*' => 'required|mimes:pdf,doc,docx|max:10240'
+        ]);
+
+        if ($request->file('file')){
+
+            foreach($request->file('file') as $key => $file)
+            {
+                $fileName = time() . $file->extension();
+				$nama_file = $file->getClientOriginalName();  
+
+                $file->move(public_path('uploads/kegiatan/'), $fileName);
+
+				$filekegiatan = new FileKegiatan();
+				$filekegiatan->id_kegiatan = $request->input("id_kegiatan");
+				$filekegiatan->nama_file = $nama_file;
+				$filekegiatan->file = $fileName;
+				
+				$filekegiatan->created_by = Auth::id();
+				$filekegiatan->save();
+
+				
+            }
+
+        }
+
+		$text = 'membuat '.$this->title; //' baru '.$filekegiatan->what;
+		$this->log($request, $text, ['filekegiatan.id' => $filekegiatan->id]);
+		return redirect()->route('filekegiatan.create', $request->input("id_kegiatan"))->with('message_success', 'File Kegiatan berhasil ditambahkan!');
+	}
+
+	function store2(Request $request)
 	{
 		// dd($request);
 		$this->validate($request, [
