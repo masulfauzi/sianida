@@ -59,7 +59,7 @@ class JurnalController extends Controller
 			$data['tahun'] = $request->input('tahun');
 		}
 
-		$data['guru'] = Guru::query()->orderBy('nama')->get();
+		$data['guru'] = Guru::query()->whereIsAktif('1')->orderBy('nama')->get();
 		
 		$cari = $data['tahun'] . "-" . $data['bulan'];
 		$data['jurnal'] = Jurnal::query()
