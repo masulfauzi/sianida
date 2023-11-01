@@ -8,6 +8,9 @@ use App\Modules\Log\Models\Log;
 use App\Modules\PengembanganDiri\Models\PengembanganDiri;
 use App\Modules\JenisPengembangan\Models\JenisPengembangan;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,6 +40,59 @@ class PengembanganDiriController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('PengembanganDiri::pengembangandiri', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function cetak_pd(Request $request)
+	{
+		$pd = PengembanganDiri::all();
+
+		$spreadsheet = new Spreadsheet();
+		$styleArray = array(
+			'font'  => array(
+				 'name'  => 'Times New Roman'
+			 ));      
+		$spreadsheet->getDefaultStyle()->applyFromArray($styleArray);
+
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+		$activeWorksheet->mergeCells('A1:F1');
+		$activeWorksheet->getCell('A1')->setValue('Pengembangan Diri SMK N 2 Semarang');
+		$activeWorksheet->getStyle('A1')->getAlignment()->setHorizontal('center')->setVertical('center')->setWrapText(true);
+		$activeWorksheet->getStyle("A1")->getFont()->setSize(16)->setBold(true);
+
+		$activeWorksheet->getCell('A4')->setValue('No');
+		$activeWorksheet->getCell('B4')->setValue('Nama Guru');
+		$activeWorksheet->getCell('C4')->setValue('Jenis');
+		$activeWorksheet->getCell('D4')->setValue('Nama Kegiatan');
+		$activeWorksheet->getCell('E4')->setValue('Tanggal');
+		$activeWorksheet->getCell('F4')->setValue('Tempat');
+
+		$row = 5;
+		$no = 1;
+
+		foreach($pd as $item)
+		{
+			$activeWorksheet->getCell('A'.$row)->setValue($no);
+			$activeWorksheet->getCell('B'.$row)->setValue($item->guru->nama);
+			$activeWorksheet->getCell('C'.$row)->setValue($item->jenisPengembangan->jenis_pengembangan);
+			$activeWorksheet->getCell('D'.$row)->setValue($item->nama_kegiatan);
+			$activeWorksheet->getCell('E'.$row)->setValue(\App\Helpers\Format::tanggal($item->tgl_kegiatan));
+			$activeWorksheet->getCell('F'.$row)->setValue($item->tempat);
+			$row++;
+			$no++;
+		}
+
+		$activeWorksheet->getStyle('A4:F'.$row-1)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_MEDIUM);
+
+		for ($i = 'A'; $i !=  $activeWorksheet->getHighestColumn(); $i++) {
+			$activeWorksheet->getColumnDimension($i)->setAutoSize(TRUE);
+		}
+
+
+		$writer = new Xlsx($spreadsheet);
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode('Daftar Pengembangan Diri.xlsx').'"');
+        $writer->save('php://output');
+
 	}
 
 	public function create(Request $request)

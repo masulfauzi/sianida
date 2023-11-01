@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\PengembanganDiri\Controllers\PengembanganDiriController;
 
 Route::controller(PengembanganDiriController::class)->middleware(['web','auth'])->name('pengembangandiri.')->group(function(){
+	// route custom
+	Route::get('/pengembangandiri/cetak', 'cetak_pd')->name('cetak.show');
+	
+	
+	
 	Route::get('/pengembangandiri', 'index')->name('index');
 	Route::get('/pengembangandiri/data', 'data')->name('data.index');
 	Route::get('/pengembangandiri/create', 'create')->name('create');

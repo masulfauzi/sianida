@@ -37,7 +37,11 @@
                         </form>
                     </div>
                     <div class="col-3">  
-						{!! button('pengembangandiri.create', $title) !!}  
+                        @if (session('active_role')['id'] == '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+						    {!! button('pengembangandiri.create', $title) !!}  
+                        @else
+                            <a href="{{ route('pengembangandiri.cetak.show') }}" class="btn btn-warning">Export Data</a>
+                        @endif
                     </div>
                 </div>
                 @include('include.flash')
