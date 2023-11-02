@@ -12,6 +12,7 @@ use App\Modules\Kelas\Models\Kelas;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PesertadidikController extends Controller
 {
@@ -26,6 +27,12 @@ class PesertadidikController extends Controller
 
 	public function index(Request $request)
 	{
+
+		if(session('active_role')['id'] == 'f6622918-84dd-42b4-a7b4-f78ca35a8614')
+		{
+			return redirect()->route('pesertadidik.data.index');
+		}
+
 		$query = Pesertadidik::query()->whereIdSemester(get_semester('active_semester_id'));
 		if($request->has('search')){
 			$search = $request->get('search');
@@ -35,6 +42,23 @@ class PesertadidikController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Pesertadidik::pesertadidik', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function data(Request $request)
+	{
+		$pesertadidik = Pesertadidik::query()
+									->join('siswa as a', 'a.id', 'pesertadidik.id_siswa')
+									->join('kelas as b', 'b.id', 'pesertadidik.id_kelas')
+									->join('jurusan as c', 'c.id', 'b.id_jurusan')
+									->whereIdSemester(session('active_semester')['id']);
+
+		$data['perjurusan'] = $pesertadidik->select('c.jurusan', DB::raw("count('a.*') as jml"))->groupBy('b.id_jurusan')->get();
+
+		// dd($data['perjurusan']);
+
+		// dd($pesertadidik);
+
+		return view('Pesertadidik::pesertadidik_data', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function mutasi(Request $request)

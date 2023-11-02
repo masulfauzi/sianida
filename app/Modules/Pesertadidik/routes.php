@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\Pesertadidik\Controllers\PesertadidikController;
 
 Route::controller(PesertadidikController::class)->middleware(['web','auth'])->name('pesertadidik.')->group(function(){
+	// route custom
+	// Route::get('/pesertadidik/data', 'data_pd')->name('data.index');
+	
 	Route::get('/pesertadidik', 'index')->name('index');
 	Route::get('/pesertadidik/data', 'data')->name('data.index');
 	Route::get('/pesertadidik/create', 'create')->name('create');
