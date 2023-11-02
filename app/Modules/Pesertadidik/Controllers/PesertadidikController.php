@@ -28,7 +28,7 @@ class PesertadidikController extends Controller
 	public function index(Request $request)
 	{
 
-		if(session('active_role')['id'] == 'f6622918-84dd-42b4-a7b4-f78ca35a8614')
+		if((session('active_role')['id'] == 'f6622918-84dd-42b4-a7b4-f78ca35a8614') OR (session('active_role')['id'] == '7e30f046-7af4-44b7-8d9a-9294ed93abfd'))
 		{
 			return redirect()->route('pesertadidik.data.index');
 		}
