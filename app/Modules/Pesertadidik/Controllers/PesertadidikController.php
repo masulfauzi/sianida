@@ -52,9 +52,15 @@ class PesertadidikController extends Controller
 									->join('jurusan as c', 'c.id', 'b.id_jurusan')
 									->whereIdSemester(session('active_semester')['id']);
 
-		$data['perjurusan'] = $pesertadidik->select('c.jurusan', DB::raw("count('a.*') as jml"))->groupBy('b.id_jurusan')->get();
+		$data['perjurusan'] = $pesertadidik->select('c.jurusan', DB::raw("count('a.*') as jml"))
+											->groupBy('b.id_jurusan')->get();
+		
+		$data['jenis_kelamin'] = $pesertadidik->select('c.jurusan', 
+														DB::raw("sum(if(a.id_jeniskelamin = '3faaf482-206c-4bdb-9a77-5dc78bbb16a6', 1, 0)) as 'laki_laki'"),
+														DB::raw("sum(if(a.id_jeniskelamin = 'a26cae71-5de5-457a-bba2-dc8ff4bfb29a', 1, 0)) as 'perempuan'"))
+											->get();
 
-		// dd($data['perjurusan']);
+		// dd($data['jenis_kelamin']);
 
 		// dd($pesertadidik);
 

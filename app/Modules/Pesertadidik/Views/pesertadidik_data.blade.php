@@ -35,6 +35,19 @@
         
             </section>
         </div>
+        <div class="col-6">
+            <section class="section">
+                <div class="card">
+                    <h6 class="card-header">
+                        Jumlah Siswa Perjurusan
+                    </h6>
+                    <div class="card-body">
+                        <div id="jenis_kelamin"></div>
+                    </div>
+                </div>
+        
+            </section>
+        </div>
     </div>
 
     
@@ -93,6 +106,73 @@ Highcharts.chart('perjurusan', {
     }]
 });
 
+</script>
+
+<script>
+    Highcharts.chart('jenis_kelamin', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '',
+        align: 'left'
+    },
+    xAxis: {
+        categories: [
+            @foreach($jenis_kelamin as $item)
+                "{{ $item->jurusan }}",
+            @endforeach
+        ]
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Jumlah Siswa'
+        },
+        stackLabels: {
+            enabled: true
+        }
+    },
+    legend: {
+        align: 'left',
+        x: 70,
+        verticalAlign: 'top',
+        y: 70,
+        floating: true,
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    series: [{
+        name: 'Laki-Laki',
+        data: [
+            @foreach($jenis_kelamin as $item)
+                {{ $item->laki_laki }},
+            @endforeach
+        ]
+    }, {
+        name: 'Perempuan',
+        data: [
+            @foreach($jenis_kelamin as $item)
+                {{ $item->perempuan }},
+            @endforeach
+        ]
+    }]
+});
 </script>
 
 @endsection
