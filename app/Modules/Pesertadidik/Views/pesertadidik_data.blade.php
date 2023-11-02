@@ -49,6 +49,34 @@
             </section>
         </div>
     </div>
+    <div class="row">
+        <div class="col-6">
+            <section class="section">
+                <div class="card">
+                    <h6 class="card-header">
+                        Jumlah Siswa by Jenis Kelamin
+                    </h6>
+                    <div class="card-body">
+                        <div id="jk"></div>
+                    </div>
+                </div>
+        
+            </section>
+        </div>
+        <div class="col-6">
+            <section class="section">
+                <div class="card">
+                    <h6 class="card-header">
+                        Jumlah Siswa by Agama
+                    </h6>
+                    <div class="card-body">
+                        <div id="agama"></div>
+                    </div>
+                </div>
+        
+            </section>
+        </div>
+    </div>
 
     
 
@@ -99,6 +127,98 @@ Highcharts.chart('perjurusan', {
             @foreach($perjurusan as $item)
                 {
                     name: "{{ $item->jurusan }}",
+                    y: {{ $item->jml }}
+                },
+            @endforeach
+        ]
+    }]
+});
+
+</script>
+<script>
+    // Data retrieved from https://netmarketshare.com
+Highcharts.chart('agama', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: '',
+        align: 'left'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.y:.0f}</b>'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            }
+        }
+    },
+    series: [{
+        name: 'Jumlah',
+        colorByPoint: true,
+        data: [
+            @foreach($agama as $item)
+                {
+                    name: "{{ $item->agama }}",
+                    y: {{ $item->jml }}
+                },
+            @endforeach
+        ]
+    }]
+});
+
+</script>
+<script>
+    // Data retrieved from https://netmarketshare.com
+Highcharts.chart('jk', {
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        type: 'pie'
+    },
+    title: {
+        text: '',
+        align: 'left'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.y:.0f}</b>'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+            }
+        }
+    },
+    series: [{
+        name: 'Jumlah',
+        colorByPoint: true,
+        data: [
+            @foreach($jk as $item)
+                {
+                    name: "{{ $item->jeniskelamin }}",
                     y: {{ $item->jml }}
                 },
             @endforeach

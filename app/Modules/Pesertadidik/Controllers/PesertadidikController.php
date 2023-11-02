@@ -50,17 +50,39 @@ class PesertadidikController extends Controller
 									->join('siswa as a', 'a.id', 'pesertadidik.id_siswa')
 									->join('kelas as b', 'b.id', 'pesertadidik.id_kelas')
 									->join('jurusan as c', 'c.id', 'b.id_jurusan')
+									->join('jeniskelamin as d', 'a.id_jeniskelamin', 'd.id')
+									->join('agama as e', 'a.id_agama', 'e.id')
 									->whereIdSemester(session('active_semester')['id']);
+									
 
-		$data['perjurusan'] = $pesertadidik->select('c.jurusan', DB::raw("count('a.*') as jml"))
-											->groupBy('b.id_jurusan')->get();
+		$perjurusan = clone $pesertadidik;
+		$jenis_kelamin = clone $pesertadidik;
+		$jk = clone $pesertadidik;
+		$agama = clone $pesertadidik;
+
+		$data['agama'] = $agama->select('e.agama', DB::raw("count('a.*') as jml"))
+								->groupBy('a.id_agama')
+								->get();
+
+		$data['jk'] = $jk->select('d.jeniskelamin', DB::raw("count('a.*') as jml"))
+									->groupBy('a.id_jeniskelamin')
+									->get();
+
 		
-		$data['jenis_kelamin'] = $pesertadidik->select('c.jurusan', 
+
+		$data['perjurusan'] = $perjurusan->select('c.jurusan', DB::raw("count('a.*') as jml"))
+											->groupBy('b.id_jurusan')
+											->get();
+		
+		$data['jenis_kelamin'] = $jenis_kelamin->select('c.jurusan', 
 														DB::raw("sum(if(a.id_jeniskelamin = '3faaf482-206c-4bdb-9a77-5dc78bbb16a6', 1, 0)) as 'laki_laki'"),
 														DB::raw("sum(if(a.id_jeniskelamin = 'a26cae71-5de5-457a-bba2-dc8ff4bfb29a', 1, 0)) as 'perempuan'"))
-											->get();
+												->groupBy('b.id_jurusan')
+												->get();
 
-		// dd($data['jenis_kelamin']);
+		
+
+		// dd($data['jk']);
 
 		// dd($pesertadidik);
 
