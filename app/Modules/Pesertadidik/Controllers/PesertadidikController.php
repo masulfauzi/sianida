@@ -59,6 +59,13 @@ class PesertadidikController extends Controller
 		$jenis_kelamin = clone $pesertadidik;
 		$jk = clone $pesertadidik;
 		$agama = clone $pesertadidik;
+		$kelas = clone $pesertadidik;
+
+		$data['kelas'] = $kelas->select('b.kelas', 
+										DB::raw("sum(if(a.id_jeniskelamin = '3faaf482-206c-4bdb-9a77-5dc78bbb16a6', 1, 0)) as 'laki_laki'"),
+										DB::raw("sum(if(a.id_jeniskelamin = 'a26cae71-5de5-457a-bba2-dc8ff4bfb29a', 1, 0)) as 'perempuan'"))
+								->groupBy('b.id')
+								->get();
 
 		$data['agama'] = $agama->select('e.agama', DB::raw("count('a.*') as jml"))
 								->groupBy('a.id_agama')

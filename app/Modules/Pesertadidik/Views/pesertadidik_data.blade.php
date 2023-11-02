@@ -77,6 +77,22 @@
             </section>
         </div>
     </div>
+    <div class="row">
+        <div class="col-12">
+            <section class="section">
+                <div class="card">
+                    <h6 class="card-header">
+                        Jumlah Siswa by Kelas
+                    </h6>
+                    <div class="card-body">
+                        <div id="kelas"></div>
+                    </div>
+                </div>
+        
+            </section>
+        </div>
+        
+    </div>
 
     
 
@@ -288,6 +304,72 @@ Highcharts.chart('jk', {
         name: 'Perempuan',
         data: [
             @foreach($jenis_kelamin as $item)
+                {{ $item->perempuan }},
+            @endforeach
+        ]
+    }]
+});
+</script>
+<script>
+    Highcharts.chart('kelas', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '',
+        align: 'left'
+    },
+    xAxis: {
+        categories: [
+            @foreach($kelas as $item)
+                "{{ $item->kelas }}",
+            @endforeach
+        ]
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Jumlah Siswa'
+        },
+        stackLabels: {
+            enabled: true
+        }
+    },
+    legend: {
+        align: 'left',
+        x: 70,
+        verticalAlign: 'top',
+        y: 70,
+        floating: true,
+        backgroundColor:
+            Highcharts.defaultOptions.legend.backgroundColor || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+    },
+    tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+    },
+    plotOptions: {
+        column: {
+            stacking: 'normal',
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    series: [{
+        name: 'Laki-Laki',
+        data: [
+            @foreach($kelas as $item)
+                {{ $item->laki_laki }},
+            @endforeach
+        ]
+    }, {
+        name: 'Perempuan',
+        data: [
+            @foreach($kelas as $item)
                 {{ $item->perempuan }},
             @endforeach
         ]
