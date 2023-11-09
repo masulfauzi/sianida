@@ -27,7 +27,7 @@
                 Tabel Data {{ $title }}
             </h6>
             <div class="card-body">
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-9">
                         <form action="{{ route('kelas.index') }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
@@ -39,7 +39,7 @@
                     <div class="col-3">  
 						{!! button('kelas.create', $title) !!}  
                     </div>
-                </div>
+                </div> --}}
                 @include('include.flash')
                 <div class="table-responsive-md col-12">
                     <table class="table" id="table1">
