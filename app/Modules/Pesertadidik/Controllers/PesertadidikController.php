@@ -49,6 +49,7 @@ class PesertadidikController extends Controller
 	{
 		$data['tingkat'] = Tingkat::all()->sortBy('tingkat')->pluck('tingkat', 'id');
 		$data['tingkat']->prepend('-PILIH SALAH SATU-', '');
+		$data['filter']['tingkat'] = $request->input('tingkat');
 		
 
 		$pesertadidik = Pesertadidik::query()
@@ -62,7 +63,7 @@ class PesertadidikController extends Controller
 		if($request->has('tingkat'))
 		{
 			$pesertadidik->where('b.id_tingkat', $request->input('tingkat'));
-			$data['filter']['tingkat'] = $request->input('tingkat');
+			
 		}
 									
 
