@@ -11,6 +11,7 @@ use App\Modules\Siswa\Models\Siswa;
 use App\Modules\Kelas\Models\Kelas;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Tingkat\Models\Tingkat;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -46,6 +47,10 @@ class PesertadidikController extends Controller
 
 	public function data(Request $request)
 	{
+		$data['tingkat'] = Tingkat::all()->sortBy('tingkat')->pluck('tingkat', 'id');
+		$data['tingkat']->prepend('-PILIH SALAH SATU-', '');
+		
+
 		$pesertadidik = Pesertadidik::query()
 									->join('siswa as a', 'a.id', 'pesertadidik.id_siswa')
 									->join('kelas as b', 'b.id', 'pesertadidik.id_kelas')
@@ -53,6 +58,12 @@ class PesertadidikController extends Controller
 									->join('jeniskelamin as d', 'a.id_jeniskelamin', 'd.id')
 									->join('agama as e', 'a.id_agama', 'e.id')
 									->whereIdSemester(session('active_semester')['id']);
+		
+		if($request->has('tingkat'))
+		{
+			$pesertadidik->where('b.id_tingkat', $request->input('tingkat'));
+			$data['filter']['tingkat'] = $request->input('tingkat');
+		}
 									
 
 		$perjurusan = clone $pesertadidik;
