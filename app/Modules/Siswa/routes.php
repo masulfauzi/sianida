@@ -12,6 +12,7 @@ Route::controller(SiswaController::class)->middleware(['web','auth'])->name('sis
 	Route::get('/siswa/{siswa}/edit', 'edit')->name('edit');
 	Route::patch('/siswa/{siswa}', 'update')->name('update');
 	Route::get('/siswa/{siswa}/delete', 'destroy')->name('destroy');
+	
 
 	//custom route untuk biodata siswa
 	Route::get('/biodata', 'biodata')->name('biodata.index');
@@ -19,6 +20,7 @@ Route::controller(SiswaController::class)->middleware(['web','auth'])->name('sis
 	Route::get('/biodata/{file}/lihat_file/{jenis}', 'lihat_file')->name('lihat_file.index');
 	Route::post('/biodata/upload', 'aksi_upload')->name('aksi_upload.index');
 	Route::post('/biodata', 'store_biodata')->name('biodata.store.index');
+	Route::get('/hasil_abm', 'hasil_abm')->name('abm.index');
 
 	//custom route untuk download
 	Route::get('/downloads', 'downloads')->name('download.index');

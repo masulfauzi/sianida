@@ -45,6 +45,18 @@ class SiswaController extends Controller
 		return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function hasil_abm(Request $request)
+	{
+		$id_siswa = session()->get('id_siswa');
+
+		$siswa = Siswa::find($id_siswa);
+
+		$data['hasil'] = $siswa->nisn . ".pdf";
+
+		$this->log($request, 'melihat halaman hasil ABM');
+		return view('Siswa::siswa_abm', array_merge($data, ['title' => $this->title]));
+	}
+
 	public function kelulusan(Request $request)
 	{
 		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
