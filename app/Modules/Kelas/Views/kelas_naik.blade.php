@@ -37,6 +37,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama</th>
+                                    <th>NISN</th>
                                     <th>Pilih</th>
                                 </tr>
                                 @php
@@ -46,6 +47,7 @@
                                     <tr>
                                         <td>{{ $no++ }}</td>
                                         <td>{{ $item->siswa['nama_siswa'] }}</td>
+                                        <td>{{ $item->siswa['nisn'] }}</td>
                                         <td><input type="checkbox" name="id_pesertadidik[]" value="{{ $item->id }}" id="" checked></td>
                                     </tr>
                                 @endforeach
