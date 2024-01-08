@@ -29,7 +29,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-9">
-                        <form action="{{ route('prestasi.index') }}" method="get">
+                        <form action="{{ route('tingkatjuara.index') }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
                                 <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
                                 <div class="form-control-icon"><i class="fa fa-search"></i></div>
@@ -37,7 +37,7 @@
                         </form>
                     </div>
                     <div class="col-3">  
-						{!! button('prestasi.create', $title) !!}  
+						{!! button('tingkatjuara.create', $title) !!}  
                     </div>
                 </div>
                 @include('include.flash')
@@ -46,12 +46,8 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-								<td>Prestasi</td>
-                                <td>Tingkat</td>
-								{{-- <td>Siswa</td> --}}
-								<td>Sertifikat</td>
-								<td>Tgl Perolehan</td>
-								{{-- <td>Is Pakai</td> --}}
+                                <td>Tingkat Juara</td>
+								<td>Urutan</td>
 								
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -61,24 +57,18 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-									<td>{{ $item->prestasi }}</td>
-                                    <td>{{ $item->juara->juara }}</td>
-									{{-- <td>{{ $item->id_siswa }}</td> --}}
-									<td>
-                                        <a target="_blank" href="{{ url('uploads/sertifikat_prestasi/'.$item->sertifikat) }}">Lihat</a>
-                                    </td>
-									<td>{{ \App\Helpers\Format::tanggal($item->tgl_perolehan) }}</td>
-									{{-- <td>{{ $item->is_pakai }}</td> --}}
+                                    <td>{{ $item->tingkat_juara }}</td>
+									<td>{{ $item->urutan }}</td>
 									
                                     <td>
-										{!! button('prestasi.show','', $item->id) !!}
-										{!! button('prestasi.edit', $title, $item->id) !!}
-                                        {!! button('prestasi.destroy', $title, $item->id) !!}
+										{!! button('tingkatjuara.show','', $item->id) !!}
+										{!! button('tingkatjuara.edit', $title, $item->id) !!}
+                                        {!! button('tingkatjuara.destroy', $title, $item->id) !!}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center"><i>No data.</i></td>
+                                    <td colspan="4" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

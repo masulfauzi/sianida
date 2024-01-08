@@ -6,6 +6,8 @@ use App\Helpers\UsesUuid;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Modules\Juara\Models\Juara;
+use App\Modules\Siswa\Models\Siswa;
 
 
 class Prestasi extends Model
@@ -17,5 +19,11 @@ class Prestasi extends Model
 	protected $table      = 'prestasi';
 	protected $fillable   = ['*'];	
 
-	
+	public function juara(){
+		return $this->belongsTo(Juara::class,"id_juara","id");
+	}
+public function siswa(){
+		return $this->belongsTo(Siswa::class,"id_siswa","id");
+	}
+
 }

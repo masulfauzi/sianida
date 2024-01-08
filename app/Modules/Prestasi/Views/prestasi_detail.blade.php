@@ -31,7 +31,12 @@
                 <div class="row">
                     <div class="col-lg-10 offset-lg-2">
                         <div class="row">
-                            <div class='col-lg-2'><p>Prestasi</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $prestasi->prestasi }}</p></div>
+                            <div class='col-lg-2'><p>Juara</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $prestasi->juara->id }}</p></div>
+									<div class='col-lg-2'><p>Siswa</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $prestasi->siswa->id }}</p></div>
+									<div class='col-lg-2'><p>Prestasi</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $prestasi->prestasi }}</p></div>
+									<div class='col-lg-2'><p>Sertifikat</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $prestasi->sertifikat }}</p></div>
+									<div class='col-lg-2'><p>Tgl Perolehan</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $prestasi->tgl_perolehan }}</p></div>
+									<div class='col-lg-2'><p>Is Pakai</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $prestasi->is_pakai }}</p></div>
 									
                         </div>
                     </div>
