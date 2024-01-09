@@ -64,7 +64,7 @@ class PrestasiController extends Controller
 			'id_siswa' => 'required',
 			'prestasi' => 'required',
 			'sertifikat' => 'required|mimes:pdf,jpg,jpeg,png|max:10240',
-			'tgl_perolehan' => 'required',
+			'tgl_perolehan' => 'required|date',
 			// 'is_pakai' => 'required',
 			
 		]);
@@ -106,12 +106,12 @@ class PrestasiController extends Controller
 		$ref_siswa = Siswa::all()->pluck('nama_siswa','id');
 		
 		$data['forms'] = array(
-			'id_juara' => ['Juara', Form::select("id_juara", $ref_juara, null, ["class" => "form-control select2"]) ],
-			'id_siswa' => ['Siswa', Form::select("id_siswa", $ref_siswa, null, ["class" => "form-control select2"]) ],
+			// 'id_juara' => ['Juara', Form::select("id_juara", $ref_juara, null, ["class" => "form-control select2"]) ],
+			// 'id_siswa' => ['Siswa', Form::select("id_siswa", $ref_siswa, null, ["class" => "form-control select2"]) ],
 			'prestasi' => ['Prestasi', Form::text("prestasi", $prestasi->prestasi, ["class" => "form-control","placeholder" => "", "id" => "prestasi"]) ],
-			'sertifikat' => ['Sertifikat', Form::text("sertifikat", $prestasi->sertifikat, ["class" => "form-control","placeholder" => "", "id" => "sertifikat"]) ],
+			// 'sertifikat' => ['Sertifikat', Form::text("sertifikat", $prestasi->sertifikat, ["class" => "form-control","placeholder" => "", "id" => "sertifikat"]) ],
 			'tgl_perolehan' => ['Tgl Perolehan', Form::text("tgl_perolehan", $prestasi->tgl_perolehan, ["class" => "form-control datepicker", "id" => "tgl_perolehan"]) ],
-			'is_pakai' => ['Is Pakai', Form::text("is_pakai", $prestasi->is_pakai, ["class" => "form-control","placeholder" => "", "id" => "is_pakai"]) ],
+			// 'is_pakai' => ['Is Pakai', Form::text("is_pakai", $prestasi->is_pakai, ["class" => "form-control","placeholder" => "", "id" => "is_pakai"]) ],
 			
 		);
 
@@ -123,12 +123,12 @@ class PrestasiController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validate($request, [
-			'id_juara' => 'required',
-			'id_siswa' => 'required',
+			// 'id_juara' => 'required',
+			// 'id_siswa' => 'required',
 			'prestasi' => 'required',
-			'sertifikat' => 'required',
+			// 'sertifikat' => 'required',
 			'tgl_perolehan' => 'required',
-			'is_pakai' => 'required',
+			// 'is_pakai' => 'required',
 			
 		]);
 		
