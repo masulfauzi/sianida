@@ -146,7 +146,7 @@ class NilaiController extends Controller
 
 			$siswa = Siswa::whereNisn($data[$i][2])->first();
 
-			if($siswa->count() > 0)
+			if($siswa)
 			{
 				for($j=3; $j<$jml_kolom; $j++)
 				{
