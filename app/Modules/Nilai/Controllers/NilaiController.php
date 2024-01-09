@@ -146,21 +146,26 @@ class NilaiController extends Controller
 
 			$siswa = Siswa::whereNisn($data[$i][2])->first();
 
+			if(count($siswa) > 0)
+			{
+				for($j=3; $j<$jml_kolom; $j++)
+				{
+					$nilai = new Nilai();
+					$nilai->id_semester = $request->input("id_semester");
+					$nilai->id_siswa = $siswa->id;
+					$nilai->id_mapel = $id_mapel[$j];
+					$nilai->nilai = $data[$i][$j];
+					
+					$nilai->created_by = Auth::id();
+					$nilai->save();
+
+					// dd($nilai);
+				}
+			}
+
 			// dd($data[$i]);
 
-			for($j=3; $j<$jml_kolom; $j++)
-			{
-				$nilai = new Nilai();
-				$nilai->id_semester = $request->input("id_semester");
-				$nilai->id_siswa = $siswa->id;
-				$nilai->id_mapel = $id_mapel[$j];
-				$nilai->nilai = $data[$i][$j];
-				
-				$nilai->created_by = Auth::id();
-				$nilai->save();
-
-				// dd($nilai);
-			}
+			
 			
 		}
 
