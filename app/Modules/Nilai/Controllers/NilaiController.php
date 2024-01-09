@@ -147,17 +147,35 @@ class NilaiController extends Controller
 			$siswa = Siswa::whereNisn($data[$i][2])->first();
 
 			if($siswa)
-			{
+			{	
 				for($j=3; $j<$jml_kolom; $j++)
 				{
-					$nilai = new Nilai();
-					$nilai->id_semester = $request->input("id_semester");
-					$nilai->id_siswa = $siswa->id;
-					$nilai->id_mapel = $id_mapel[$j];
-					$nilai->nilai = $data[$i][$j];
+					$cek_nilai = Nilai::query()->whereIdSemester($request->input("id_semester"))
+										->whereIdSiswa($siswa->id)
+										->whereIdMapel($id_mapel[$j])
+										->first();
+
+					if($cek_nilai)
+					{
+						$nilai = Nilai::find($cek_nilai->id);
+						$nilai->nilai = $data[$i][$j];
+						
+						$nilai->updated_by = Auth::id();
+						$nilai->save();
+					}
+					else
+					{
+						$nilai = new Nilai();
+						$nilai->id_semester = $request->input("id_semester");
+						$nilai->id_siswa = $siswa->id;
+						$nilai->id_mapel = $id_mapel[$j];
+						$nilai->nilai = $data[$i][$j];
+						
+						$nilai->created_by = Auth::id();
+						$nilai->save();
+					}
+
 					
-					$nilai->created_by = Auth::id();
-					$nilai->save();
 
 					// dd($nilai);
 				}
