@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // use App\Modules\Bagian\Models\Bagian;
-use App\Modules\JenisKelamin\Models\JenisKelamin;
+use App\Modules\Jeniskelamin\Models\Jeniskelamin;
 use App\Modules\Agama\Models\Agama;
 use App\Modules\BagianTu\Models\BagianTu;
 
@@ -27,7 +27,7 @@ class Karyawan extends Model
 		return $this->belongsTo(BagianTu::class,"id_bagian","id");
 	}
 public function jenisKelamin(){
-		return $this->belongsTo(JenisKelamin::class,"id_jenis_kelamin","id");
+		return $this->belongsTo(Jeniskelamin::class,"id_jenis_kelamin","id");
 	}
 public function agama(){
 		return $this->belongsTo(Agama::class,"id_agama","id");
