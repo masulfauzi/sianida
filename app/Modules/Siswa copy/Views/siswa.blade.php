@@ -66,16 +66,14 @@
 									<td>{{ $item->nis }}</td>
 									<td>{{ $item->nisn }}</td>
 									<td>{{ $item->nik }}</td>
-									<td>{{ $item->jeniskelamin->jeniskelamin }}</td>
-									<td>{{ $item->agama->agama }}</td>
+									<td>{{ $item->id_jeniskelamin }}</td>
+									<td>{{ $item->id_agama }}</td>
 									<td>{{ $item->tahun_masuk }}</td>
 									
                                     <td>
-										{{-- {!! button('siswa.show','', $item->id) !!}
+										{!! button('siswa.show','', $item->id) !!}
 										{!! button('siswa.edit', $title, $item->id) !!}
-                                        {!! button('siswa.destroy', $title, $item->id) !!} --}}
-
-                                        <a href="{{ route('siswa.detail.show') }}" class="btn btn-outline-primary">Detail Siswa</a>
+                                        {!! button('siswa.destroy', $title, $item->id) !!}
                                     </td>
                                 </tr>
                             @empty

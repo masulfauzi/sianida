@@ -38,20 +38,6 @@
 									<div class='col-lg-2'><p>Jeniskelamin</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->jeniskelamin->id }}</p></div>
 									<div class='col-lg-2'><p>Agama</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->agama->id }}</p></div>
 									<div class='col-lg-2'><p>Tahun Masuk</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tahun_masuk }}</p></div>
-									<div class='col-lg-2'><p>Tempat Lahir</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tempat_lahir }}</p></div>
-									<div class='col-lg-2'><p>Tgl Lahir</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tgl_lahir }}</p></div>
-									<div class='col-lg-2'><p>Nama Ayah</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nama_ayah }}</p></div>
-									<div class='col-lg-2'><p>Nama Ibu</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nama_ibu }}</p></div>
-									<div class='col-lg-2'><p>Alamat</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->alamat }}</p></div>
-									<div class='col-lg-2'><p>Sekolah Asal</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->sekolah_asal }}</p></div>
-									<div class='col-lg-2'><p>No Ijazah Smp</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->no_ijazah_smp }}</p></div>
-									<div class='col-lg-2'><p>No Skhun</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->no_skhun }}</p></div>
-									<div class='col-lg-2'><p>File Ijazah Smp</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_ijazah_smp }}</p></div>
-									<div class='col-lg-2'><p>File Skhun</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_skhun }}</p></div>
-									<div class='col-lg-2'><p>File Kk</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_kk }}</p></div>
-									<div class='col-lg-2'><p>File Akta Lahir</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_akta_lahir }}</p></div>
-									<div class='col-lg-2'><p>Tgl Lulus</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tgl_lulus }}</p></div>
-									<div class='col-lg-2'><p>Is Lulus</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->is_lulus }}</p></div>
 									
                         </div>
                     </div>

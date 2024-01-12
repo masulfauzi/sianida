@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Siswa\Models;
+namespace App\Modules\Students\Models;
 
 use App\Helpers\UsesUuid;
 use Illuminate\Support\Facades\DB;
@@ -10,13 +10,13 @@ use App\Modules\Jeniskelamin\Models\Jeniskelamin;
 use App\Modules\Agama\Models\Agama;
 
 
-class Siswa extends Model
+class Students extends Model
 {
 	use SoftDeletes;
 	use UsesUuid;
 
 	protected $dates      = ['deleted_at'];
-	protected $table      = 'siswa';
+	protected $table      = 'students';
 	protected $fillable   = ['*'];	
 
 	public function jeniskelamin(){

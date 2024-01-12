@@ -29,7 +29,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-9">
-                        <form action="{{ route('siswa.index') }}" method="get">
+                        <form action="{{ route('students.index') }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
                                 <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
                                 <div class="form-control-icon"><i class="fa fa-search"></i></div>
@@ -37,7 +37,7 @@
                         </form>
                     </div>
                     <div class="col-3">  
-						{!! button('siswa.create', $title) !!}  
+						{!! button('students.create', $title) !!}  
                     </div>
                 </div>
                 @include('include.flash')
@@ -53,6 +53,20 @@
 								<td>Jeniskelamin</td>
 								<td>Agama</td>
 								<td>Tahun Masuk</td>
+								<td>Tempat Lahir</td>
+								<td>Tgl Lahir</td>
+								<td>Nama Ayah</td>
+								<td>Nama Ibu</td>
+								<td>Alamat</td>
+								<td>Sekolah Asal</td>
+								<td>No Ijazah Smp</td>
+								<td>No Skhun</td>
+								<td>File Ijazah Smp</td>
+								<td>File Skhun</td>
+								<td>File Kk</td>
+								<td>File Akta Lahir</td>
+								<td>Tgl Lulus</td>
+								<td>Is Lulus</td>
 								
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -66,21 +80,33 @@
 									<td>{{ $item->nis }}</td>
 									<td>{{ $item->nisn }}</td>
 									<td>{{ $item->nik }}</td>
-									<td>{{ $item->jeniskelamin->jeniskelamin }}</td>
-									<td>{{ $item->agama->agama }}</td>
+									<td>{{ $item->id_jeniskelamin }}</td>
+									<td>{{ $item->id_agama }}</td>
 									<td>{{ $item->tahun_masuk }}</td>
+									<td>{{ $item->tempat_lahir }}</td>
+									<td>{{ $item->tgl_lahir }}</td>
+									<td>{{ $item->nama_ayah }}</td>
+									<td>{{ $item->nama_ibu }}</td>
+									<td>{{ $item->alamat }}</td>
+									<td>{{ $item->sekolah_asal }}</td>
+									<td>{{ $item->no_ijazah_smp }}</td>
+									<td>{{ $item->no_skhun }}</td>
+									<td>{{ $item->file_ijazah_smp }}</td>
+									<td>{{ $item->file_skhun }}</td>
+									<td>{{ $item->file_kk }}</td>
+									<td>{{ $item->file_akta_lahir }}</td>
+									<td>{{ $item->tgl_lulus }}</td>
+									<td>{{ $item->is_lulus }}</td>
 									
                                     <td>
-										{{-- {!! button('siswa.show','', $item->id) !!}
-										{!! button('siswa.edit', $title, $item->id) !!}
-                                        {!! button('siswa.destroy', $title, $item->id) !!} --}}
-
-                                        <a href="{{ route('siswa.detail.show') }}" class="btn btn-outline-primary">Detail Siswa</a>
+										{!! button('students.show','', $item->id) !!}
+										{!! button('students.edit', $title, $item->id) !!}
+                                        {!! button('students.destroy', $title, $item->id) !!}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center"><i>No data.</i></td>
+                                    <td colspan="23" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>
