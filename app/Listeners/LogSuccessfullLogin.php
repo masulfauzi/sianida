@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Modules\Guru\Models\Guru;
+use App\Modules\Karyawan\Models\Karyawan;
 use App\Modules\Semester\Models\Semester;
 use App\Modules\Siswa\Models\Siswa;
 
@@ -74,6 +75,12 @@ class LogSuccessfullLogin
             if($guru = Guru::get_id_guru_by_id_user(Auth::user()->id)->first())
             {
                 session(['id_guru' => $guru->id_guru]);
+            }
+
+            //get session id_guru
+            if($karyawan = Karyawan::get_id_karyawan_by_id_user(Auth::user()->id)->first())
+            {
+                session(['id_karyawan' => $karyawan->id_karyawan]);
             }
 
 
