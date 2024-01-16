@@ -65,6 +65,7 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Mapel</th>
+                                            <th>Semester</th>
                                             <th>Nilai</th>
                                             <th>Aksi</th>
                                         </tr>
@@ -77,6 +78,7 @@
                                             <tr>
                                                 <td>{{ $no++ }}</td>
                                                 <td>{{ $item->mapel->mapel }}</td>
+                                                <td>{{ $item->semester->semester }}</td>
                                                 <td>{{ $item->nilai }}</td>
                                                 <td>
                                                     <a href="{{ route('nilai.edit', $item->id) }}" class="btn btn-sm btn-primary">Edit</a>
