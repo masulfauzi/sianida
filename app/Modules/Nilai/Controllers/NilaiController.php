@@ -214,15 +214,16 @@ class NilaiController extends Controller
 	{
 		$data['nilai'] = $nilai;
 
-		$ref_semester = Semester::all()->pluck('semester','id');
-		$ref_siswa = Siswa::all()->pluck('nama_siswa','id');
-		$ref_mapel = Mapel::all()->pluck('mapel','id');
+		// $ref_semester = Semester::all()->pluck('semester','id');
+		// $ref_siswa = Siswa::all()->pluck('nama_siswa','id');
+		// $ref_mapel = Mapel::all()->pluck('mapel','id');
 		
 		$data['forms'] = array(
-			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
-			'id_siswa' => ['Siswa', Form::select("id_siswa", $ref_siswa, null, ["class" => "form-control select2"]) ],
-			'id_mapel' => ['Mapel', Form::select("id_mapel", $ref_mapel, null, ["class" => "form-control select2"]) ],
+			// 'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
+			'siswa' => ['Siswa', Form::text("id_siswa", $nilai->siswa->nama_siswa, ["class" => "form-control", "disabled"]) ],
+			'id_mapel' => ['Mapel', Form::text("id_mapel", $nilai->mapel->mapel, ["class" => "form-control", "disabled"]) ],
 			'nilai' => ['Nilai', Form::text("nilai", $nilai->nilai, ["class" => "form-control","placeholder" => "", "id" => "nilai"]) ],
+			'id_siswa' => [NULL, Form::hidden("id_siswa", $nilai->id_siswa) ],
 			
 		);
 
@@ -234,17 +235,17 @@ class NilaiController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validate($request, [
-			'id_semester' => 'required',
+			// 'id_semester' => 'required',
 			'id_siswa' => 'required',
-			'id_mapel' => 'required',
+			// 'id_mapel' => 'required',
 			'nilai' => 'required',
 			
 		]);
 		
 		$nilai = Nilai::find($id);
-		$nilai->id_semester = $request->input("id_semester");
-		$nilai->id_siswa = $request->input("id_siswa");
-		$nilai->id_mapel = $request->input("id_mapel");
+		// $nilai->id_semester = $request->input("id_semester");
+		// $nilai->id_siswa = $request->input("id_siswa");
+		// $nilai->id_mapel = $request->input("id_mapel");
 		$nilai->nilai = $request->input("nilai");
 		
 		$nilai->updated_by = Auth::id();
@@ -253,7 +254,7 @@ class NilaiController extends Controller
 
 		$text = 'mengedit '.$this->title;//.' '.$nilai->what;
 		$this->log($request, $text, ['nilai.id' => $nilai->id]);
-		return redirect()->route('nilai.index')->with('message_success', 'Nilai berhasil diubah!');
+		return redirect()->route('siswa.detail.index', $request->input('id_siswa') . '?tab=transkrip')->with('message_success', 'Nilai berhasil diubah!');
 	}
 
 	public function destroy(Request $request, $id)

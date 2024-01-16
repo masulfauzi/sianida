@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('page-css')
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 @endsection
 
 @section('main')
@@ -23,48 +24,87 @@
     </div>
 
     <section class="section">
-        <div class="card">
-            <h6 class="card-header">
-                Detail Data {{ $title }}: {{ $siswa->nama }}
-            </h6>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-10 offset-lg-2">
-                        <div class="row">
-                            <div class='col-lg-2'><p>Nama Siswa</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nama_siswa }}</p></div>
-									<div class='col-lg-2'><p>Nis</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nis }}</p></div>
-									<div class='col-lg-2'><p>Nisn</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nisn }}</p></div>
-									<div class='col-lg-2'><p>Nik</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nik }}</p></div>
-									<div class='col-lg-2'><p>Jeniskelamin</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->jeniskelamin->id }}</p></div>
-									<div class='col-lg-2'><p>Agama</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->agama->id }}</p></div>
-									<div class='col-lg-2'><p>Tahun Masuk</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tahun_masuk }}</p></div>
-									<div class='col-lg-2'><p>Tempat Lahir</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tempat_lahir }}</p></div>
-									<div class='col-lg-2'><p>Tgl Lahir</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tgl_lahir }}</p></div>
-									<div class='col-lg-2'><p>Nama Ayah</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nama_ayah }}</p></div>
-									<div class='col-lg-2'><p>Nama Ibu</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->nama_ibu }}</p></div>
-									<div class='col-lg-2'><p>Alamat</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->alamat }}</p></div>
-									<div class='col-lg-2'><p>Sekolah Asal</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->sekolah_asal }}</p></div>
-									<div class='col-lg-2'><p>No Ijazah Smp</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->no_ijazah_smp }}</p></div>
-									<div class='col-lg-2'><p>No Skhun</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->no_skhun }}</p></div>
-									<div class='col-lg-2'><p>File Ijazah Smp</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_ijazah_smp }}</p></div>
-									<div class='col-lg-2'><p>File Skhun</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_skhun }}</p></div>
-									<div class='col-lg-2'><p>File Kk</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_kk }}</p></div>
-									<div class='col-lg-2'><p>File Akta Lahir</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->file_akta_lahir }}</p></div>
-									<div class='col-lg-2'><p>Tgl Lulus</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->tgl_lulus }}</p></div>
-									<div class='col-lg-2'><p>Is Lulus</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $siswa->is_lulus }}</p></div>
-									
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Detail Siswa</h5>
+                    </div>
+                    <div class="card-body">
+                        @include('include.flash')
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link @if ($tab == 'biodata') active @endif" id="home-tab" data-bs-toggle="tab" href="#home" role="tab"
+                                    aria-controls="home" aria-selected="true">Biodata</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link @if ($tab == 'transkrip') active @endif" id="profile-tab" data-bs-toggle="tab" href="#profile" role="tab"
+                                    aria-controls="profile" aria-selected="false">Transkrip Nilai</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            
+                            <div class="tab-pane fade  m-3 @if ($tab == 'biodata') show active @endif" id="home" role="tabpanel" aria-labelledby="home-tab">
+                               <table class="table">
+                                    <tr>
+                                        <td>Nama</td>
+                                        <td>:</td>
+                                        <td>{{ $siswa->nama_siswa }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>NISN</td>
+                                        <td>:</td>
+                                        <td>{{ $siswa->nisn }}</td>
+                                    </tr>
+                               </table>
+                            </div>
+                            <div class="tab-pane fade m-3 @if ($tab == 'transkrip') show active @endif" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                <table id="transkrip" class="cell-border compact stripe">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Mapel</th>
+                                            <th>Nilai</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                        $no = 1;
+                                        @endphp
+                                        @foreach ($nilai as $item)
+                                            <tr>
+                                                <td>{{ $no++ }}</td>
+                                                <td>{{ $item->mapel->mapel }}</td>
+                                                <td>{{ $item->nilai }}</td>
+                                                <td>
+                                                    <a href="{{ route('nilai.edit', $item->id) }}" class="btn btn-sm btn-primary">Edit</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                    
+                                </table>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
             </div>
+            
         </div>
-
     </section>
+    
 </div>
 @endsection
 
 @section('page-js')
+    <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 @endsection
 
 @section('inline-js')
+    <script>
+        let table = new DataTable('#transkrip');
+    </script>
 @endsection

@@ -12,7 +12,6 @@ use App\Modules\Karyawan\Models\Karyawan;
 use App\Modules\Semester\Models\Semester;
 use App\Modules\Siswa\Models\Siswa;
 
-
 class LogSuccessfullLogin
 {
     /**
@@ -68,8 +67,6 @@ class LogSuccessfullLogin
             session(['active_role' => $active_role]);  
             session(['semester' => $semester->pluck('semester', 'id')]);  
 
-            // dd(session()->all());
-            
             //session custom
             //get session id_guru
             if($guru = Guru::get_id_guru_by_id_user(Auth::user()->id)->first())
@@ -77,21 +74,16 @@ class LogSuccessfullLogin
                 session(['id_guru' => $guru->id_guru]);
             }
 
-            //get session id_guru
+            //get session id_karyawan
             if($karyawan = Karyawan::get_id_karyawan_by_id_user(Auth::user()->id)->first())
             {
                 session(['id_karyawan' => $karyawan->id_karyawan]);
             }
 
-
-            //get session id_siswa
-            if($siswa = Siswa::get_id_siswa_by_id_user(Auth::user()->id)->first())
+            if($siswa = Siswa::get_siswa_by_id_user(Auth::user()->id)->first())
             {
                 session(['id_siswa' => $siswa->id_siswa]);
             }
-
-            
-            
             
 
         } catch (\Throwable $th) {

@@ -75,7 +75,7 @@
 										{!! button('siswa.edit', $title, $item->id) !!}
                                         {!! button('siswa.destroy', $title, $item->id) !!} --}}
 
-                                        <a href="{{ route('siswa.detail.show') }}" class="btn btn-outline-primary">Detail Siswa</a>
+                                        <a href="{{ route('siswa.detail.index', $item->id) }}" class="btn btn-outline-primary">Detail Siswa</a>
                                     </td>
                                 </tr>
                             @empty

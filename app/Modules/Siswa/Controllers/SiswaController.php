@@ -10,6 +10,7 @@ use App\Modules\Jeniskelamin\Models\Jeniskelamin;
 use App\Modules\Agama\Models\Agama;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Nilai\Models\Nilai;
 use Illuminate\Support\Facades\Auth;
 
 class SiswaController extends Controller
@@ -25,20 +26,35 @@ class SiswaController extends Controller
 
 	public function index(Request $request)
 	{
-		if(session('active_role')['id'] == 'ce70ee2f-b43b-432b-b71c-30d073a4ba23')
-		{
-			return redirect(route('siswa.biodata.index'));
-		}
-
 		$query = Siswa::query();
 		if($request->has('search')){
 			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
+			$query->where('nama_siswa', 'like', "%$search%");
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function detail_siswa(Request $request, Siswa $siswa)
+	{
+		// $url = url()->current();
+		// dd($url);
+
+		$tab = $request->tab;
+
+		if(!$tab)
+		{
+			$tab = 'biodata';
+		}
+
+		$data['tab'] = $tab;
+		$data['siswa'] = $siswa;
+		$data['nilai'] = Nilai::query()->whereIdSiswa($siswa->id)->get();
+
+		$this->log($request, 'melihat halaman detail siswa '.$this->title);
+		return view('Siswa::siswa_detail', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function create(Request $request)
