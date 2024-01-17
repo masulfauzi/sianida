@@ -50,7 +50,7 @@ class PrestasiController extends Controller
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
 		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$data['data'] = $query->paginate(20)->withQueryString();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Prestasi::prestasi_admin', array_merge($data, ['title' => $this->title]));
