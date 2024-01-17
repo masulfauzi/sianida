@@ -26,6 +26,14 @@ public function agama(){
 		return $this->belongsTo(Agama::class,"id_agama","id");
 	}
 
+	public static function cek_aktivasi_siswa($data)
+	{
+		return DB::table('siswa')
+					->where('nis', $data->nis)
+					->where('nisn', $data->nisn)
+					->where('nik', $data->nik);
+	}
+
 	public static function get_siswa_by_id_user($id_user)
 	{
 		// dd();
