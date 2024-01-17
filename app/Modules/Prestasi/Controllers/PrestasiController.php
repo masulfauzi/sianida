@@ -66,7 +66,7 @@ class PrestasiController extends Controller
 		
 		$text = 'mengedit '.$this->title;//.' '.$prestasi->what;
 		$this->log($request, $text, ['prestasi.id' => $prestasi->id]);
-		return redirect()->route('prestasi.index')->with('message_success', 'Prestasi berhasil diubah!');
+		return redirect()->back()->with('message_success', 'Prestasi berhasil diubah!');
 	}
 
 	public function create(Request $request)
