@@ -25,6 +25,13 @@ class PrestasiController extends Controller
 
 	public function index(Request $request)
 	{
+		// dd(session('active_role'));
+		
+		if(session('active_role')['id'] == '1fe8326c-22c4-4732-9c12-f7b83a16b842')
+		{
+			return redirect()->route('prestasi.admin.index');
+		}
+
 		$query = Prestasi::query()->whereIdSiswa(session()->get('id_siswa'));
 		if($request->has('search')){
 			$search = $request->get('search');
@@ -34,6 +41,32 @@ class PrestasiController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Prestasi::prestasi', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function index_admin(Request $request)
+	{
+		$query = Prestasi::query();
+		if($request->has('search')){
+			$search = $request->get('search');
+			// $query->where('name', 'like', "%$search%");
+		}
+		$data['data'] = $query->paginate(10)->withQueryString();
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('Prestasi::prestasi_admin', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function ubah_status(Request $request, $id_prestasi, $is_pakai)
+	{
+		$prestasi = Prestasi::find($id_prestasi);
+		$prestasi->is_pakai = $is_pakai;
+		
+		$prestasi->updated_by = Auth::id();
+		$prestasi->save();
+		
+		$text = 'mengedit '.$this->title;//.' '.$prestasi->what;
+		$this->log($request, $text, ['prestasi.id' => $prestasi->id]);
+		return redirect()->route('prestasi.index')->with('message_success', 'Prestasi berhasil diubah!');
 	}
 
 	public function create(Request $request)
@@ -133,12 +166,12 @@ class PrestasiController extends Controller
 		]);
 		
 		$prestasi = Prestasi::find($id);
-		$prestasi->id_juara = $request->input("id_juara");
-		$prestasi->id_siswa = $request->input("id_siswa");
+		// $prestasi->id_juara = $request->input("id_juara");
+		// $prestasi->id_siswa = $request->input("id_siswa");
 		$prestasi->prestasi = $request->input("prestasi");
-		$prestasi->sertifikat = $request->input("sertifikat");
+		// $prestasi->sertifikat = $request->input("sertifikat");
 		$prestasi->tgl_perolehan = $request->input("tgl_perolehan");
-		$prestasi->is_pakai = $request->input("is_pakai");
+		// $prestasi->is_pakai = $request->input("is_pakai");
 		
 		$prestasi->updated_by = Auth::id();
 		$prestasi->save();
