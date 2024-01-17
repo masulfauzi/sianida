@@ -45,7 +45,7 @@ class PrestasiController extends Controller
 
 	public function index_admin(Request $request)
 	{
-		$query = Prestasi::query();
+		$query = Prestasi::query()->orderBy('is_pakai');
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
