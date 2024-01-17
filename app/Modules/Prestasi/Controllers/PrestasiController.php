@@ -27,7 +27,7 @@ class PrestasiController extends Controller
 	{
 		// dd(session('active_role'));
 		
-		if(session('active_role')['id'] == '1fe8326c-22c4-4732-9c12-f7b83a16b842')
+		if(session('active_role')['id'] != 'ce70ee2f-b43b-432b-b71c-30d073a4ba23')
 		{
 			return redirect()->route('prestasi.admin.index');
 		}
