@@ -37,12 +37,7 @@ class SnbpController extends Controller
 
 	public function index_jurusan(Request $request, Jurusan $jurusan)
 	{
-		$data['data'] = Snbp::join('pesertadidik as p', 'p.id_siswa', '=', 'snbp.id_siswa')
-							->join('kelas as k', 'k.id','=', 'p.id_kelas')
-							->where('k.id_jurusan', $jurusan->id)
-							->where('snbp.id_semester', session('active_semester')['id'])
-							->where('p.id_semester', session('active_semester')['id'])
-							->orderBy('rata_rata', 'DESC')->get();
+		$data['data'] = Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id']);
 		$data['jurusan'] = $jurusan;
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
@@ -66,7 +61,7 @@ class SnbpController extends Controller
 		
 		// dd($siswa);
 
-		$hapus = Snbp::whereIn('id_siswa',$siswa)->delete();
+		// $hapus = Snbp::whereIn('id_siswa',$siswa)->delete();
 
 		// dd($hapus);
 
@@ -92,21 +87,58 @@ class SnbpController extends Controller
 
 			$data_nilai_collection = collect($data_nilai);
 
-			// dd($data_nilai_collection->sum()/count($data_nilai_collection));
+			$cek_snbp = Snbp::whereIdSemester(session('active_semester')['id'])
+								->whereIdSiswa($item->id)
+								->first();
+			// dd($cek_snbp);
 
-			$snbp = new Snbp();
-			$snbp->id_semester = session('active_semester')['id'];
-			$snbp->id_siswa = $item->id;
-			$snbp->rata_rata = $data_nilai_collection->sum()/count($data_nilai_collection);
-			$snbp->is_berminat = 1;
-			
-			$snbp->created_by = Auth::id();
-			$snbp->save();
-
-			// dd($snbp);
-			
+			if($cek_snbp)
+			{
+				$snbp = Snbp::find($cek_snbp->id);
+				$snbp->rata_rata = $data_nilai_collection->sum()/count($data_nilai_collection);
+				
+				$snbp->updated_by = Auth::id();
+				$snbp->save();
+			}
+			else
+			{
+				$snbp = new Snbp();
+				$snbp->id_semester = session('active_semester')['id'];
+				$snbp->id_siswa = $item->id;
+				$snbp->rata_rata = $data_nilai_collection->sum()/count($data_nilai_collection);
+				
+				$snbp->created_by = Auth::id();
+				$snbp->save();
+			}
 			
 		}
+
+		$urutkan = Snbp::get_nilai_snbp_jurusan($jurusan->id, $id_semester);
+
+		$kuota = 40 / 100 * count($urutkan);
+
+		$no = 1;
+		foreach($urutkan as $urutan)
+		{
+			if($no <= $kuota)
+			{
+				$eligible = 1;
+			}
+			else
+			{
+				$eligible = 0;
+			}
+
+			$snbp = Snbp::find($urutan->id);
+			$snbp->is_eligible = $eligible;
+			$snbp->peringkat = $no;
+				
+			$snbp->updated_by = Auth::id();
+			$snbp->save();
+
+			$no ++;
+		}
+
 
 		$text = 'membuat '.$this->title; //' baru '.$snbp->what;
 		$this->log($request, $text, ['snbp.id' => $snbp->id]);

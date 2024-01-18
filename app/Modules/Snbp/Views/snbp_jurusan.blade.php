@@ -49,19 +49,53 @@
                                 <td>Nama Siswa</td>
                                 <td>NISN</td>
                                 <td>Nilai</td>
+                                <td>Berminat</td>
                                 <td>Eligible</td>
+                                <td>Peringkat</td>
                             </tr>
                         </thead>
                         <tbody>
-                            @php $no = 1; @endphp
+                            @php 
+                                $no = 1;                             
+                            @endphp
+
                             @forelse ($data as $item)
-                                <tr>
+                                @if ($item->is_berminat == 1)
+                                    @php
+                                        $berminat = 'Berminat';
+                                    @endphp
+                                @else
+                                    @if ($item->is_berminat == '0')
+                                        @php
+                                            $berminat = 'Tidak Berminat';
+                                        @endphp
+                                    @else
+                                        @php
+                                            $berminat = 'Belum Ditentukan';
+                                        @endphp
+                                    @endif
+                                @endif
+
+                                @if ($item->is_eligible == 1)
+                                    @php
+                                        $eligible = 'Eligible';
+                                        $class = '';
+                                    @endphp
+                                @else
+                                    @php
+                                        $eligible = 'Tidak Eligible';
+                                        $class = 'table-danger';
+                                    @endphp
+                                @endif
+                                <tr class="{{ $class }}">
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->siswa->nama_siswa }}</td>
-                                    <td>{{ $item->siswa->nisn }}</td>
+                                    <td>{{ $item->nama_siswa }}</td>
+                                    <td>{{ $item->nisn }}</td>
                                     <td>{{ $item->rata_rata }}</td>
+                                    <td>{{ $berminat }}</td>
+                                    <td>{{ $eligible }}</td>
+                                    <td>{{ $item->peringkat }}</td>
 									
-                                   
                                 </tr>
                             @empty
                                 <tr>
