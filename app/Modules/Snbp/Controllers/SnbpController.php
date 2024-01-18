@@ -42,7 +42,7 @@ class SnbpController extends Controller
 							->where('k.id_jurusan', $jurusan->id)
 							->where('snbp.id_semester', session('active_semester')['id'])
 							->where('p.id_semester', session('active_semester')['id'])
-							->orderBy('rata_rata')->get();
+							->orderBy('rata_rata', 'DESC')->get();
 		$data['jurusan'] = $jurusan;
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
