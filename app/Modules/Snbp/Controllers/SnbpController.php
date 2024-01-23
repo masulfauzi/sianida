@@ -29,10 +29,70 @@ class SnbpController extends Controller
 
 	public function index(Request $request)
 	{
+		if(session('active_role')['id'] == 'ce70ee2f-b43b-432b-b71c-30d073a4ba23')
+		{
+			return redirect()->route('snbp.siswa.index');
+		}
+
 		$data['data'] = Jurusan::all();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Snbp::snbp', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function index_siswa(Request $request)
+	{
+		// dd(session('id_siswa'));
+		$siswa = Siswa::detail_siswa(session('id_siswa'));
+
+		// dd($siswa);
+
+		$data['pesertadidik'] = Pesertadidik::join('kelas as k', 'pesertadidik.id_kelas', '=', 'k.id')
+												->join('snbp as s', 'pesertadidik.id_siswa', '=', 's.id_siswa')
+												->where('k.id_jurusan', $siswa->id_jurusan)
+												->where('pesertadidik.id_semester',session('active_semester')['id'])
+												->get();
+		$data['data'] = Snbp::whereIdSiswa(session('id_siswa'))->first();
+
+		// dd($data['data']);
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('Snbp::snbp_siswa', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function update_minat(Request $request, $id_snbp)
+	{
+		$snbp = Snbp::find($id_snbp);
+
+		$snbp->is_berminat = $request->input('berminat');
+
+		$snbp->updated_by = Auth::id();
+		$snbp->save();
+
+		$this->log($request, 'mengubah status berminat');
+		return redirect()->back()->with('message_success', 'Status berhasil disimpan');
+	}
+
+	public function upload_super(Request $request, $id_snbp)
+	{
+		$request->validate([
+            'file' => 'required|mimes:pdf,doc,docx|max:10240'
+        ]);
+
+		$fileName = time().'.'.$request->file->extension();  
+
+        $request->file->move(public_path('uploads/super/'), $fileName);
+
+
+		$snbp = Snbp::find($id_snbp);
+
+		$snbp->super = $fileName;
+
+		$snbp->updated_by = Auth::id();
+		$snbp->save();
+
+		$this->log($request, 'mengupload super');
+		return redirect()->back()->with('message_success', 'Surat Pernyataan berhasil disimpan');
 	}
 
 	public function index_jurusan(Request $request, Jurusan $jurusan)

@@ -8,6 +8,11 @@ Route::controller(SnbpController::class)->middleware(['web','auth'])->name('snbp
 	Route::get('/snbp/jurusan/{jurusan}', 'index_jurusan')->name('jurusan.index');
 	Route::get('/snbp/generate_jurusan/{jurusan}', 'generate_jurusan')->name('generate.create');
 	
+	// ROUTE UNTUK SISWA
+	Route::get('/snbp/siswa', 'index_siswa')->name('siswa.index');
+	Route::post('/snbp/update_minat/{snbp}', 'update_minat')->name('berminat.update');
+	Route::post('/snbp/upload_super/{snbp}', 'upload_super')->name('super.store');
+	
 	
 	
 	Route::get('/snbp', 'index')->name('index');
