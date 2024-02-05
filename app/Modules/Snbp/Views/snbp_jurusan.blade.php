@@ -38,6 +38,7 @@
                     </div>
                     <div class="col-3">  
 						<a href="{{ route('snbp.generate.create', $jurusan->id) }}" class="btn btn-primary">Generate</a> 
+						<a href="{{ route('snbp.finalisasi.create', $jurusan->id) }}" class="btn btn-success">Finalisasi</a> 
                     </div>
                 </div>
                 @include('include.flash')
@@ -52,14 +53,19 @@
                                 <td>Berminat</td>
                                 <td>Eligible</td>
                                 <td>Peringkat</td>
+                                <td>Eligible Final</td>
+                                <td>Peringkat Final</td>
                             </tr>
                         </thead>
                         <tbody>
                             @php 
-                                $no = 1;                             
+                                $no = 1;
+                                $kuota = 40 / 100 * count($data);
                             @endphp
 
                             @forelse ($data as $item)
+                                
+
                                 @if ($item->is_berminat == 1)
                                     @php
                                         $berminat = 'Berminat';
@@ -79,14 +85,33 @@
                                 @if ($item->is_eligible == 1)
                                     @php
                                         $eligible = 'Eligible';
-                                        $class = '';
                                     @endphp
                                 @else
                                     @php
                                         $eligible = 'Tidak Eligible';
+                                    @endphp
+                                @endif
+                                
+                                @if ($item->is_eligible_final == 1)
+                                    @php
+                                        $eligible_final = 'Eligible';
+                                    @endphp
+                                @else
+                                    @php
+                                        $eligible_final = 'Tidak Eligible';
+                                    @endphp
+                                @endif
+
+                                @if ($no <= $kuota)
+                                    @php
+                                        $class = '';
+                                    @endphp
+                                @else
+                                    @php
                                         $class = 'table-danger';
                                     @endphp
                                 @endif
+
                                 <tr class="{{ $class }}">
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->nama_siswa }}</td>
@@ -95,6 +120,8 @@
                                     <td>{{ $berminat }}</td>
                                     <td>{{ $eligible }}</td>
                                     <td>{{ $item->peringkat }}</td>
+                                    <td>{{ $eligible_final }}</td>
+                                    <td>{{ $item->peringkat_final }}</td>
 									
                                 </tr>
                             @empty

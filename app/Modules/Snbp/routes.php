@@ -7,6 +7,7 @@ Route::controller(SnbpController::class)->middleware(['web','auth'])->name('snbp
 	// ROUTE CUSTOM 
 	Route::get('/snbp/jurusan/{jurusan}', 'index_jurusan')->name('jurusan.index');
 	Route::get('/snbp/generate_jurusan/{jurusan}', 'generate_jurusan')->name('generate.create');
+	Route::get('/snbp/finalisasi/{jurusan}', 'finalisasi')->name('finalisasi.create');
 	
 	// ROUTE UNTUK SISWA
 	Route::get('/snbp/siswa', 'index_siswa')->name('siswa.index');

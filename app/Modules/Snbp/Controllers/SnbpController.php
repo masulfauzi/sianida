@@ -97,11 +97,49 @@ class SnbpController extends Controller
 
 	public function index_jurusan(Request $request, Jurusan $jurusan)
 	{
-		$data['data'] = Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id']);
+		$data['data'] = Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id'])->sortBy('peringkat')->sortBy('peringkat_final');
 		$data['jurusan'] = $jurusan;
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Snbp::snbp_jurusan', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function finalisasi(Request $request, Jurusan $jurusan)
+	{
+		// dd($jurusan);
+
+		$urutkan = Snbp::get_nilai_snbp_jurusan_final($jurusan->id, session('active_semester')['id']);
+
+		$kuota = 40 / 100 * count($urutkan);
+
+		$no = 1;
+		foreach($urutkan as $urutan)
+		{
+			if($no <= $kuota)
+			{
+				$eligible = 1;
+			}
+			else
+			{
+				$eligible = 0;
+			}
+
+			$snbp = Snbp::find($urutan->id);
+			$snbp->is_eligible_final = $eligible;
+			$snbp->peringkat_final = $no;
+				
+			$snbp->updated_by = Auth::id();
+			$snbp->save();
+
+			$no ++;
+		}
+
+
+		$text = 'membuat '.$this->title; //' baru '.$snbp->what;
+		$this->log($request, $text, ['snbp.id' => $snbp->id]);
+		return redirect()->back()->with('message_success', 'Snbp berhasil ditambahkan!');
+
+
 	}
 
 	public function generate_jurusan(Request $request, Jurusan $jurusan)
