@@ -11,6 +11,7 @@ use App\Modules\Siswa\Models\Siswa;
 use App\Modules\Mapel\Models\Mapel;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Jurusan\Models\Jurusan;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -35,15 +36,59 @@ class NilaiController extends Controller
 			return redirect()->route('nilai.siswa.index');
 		}
 
-		$query = Nilai::query();
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$data['selected'] = [
+			'id_semester' => $request->input('id_semester'),
+			'id_jurusan' => $request->input('id_jurusan')
+		];
+
+		$data['semester'] = Semester::all()->pluck('semester', 'id');
+		$data['semester']->prepend('-PILIH SALAH SATU-', '');
+
+		// dd($data['semester']);
+		$data['jurusan'] = Jurusan::all()->pluck('jurusan', 'id');
+		$data['jurusan']->prepend('-PILIH SALAH SATU-', '');
+
+
+		$siswa = Siswa::select('siswa.*', 'n.peringkat_final')
+						->join('pesertadidik as p', 'siswa.id', '=', 'p.id_siswa')
+						->join('kelas as k', 'p.id_kelas', '=', 'k.id')
+						->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
+						->join('snbp as n', 'n.id_siswa', '=', 'siswa.id')
+						->where('p.id_semester', session('active_semester')['id'])
+						->where('k.id_jurusan', $request->input('id_jurusan'))
+						->where('t.tingkat', 'XII')
+						->orderBy('n.peringkat_final')
+						->get();
+
+		$id_siswa = Siswa::select('siswa.id')
+							->join('pesertadidik as p', 'siswa.id', '=', 'p.id_siswa')
+							->join('kelas as k', 'p.id_kelas', '=', 'k.id')
+							->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
+							->where('p.id_semester', session('active_semester')['id'])
+							->where('k.id_jurusan', $request->input('id_jurusan'))
+							->where('t.tingkat', 'XII')
+							->get();
+
+		$mapel = Nilai::whereIn('id_siswa', $id_siswa)
+						->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
+						->where('nilai.id_semester', $request->input('id_semester'));
+
+		$nilai = clone $mapel;
+
+		$nilai = $nilai->get();
+
+		$mapel = $mapel->groupBy('m.id')->get();
+
+		$data['mapel'] = $mapel;
+		$data['siswa'] = $siswa;
+		$data['nilai'] = $nilai;
+
+
+
+
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
-		return view('Nilai::nilai', array_merge($data, ['title' => $this->title]));
+		return view('Nilai::nilai_filter', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function index_siswa(Request $request)
