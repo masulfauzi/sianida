@@ -125,7 +125,7 @@ class NilaiController extends Controller
 
 	public function create(Request $request)
 	{
-		$ref_semester = Semester::all()->pluck('semester','id');
+		$ref_semester = Semester::all()->sortBy('urutan')->pluck('semester','id');
 		$ref_semester->prepend('-PILIH SALAH SATU-', '');
 		// $ref_siswa = Siswa::all()->pluck('nama_siswa','id');
 		$data['ref_mapel'] = Mapel::all()->pluck('mapel','id');

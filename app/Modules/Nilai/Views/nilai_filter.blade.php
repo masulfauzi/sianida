@@ -85,23 +85,45 @@
                         </tr>
                         @php
                             $no = 1;
+                            $skip = [
+                                '41add181-313c-4c27-9f7e-1a0236e1cdea',
+                                'afad1365-e60b-4c5a-8956-3d1c4dc98d0e',
+                                '471f4a09-5b09-40d5-b01b-7bff3490ee2f'
+                            ];
                         @endphp
     
                         @foreach ($siswa as $item_siswa)
-                            <tr>
-                                <td>{{ $no++ }}</td>
-                                <td>{{ $item_siswa->nama_siswa }}</td>
-                                <td>{{ $item_siswa->nisn }}</td>
-                                <td>{{ $item_siswa->peringkat_final }}</td>
-    
-                                @foreach ($mapel as $item_mapel)
-                                    @php
-                                        $tampil_nilai = $nilai->where('id_siswa', $item_siswa->id)->where('id_mapel', $item_mapel->id)->first()->nilai;
-                                    @endphp
-                                    <th>{{ $tampil_nilai }}</th>
-                                @endforeach
+                            @if (in_array($item_siswa->id, $skip))
                                 
-                            </tr>
+                            @else
+                                <tr>
+                                    <td>{{ $no++ }}</td>
+                                    <td>{{ $item_siswa->nama_siswa }}</td>
+                                    <td>{{ $item_siswa->nisn }}</td>
+                                    <td>{{ $item_siswa->peringkat_final }}</td>
+        
+                                    @foreach ($mapel as $item_mapel)
+                                    
+                                        @php
+                                            $tampil_nilai = \App\Modules\Nilai\Models\Nilai::where('id_siswa', $item_siswa->id)->where('id_semester', $selected['id_semester'])->where('id_mapel', $item_mapel->id)->first();
+                                        @endphp
+
+                                        @if ($tampil_nilai == '')
+                                            @php
+                                                die($tampil_nilai);
+                                            @endphp
+                                        @endif
+
+                                        <th>{!! $tampil_nilai !!}</th>
+                                    @endforeach
+                                    
+                                </tr>
+                            @endif
+                            
+
+                            {{-- @if ($no == 11)
+                                {{ die(); }}
+                            @endif --}}
                         @endforeach
                         
                     </table>
