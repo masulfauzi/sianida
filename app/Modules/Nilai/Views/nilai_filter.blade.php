@@ -105,7 +105,7 @@
                                     @foreach ($mapel as $item_mapel)
                                     
                                         @php
-                                            $tampil_nilai = \App\Modules\Nilai\Models\Nilai::where('id_siswa', $item_siswa->id)->where('id_semester', $selected['id_semester'])->where('id_mapel', $item_mapel->id)->first();
+                                            $tampil_nilai = \App\Modules\Nilai\Models\Nilai::where('id_siswa', $item_siswa->id)->where('id_semester', $selected['id_semester'])->where('id_mapel', $item_mapel->id)->first()->nilai;
                                         @endphp
 
                                         @if ($tampil_nilai == '')
