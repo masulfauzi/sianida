@@ -41,7 +41,7 @@ class NilaiController extends Controller
 			'id_jurusan' => $request->input('id_jurusan')
 		];
 
-		$data['semester'] = Semester::all()->pluck('semester', 'id');
+		$data['semester'] = Semester::orderBy('urutan')->get()->pluck('semester', 'id');
 		$data['semester']->prepend('-PILIH SALAH SATU-', '');
 
 		// dd($data['semester']);
