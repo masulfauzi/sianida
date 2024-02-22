@@ -50,7 +50,8 @@ class JurnalTuController extends Controller
 			'id_status_pekerjaan' => ['Status Pekerjaan', Form::select("id_status_pekerjaan", $ref_status_pekerjaan, null, ["class" => "form-control select2"]) ],
 			'detail_pekerjaan' => ['Detail Pekerjaan', Form::textarea("detail_pekerjaan", old("detail_pekerjaan"), ["class" => "form-control rich-editor"]) ],
 			'tanggal' => ['Tanggal', Form::text("tanggal", old("tanggal"), ["class" => "form-control datepicker"]) ],
-			'foto' => ['Foto', Form::file("foto", ["class" => "form-control","accept"=>"image/*", "capture"=>"camera"]) ],
+			// 'foto' => ['Foto', Form::file("foto", ["class" => "form-control","accept"=>"image/*", "capture"=>"camera"]) ],
+			'foto' => ['Foto', Form::file("foto", ["class" => "form-control","accept"=>"capture=camera,image/*"]) ],
 			'id_karyawan' => ['', Form::hidden("id_karyawan", $id_karyawan) ],
 			
 		);
