@@ -235,6 +235,7 @@ class UjiansekolahController extends Controller
 			'id_guru' => ['Guru', Form::select("id_guru", $ref_guru, $data['ujiansekolah']['id_guru'], ["class" => "form-control select2"]) ],
 			'id_mapel' => ['Mapel', Form::select("id_mapel", $ref_mapel, $data['ujiansekolah']['id_mapel'], ["class" => "form-control select2"]) ],
 			'id_jurusan' => ['Jurusan', Form::select("id_jurusan", $ref_jurusan, $data['ujiansekolah']['id_jurusan'], ["class" => "form-control select2"]) ],
+			'jml_soal' => ['Jumlah Soal', Form::text("id_jurusan", $data['ujiansekolah']['jml_soal'], ["class" => "form-control"]) ],
 			
 		);
 
@@ -256,6 +257,7 @@ class UjiansekolahController extends Controller
 		$ujiansekolah->id_mapel = $request->input("id_mapel");
 		$ujiansekolah->id_guru = $request->input("id_guru");
 		$ujiansekolah->id_jurusan = $request->input("id_jurusan");
+		$ujiansekolah->jml_soal = $request->input("jml_soal");
 		
 		$ujiansekolah->updated_by = Auth::id();
 		$ujiansekolah->save();
