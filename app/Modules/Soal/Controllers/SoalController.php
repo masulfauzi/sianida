@@ -227,6 +227,7 @@ public function input_soal(Request $request, $id_ujian, $id_jenissoal, $no_soal)
 		$soal->opsi_c = $request->input("opsi_c");
 		$soal->opsi_d = $request->input("opsi_d");
 		$soal->opsi_e = $request->input("opsi_e");
+		$soal->kunci = $request->input("kunci");
 
 		if($request->hasFile('gambar'))
 		{
