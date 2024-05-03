@@ -11,6 +11,8 @@ use App\Modules\Agama\Models\Agama;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Nilai\Models\Nilai;
+use App\Modules\Semester\Models\Semester;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class SiswaController extends Controller
@@ -35,6 +37,29 @@ class SiswaController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function kelulusan(Request $request)
+	{
+		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
+		$data['semester']	= Semester::find(get_semester('active_semester_id'));
+
+		$sekarang = Carbon::createFromTimeString(date('Y-m-d H:i:s'));
+		$pengumuman = Carbon::createFromTimeString($data['semester']->wkt_kelulusan);
+
+		// dd($sekarang);
+
+		if ($sekarang->gt($pengumuman)) {
+			// die("Tampil");
+			return view('Siswa::siswa_kelulusan', array_merge($data, ['title' => $this->title]));
+		}
+		else
+		{
+			// die("Belum");
+			return view('Siswa::timer_kelulusan', array_merge($data, ['title' => $this->title]));
+		}
+
+		
 	}
 
 	public function detail_siswa(Request $request, Siswa $siswa)
