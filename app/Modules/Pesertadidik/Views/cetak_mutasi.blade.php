@@ -66,7 +66,7 @@
                 <td class="center">{{ $item->kelas }}</td>
                 <td class="center">LULUS</td>
                 <td>
-                    Semarang, 8 Mei 2023
+                    Semarang, 7 Mei 2024
                     <br>
                     Kepala Sekolah
                     <br>
