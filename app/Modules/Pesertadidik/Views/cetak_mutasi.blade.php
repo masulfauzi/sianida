@@ -47,7 +47,7 @@
                 <td width="5%"></td>
                 <td width="23%">Nama Peserta Didik</td>
                 <td width="2%">:</td>
-                <td>{{ $item->nama_siswa }}</td>
+                <td>{{ strtoupper($item->nama_siswa) }}</td>
             </tr>
         </table>
             
