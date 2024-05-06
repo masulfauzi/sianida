@@ -62,7 +62,7 @@
                 <td class="bold">Tanda Tangan Kepala Sekolah, Stempel Sekolah, dan Tanda Tangan Orang Tua/Wali</td>
             </tr>
             <tr>
-                <td class="center">8 Mei 2023</td>
+                <td class="center">7 Mei 2024</td>
                 <td class="center">{{ $item->kelas }}</td>
                 <td class="center">LULUS</td>
                 <td>
