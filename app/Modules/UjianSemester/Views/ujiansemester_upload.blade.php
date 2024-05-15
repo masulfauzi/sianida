@@ -64,7 +64,7 @@
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>Kunci & Norma Penilaian</td>
+                                <td>Norma Penilaian</td>
                                 <td align="center">
                                     @if ($data->norma_penilaian)
                                         <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$data->norma_penilaian.'/lihat/norma') }}');">
