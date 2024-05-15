@@ -24,7 +24,7 @@ class SoalSemesterController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = SoalSemester::query()->whereIdGuru(session('id_guru'));
+		$query = SoalSemester::query();
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");

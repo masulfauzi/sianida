@@ -29,7 +29,7 @@ class UjianSemesterController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = UjianSemester::query();
+		$query = UjianSemester::query()->whereIdGuru(session('id_guru'));
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
