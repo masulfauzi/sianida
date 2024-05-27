@@ -85,6 +85,8 @@ class SoalSemesterController extends Controller
 
 	function store(Request $request)
 	{
+		dd($request->input("soal"));
+
 		$this->validate($request, [
 			'id_ujiansemester' => 'required',
 			'no_soal' => 'required',
@@ -212,6 +214,8 @@ class SoalSemesterController extends Controller
 
 	public function update(Request $request, $id)
 	{
+		// dd($request->all());
+
 		$this->validate($request, [
 			// 'id_ujiansemester' => 'required',
 			// 'no_soal' => 'required',

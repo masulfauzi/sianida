@@ -6,6 +6,7 @@ use App\Modules\UjianSemester\Controllers\UjianSemesterController;
 Route::controller(UjianSemesterController::class)->middleware(['web','auth'])->name('ujiansemester.')->group(function(){
 	// route custom
 	Route::get('/ujiansemester/upload/{ujiansemester}', 'upload')->name('upload.index');
+	Route::get('/ujiansemester/admin/', 'index_admin')->name('admin.index');
 	Route::post('/ujiansemester/aksi_upload', 'aksi_upload')->name('aksi_upload.store');
 
 	

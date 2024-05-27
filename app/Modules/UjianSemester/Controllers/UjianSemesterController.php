@@ -29,7 +29,32 @@ class UjianSemesterController extends Controller
 
 	public function index(Request $request)
 	{
+		$admin = [
+			'bf1548f3-295c-4d73-809d-66ab7c240091',
+			'1fe8326c-22c4-4732-9c12-f7b83a16b842'
+		];
+
+		// dd(session('active_role')['id']);
+
+		if(in_array(session('active_role')['id'], $admin))
+		{
+			return redirect()->route('ujiansemester.admin.index');
+		}
+
 		$query = UjianSemester::query()->whereIdGuru(session('id_guru'));
+		if($request->has('search')){
+			$search = $request->get('search');
+			// $query->where('name', 'like', "%$search%");
+		}
+		$data['data'] = $query->paginate(10)->withQueryString();
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('UjianSemester::ujiansemester', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function index_admin(Request $request)
+	{
+		$query = UjianSemester::query();
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
