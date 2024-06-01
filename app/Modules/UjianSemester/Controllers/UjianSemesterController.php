@@ -131,7 +131,7 @@ class UjianSemesterController extends Controller
 
 		$writer = new Xlsx($spreadsheet);
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="'. urlencode('Template Soal '. $ujian->mapel->mapel . ' Kelas ' . $ujian->tingkat->tingkat . '.xlsx').'"');
+        header('Content-Disposition: attachment; filename="'. urlencode('Template Soal '. $ujian->mapel->mapel . ' Kelas ' . $ujian->tingkat->tingkat . '.xls').'"');
         $writer->save('php://output');
 		
 	}
