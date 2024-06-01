@@ -53,6 +53,7 @@
                                 <td>Jml Soal</td>
                                 <td>Kisi Kisi</td>
                                 <td>Norma Penilaian</td>
+                                <td>Soal</td>
 
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -69,7 +70,7 @@
                                 <td>{{ $item->jml_soal }}</td>
                                 <td>
                                     @if ($item->kisi_kisi)
-                                    <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->kisikisi.'/lihat/kisikisi') }}');">
+                                    <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->kisi_kisi.'/lihat/kisikisi') }}');">
                                         <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
                                     </a>
                                     @else
@@ -78,11 +79,27 @@
                                 </td>
                                 <td>
                                     @if ($item->norma_penilaian)
-                                    <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->kisikisi.'/lihat/kisikisi') }}');">
+                                    <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->norma_penilaian.'/lihat/kisikisi') }}');">
                                         <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
                                     </a>
                                     @else
                                     <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                    @endif
+                                </td>
+                                <td>
+                                    @php
+                                        $soal = \App\Modules\SoalSemester\Models\SoalSemester::where('id_ujiansemester', $item->id)->get();
+                                    @endphp
+
+                                    @if (count($soal) > 0)
+                                        <a href="javascript:void(0);" onclick="window.open('{{ route('soalsemester.lihat_soal.index', [$item->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}', '_blank', 'width=auto,height=auto');">
+                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                        </a>
+                                        {{-- <a href="JavaScript:newPopup('{{ url('/gurumapel/'.$item->id.'/lihat/kisikisi') }}');">
+                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                        </a> --}}
+                                    @else
+                                        <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
                                     @endif
                                 </td>
 
@@ -108,6 +125,13 @@
 @endsection
 
 @section('page-js')
+    <script type="text/javascript">
+        // Popup window code
+        function newPopup(url) {
+            popupWindow = window.open(
+                url,'popUpWindow','height=300,width=400,left=10,top=10,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no,status=yes')
+        }
+    </script>
 @endsection
 
 @section('inline-js')
