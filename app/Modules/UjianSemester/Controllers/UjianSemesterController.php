@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class UjianSemesterController extends Controller
 {
@@ -129,7 +129,7 @@ class UjianSemesterController extends Controller
 		}
 
 
-		$writer = new Xlsx($spreadsheet);
+		$writer = new Xls($spreadsheet);
 		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="'. urlencode('Template Soal '. $ujian->mapel->mapel . ' Kelas ' . $ujian->tingkat->tingkat . '.xls').'"');
         $writer->save('php://output');
