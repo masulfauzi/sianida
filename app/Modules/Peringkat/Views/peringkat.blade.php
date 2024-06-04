@@ -43,7 +43,7 @@
                                     <th>Jurusan</th>
                                     <td>:</td>
                                     <td>
-                                        {{ Form::select("id_jurusan", $jurusan, $selected['id_jurusan'], ["class" => "form-control select2"]) }}
+                                        {{ Form::select("id_jurusan", $jurusan, $selected['id_jurusan'], ["class" => "form-control select2", "required" => "required"]) }}
                                     </td>
                                 </tr>
                                 <tr>
