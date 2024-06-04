@@ -41,7 +41,7 @@ class PeringkatController extends Controller
 
 		$data['jurusan'] 	= Jurusan::all()->pluck('jurusan', 'id');
 		$data['jurusan']->prepend('-PILIH SALAH SATU-', '');
-		$data['kelas'] 		= Kelas::all()->pluck('kelas', 'id');
+		$data['kelas'] 		= Kelas::orderBy('kelas')->get()->pluck('kelas', 'id');
 		$data['kelas']->prepend('-PILIH SALAH SATU-', '');
 		$data['semester']	= Semester::orderBy('urutan')->get()->pluck('semester', 'id');
 		$data['semester']->prepend('-PILIH SALAH SATU-', '');
