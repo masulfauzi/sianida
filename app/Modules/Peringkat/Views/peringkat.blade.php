@@ -104,7 +104,9 @@
                                     <tr>
                                         <td colspan="5" class="text-center">
                                             <i>No data.</i> <br>
-                                            <a href="{{ route('peringkat.generate.index', $selected['id_semester']) }}" class="btn btn-success">Generate</a>
+                                            @if ($selected['id_semester'])
+                                                <a href="{{ route('peringkat.generate.index', $selected['id_semester']) }}" class="btn btn-success">Generate</a>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforelse
