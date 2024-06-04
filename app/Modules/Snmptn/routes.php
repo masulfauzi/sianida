@@ -21,5 +21,5 @@ Route::controller(SnmptnController::class)->middleware(['web','auth'])->name('sn
 	
 	
 	//peringkat
-	Route::get('/peringkat', 'peringkat_kelas')->name('peringkat.kelas.index');
+	// Route::get('/peringkat', 'peringkat_kelas')->name('peringkat.kelas.index');
 });
