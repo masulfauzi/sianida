@@ -49,7 +49,7 @@ class LogSuccessfullLogin
                             });
 
             //get all semester
-            $semester = Semester::all();
+            $semester = Semester::orderBy('urutan')->get();
             // dd($semester);
 
             //get session semester aktif
