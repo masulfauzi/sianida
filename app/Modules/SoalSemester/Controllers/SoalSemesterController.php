@@ -35,6 +35,13 @@ class SoalSemesterController extends Controller
 		return view('SoalSemester::soalsemester', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function lihat_soal(Request $request, $id_ujian)
+	{
+		$data['soal'] = SoalSemester::whereIdUjiansemester($id_ujian)->orderBy("no_soal")->get();
+
+		return view('Soal::lihat_soal', $data);
+	}
+
 	public function input(Request $request, $id_ujian, $no_soal)
 	{
 		$soal = SoalSemester::cek_soal($id_ujian, $no_soal);
@@ -85,6 +92,8 @@ class SoalSemesterController extends Controller
 
 	function store(Request $request)
 	{
+		// dd($request->input("soal"));
+
 		$this->validate($request, [
 			'id_ujiansemester' => 'required',
 			'no_soal' => 'required',
@@ -212,6 +221,8 @@ class SoalSemesterController extends Controller
 
 	public function update(Request $request, $id)
 	{
+		// dd($request->all());
+
 		$this->validate($request, [
 			// 'id_ujiansemester' => 'required',
 			// 'no_soal' => 'required',

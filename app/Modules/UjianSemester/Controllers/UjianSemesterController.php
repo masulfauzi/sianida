@@ -16,6 +16,11 @@ use App\Http\Controllers\Controller;
 use App\Modules\SoalSemester\Models\SoalSemester;
 use Illuminate\Support\Facades\Auth;
 
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+
 class UjianSemesterController extends Controller
 {
 	use Logger;
@@ -29,6 +34,18 @@ class UjianSemesterController extends Controller
 
 	public function index(Request $request)
 	{
+		$admin = [
+			'bf1548f3-295c-4d73-809d-66ab7c240091',
+			'1fe8326c-22c4-4732-9c12-f7b83a16b842'
+		];
+
+		// dd(session('active_role')['id']);
+
+		if(in_array(session('active_role')['id'], $admin))
+		{
+			return redirect()->route('ujiansemester.admin.index');
+		}
+
 		$query = UjianSemester::query()->whereIdGuru(session('id_guru'));
 		if($request->has('search')){
 			$search = $request->get('search');
@@ -38,6 +55,85 @@ class UjianSemesterController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('UjianSemester::ujiansemester', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function index_admin(Request $request)
+	{
+		$query = UjianSemester::query();
+		if($request->has('search')){
+			$search = $request->get('search');
+			// $query->where('name', 'like', "%$search%");
+		}
+		$data['data'] = $query->paginate(10)->withQueryString();
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('UjianSemester::ujiansemester_admin', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function export(Request $request, $id_ujian)
+	{
+		$soal = SoalSemester::whereIdUjiansemester($id_ujian)->orderBy('no_soal')->get();
+		$ujian = UjianSemester::find($id_ujian);
+
+		$this->log($request, 'mengeeksport soal '.$this->title);
+		
+
+
+		$spreadsheet = new Spreadsheet();
+		$styleArray = array(
+			'font'  => array(
+				 'name'  => 'Times New Roman'
+			 ));      
+		$spreadsheet->getDefaultStyle()->applyFromArray($styleArray);
+
+		$activeWorksheet = $spreadsheet->getActiveSheet();
+
+		$activeWorksheet->getCell('A1')->setValue('No Soal');
+		$activeWorksheet->getCell('B1')->setValue('Soal');
+		$activeWorksheet->getCell('C1')->setValue('PilA');
+		$activeWorksheet->getCell('D1')->setValue('PilB');
+		$activeWorksheet->getCell('E1')->setValue('PilC');
+		$activeWorksheet->getCell('F1')->setValue('PilD');
+		$activeWorksheet->getCell('G1')->setValue('PilE');
+		$activeWorksheet->getCell('H1')->setValue('Jawaban');
+		$activeWorksheet->getCell('I1')->setValue('Jenis');
+		$activeWorksheet->getCell('J1')->setValue('file1');
+		$activeWorksheet->getCell('K1')->setValue('file2');
+		$activeWorksheet->getCell('L1')->setValue('fileA');
+		$activeWorksheet->getCell('M1')->setValue('fileB');
+		$activeWorksheet->getCell('N1')->setValue('fileC');
+		$activeWorksheet->getCell('O1')->setValue('fileD');
+		$activeWorksheet->getCell('P1')->setValue('fileE');
+
+		$baris = 2;
+		foreach($soal as $item)
+		{
+			$activeWorksheet->getCell('A'.$baris)->setValue($item->no_soal);
+			$activeWorksheet->getCell('B'.$baris)->setValue($item->soal);
+			$activeWorksheet->getCell('C'.$baris)->setValue($item->opsi_a);
+			$activeWorksheet->getCell('D'.$baris)->setValue($item->opsi_b);
+			$activeWorksheet->getCell('E'.$baris)->setValue($item->opsi_c);
+			$activeWorksheet->getCell('F'.$baris)->setValue($item->opsi_d);
+			$activeWorksheet->getCell('G'.$baris)->setValue($item->opsi_e);
+			$activeWorksheet->getCell('H'.$baris)->setValue(strtoupper($item->kunci));
+			$activeWorksheet->getCell('I'.$baris)->setValue("1");
+			$activeWorksheet->getCell('J'.$baris)->setValue($item->gambar);
+			$activeWorksheet->getCell('K'.$baris)->setValue('');
+			$activeWorksheet->getCell('L'.$baris)->setValue($item->gambar_a);
+			$activeWorksheet->getCell('M'.$baris)->setValue($item->gambar_b);
+			$activeWorksheet->getCell('N'.$baris)->setValue($item->gambar_c);
+			$activeWorksheet->getCell('O'.$baris)->setValue($item->gambar_d);
+			$activeWorksheet->getCell('P'.$baris)->setValue($item->gambar_e);
+
+			$baris ++;
+		}
+
+
+		$writer = new Xls($spreadsheet);
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'. urlencode('Template Soal '. $ujian->mapel->mapel . ' Kelas ' . $ujian->tingkat->tingkat . '.xls').'"');
+        $writer->save('php://output');
+		
 	}
 
 	public function upload(Request $request, String $id_ujian)

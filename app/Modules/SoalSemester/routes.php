@@ -7,6 +7,7 @@ Route::controller(SoalSemesterController::class)->middleware(['web','auth'])->na
 	// route custom
 	Route::get('/soalsemester/input/{id_ujiansemester}/{no_soal}', 'input')->name('input.create');
 	Route::get('/soalsemester/hapus_gambar/{id_soal}/{jenis}', 'hapus_gambar')->name('hapus_gambar.destroy');
+	Route::get('/soalsemester/lihat_soal/{id_soal}', 'lihat_soal')->name('lihat_soal.index');
 	
 	
 	// route bawaan
