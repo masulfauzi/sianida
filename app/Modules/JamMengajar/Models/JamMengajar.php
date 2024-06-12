@@ -34,12 +34,13 @@ public function kelas(){
 		return $this->belongsTo(Kelas::class,"id_kelas","id");
 	}
 
-	public static function get_guru()
+	public static function get_guru($id_semester)
 	{
 		return DB::table('guru as a')
 					->select('a.nama', 'a.id as id_guru', DB::raw('sum(b.jml_jam) as jml_jam'))
 					->join('jam_mengajar as b', 'a.id', '=', 'b.id_guru', 'LEFT')
 					// ->whereNull('b.deleted_at')
+					->where('b.id_semester', '=', $id_semester)
 					->groupBy('a.id')
 					->orderBy('a.nama')
 					->get();

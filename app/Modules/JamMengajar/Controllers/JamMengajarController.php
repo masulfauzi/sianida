@@ -29,7 +29,7 @@ class JamMengajarController extends Controller
 	public function index(Request $request)
 	{
 		// $query = JamMengajar::query();
-		$query = JamMengajar::get_guru();
+		$query = JamMengajar::get_guru(session('active_semester')['id']);
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
