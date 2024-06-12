@@ -58,6 +58,7 @@ class JamMengajarController extends Controller
 		$data['data']	= JamMengajar::join('kelas', 'kelas.id', 'jam_mengajar.id_kelas')
 										->select('jam_mengajar.*', 'kelas.kelas')
 										->whereIdGuru($id_guru)
+										->whereIdSemester(session('active_semester')['id'])
 										->orderBy('kelas.kelas')
 										->get();
 

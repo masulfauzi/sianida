@@ -38,9 +38,12 @@ public function kelas(){
 	{
 		return DB::table('guru as a')
 					->select('a.nama', 'a.id as id_guru', DB::raw('sum(b.jml_jam) as jml_jam'))
-					->join('jam_mengajar as b', 'a.id', '=', 'b.id_guru', 'LEFT')
+					->leftJoin('jam_mengajar as b', function($join) use ($id_semester) {
+						$join->on('a.id', '=', 'b.id_guru');
+						$join->on('b.id_semester', '=', DB::raw("'".$id_semester."'"));
+					})
 					// ->whereNull('b.deleted_at')
-					->where('b.id_semester', '=', $id_semester)
+					// ->where('b.id_semester', '=', $id_semester)
 					->groupBy('a.id')
 					->orderBy('a.nama')
 					->get();
