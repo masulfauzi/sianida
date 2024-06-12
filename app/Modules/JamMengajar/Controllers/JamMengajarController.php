@@ -28,13 +28,8 @@ class JamMengajarController extends Controller
 
 	public function index(Request $request)
 	{
-		// $query = JamMengajar::query();
-		$query = JamMengajar::get_guru(session('active_semester')['id']);
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query;
+		$data['data'] = JamMengajar::get_guru(session('active_semester')['id']);
+		$data['kelas'] = JamMengajar::get_kelas(session('active_semester')['id']);
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('JamMengajar::jammengajar', array_merge($data, ['title' => $this->title]));

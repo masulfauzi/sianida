@@ -48,6 +48,21 @@ public function kelas(){
 					->orderBy('a.nama')
 					->get();
 	}
+	
+	public static function get_kelas($id_semester)
+	{
+		return DB::table('kelas as a')
+					->select('a.kelas', 'a.id as id_kelas', DB::raw('sum(b.jml_jam) as jml_jam'))
+					->leftJoin('jam_mengajar as b', function($join) use ($id_semester) {
+						$join->on('a.id', '=', 'b.id_kelas');
+						$join->on('b.id_semester', '=', DB::raw("'".$id_semester."'"));
+					})
+					// ->whereNull('b.deleted_at')
+					// ->where('b.id_semester', '=', $id_semester)
+					->groupBy('a.id')
+					->orderBy('a.kelas')
+					->get();
+	}
 
 	public static function get_mapel_perangkat($id_semester, $id_guru = NULL)
 	{
