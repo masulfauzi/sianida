@@ -80,7 +80,7 @@ class JamMengajarController extends Controller
 		$data['forms'] = array(
 			'nama_guru' => ['Guru', Form::text("id_guru", $guru->nama, ["class" => "form-control", "disabled" => "disabled"]) ],
 			'id_mapel' => ['Mapel', Form::select("id_mapel", $ref_mapel, null, ["class" => "form-control select2"]) ],
-			'id_kelas' => ['Kelas', Form::select("id_kelas", $ref_kelas, null, ["class" => "form-control select2"]) ],
+			'id_kelas' => ['Kelas', Form::select("id_kelas[]", $ref_kelas, null, ["class" => "form-control select2", "multiple"=>"multiple"]) ],
 			'jml_jam' => ['Jml Jam', Form::text("jml_jam", old("jml_jam"), ["class" => "form-control","placeholder" => ""]) ],
 			'id_semester' => ['', Form::hidden("id_semester", get_semester('active_semester_id'), null) ],
 			'id_guru' => ['', Form::hidden("id_guru", $guru->id, null) ],
@@ -101,15 +101,24 @@ class JamMengajarController extends Controller
 			
 		]);
 
-		$jammengajar = new JamMengajar();
-		$jammengajar->id_semester = $request->input("id_semester");
-		$jammengajar->id_guru = $request->input("id_guru");
-		$jammengajar->id_mapel = $request->input("id_mapel");
-		$jammengajar->id_kelas = $request->input("id_kelas");
-		$jammengajar->jml_jam = $request->input("jml_jam");
-		
-		$jammengajar->created_by = Auth::id();
-		$jammengajar->save();
+		// dd($request->get('id_kelas'));
+
+		$list_id_kelas = $request->get('id_kelas');
+
+		foreach($list_id_kelas as $key => $list_kelas)
+		{
+			$jammengajar = new JamMengajar();
+			$jammengajar->id_semester = $request->input("id_semester");
+			$jammengajar->id_guru = $request->input("id_guru");
+			$jammengajar->id_mapel = $request->input("id_mapel");
+			$jammengajar->id_kelas = $list_kelas;
+			$jammengajar->jml_jam = $request->input("jml_jam");
+			
+			$jammengajar->created_by = Auth::id();
+			$jammengajar->save();
+
+		}
+
 
 		$text = 'membuat '.$this->title; //' baru '.$jammengajar->what;
 		$this->log($request, $text, ['jammengajar.id' => $jammengajar->id]);
