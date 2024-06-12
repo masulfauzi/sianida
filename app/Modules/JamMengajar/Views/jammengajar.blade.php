@@ -111,7 +111,7 @@
                                                             <td>{{ $item_kelas->jml_jam }}</td>
                                                             
                                                             <td>
-                                                                <a href="{{ route('jammengajar.guru.index', $item_kelas->id_kelas) }}" class="btn btn-success">Detail</a>
+                                                                <a href="{{ route('jammengajar.kelas.index', $item_kelas->id_kelas) }}" class="btn btn-success">Detail</a>
                                                             </td>
                                                         </tr>
                                                     @empty

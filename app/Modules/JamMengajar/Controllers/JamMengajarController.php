@@ -62,6 +62,25 @@ class JamMengajarController extends Controller
 		$this->log($request, 'melihat halaman manajemen jam mengajar guru');
 		return view('JamMengajar::jammengajar_guru', array_merge($data, ['title' => $this->title]));
 	}
+	
+	public function kelas(Request $request, $id_kelas)
+	{
+		$kelas = Kelas::find($id_kelas);
+		$data['kelas']	= $kelas;
+		// $data['data']	= JamMengajar::query()->whereIdGuru($id_guru)->orderBy('id_kelas')->get();
+		$data['data']	= JamMengajar::join('kelas', 'kelas.id', 'jam_mengajar.id_kelas')
+										->join('guru', 'jam_mengajar.id_guru', '=', 'guru.id')
+										->select('jam_mengajar.*', 'kelas.kelas', 'guru.nama')
+										->whereIdKelas($id_kelas)
+										->whereIdSemester(session('active_semester')['id'])
+										->orderBy('kelas.kelas')
+										->get();
+
+		// dd($data['guru']);
+
+		$this->log($request, 'melihat halaman manajemen jam mengajar guru');
+		return view('JamMengajar::jammengajar_kelas', array_merge($data, ['title' => $this->title]));
+	}
 
 	public function create(Request $request, $id_guru)
 	{

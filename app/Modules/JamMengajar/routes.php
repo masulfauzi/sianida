@@ -15,4 +15,5 @@ Route::controller(JamMengajarController::class)->middleware(['web','auth'])->nam
 	Route::get('/jammengajar/{jammengajar}/delete', 'destroy')->name('destroy');
 
 	Route::get('/jammengajar/{jammengajar}/guru', 'guru')->name('guru.index');
+	Route::get('/jammengajar/{jammengajar}/kelas', 'kelas')->name('kelas.index');
 });
