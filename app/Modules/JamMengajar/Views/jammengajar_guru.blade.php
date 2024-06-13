@@ -61,7 +61,7 @@
 									<td>{{ $item->jml_jam }}</td>
 									
                                     <td>
-										<a href="{{ route('jammengajar.guru.index', $item->id_guru) }}" class="btn btn-success">Detail</a>
+                                        {!! button('jammengajar.edit', 'Edit', $item->id) !!}
                                         {!! button('jammengajar.destroy', 'Hapus', $item->id) !!}
                                     </td>
                                 </tr>

@@ -152,16 +152,14 @@ class JamMengajarController extends Controller
 	{
 		$data['jammengajar'] = $jammengajar;
 
-		$ref_semester = Semester::all()->pluck('semester','id');
 		$ref_guru = Guru::all()->pluck('nama','id');
 		$ref_mapel = Mapel::all()->pluck('mapel','id');
-		$ref_kelas = Kelas::all()->pluck('kelas','id');
+		$ref_kelas = Kelas::all()->sortBy('kelas')->pluck('kelas','id');
 		
 		$data['forms'] = array(
-			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
-			'id_guru' => ['Guru', Form::select("id_guru", $ref_guru, null, ["class" => "form-control select2"]) ],
-			'id_mapel' => ['Mapel', Form::select("id_mapel", $ref_mapel, null, ["class" => "form-control select2"]) ],
-			'id_kelas' => ['Kelas', Form::select("id_kelas", $ref_kelas, null, ["class" => "form-control select2"]) ],
+			'id_guru' => ['Guru', Form::select("id_guru", $ref_guru, $jammengajar->id_guru, ["class" => "form-control select2"]) ],
+			'id_mapel' => ['Mapel', Form::select("id_mapel", $ref_mapel, $jammengajar->id_mapel, ["class" => "form-control select2"]) ],
+			'id_kelas' => ['Kelas', Form::select("id_kelas", $ref_kelas, $jammengajar->id_kelas, ["class" => "form-control select2"]) ],
 			'jml_jam' => ['Jml Jam', Form::text("jml_jam", $jammengajar->jml_jam, ["class" => "form-control","placeholder" => "", "id" => "jml_jam"]) ],
 			
 		);
@@ -174,7 +172,6 @@ class JamMengajarController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validate($request, [
-			'id_semester' => 'required',
 			'id_guru' => 'required',
 			'id_mapel' => 'required',
 			'id_kelas' => 'required',
@@ -183,7 +180,6 @@ class JamMengajarController extends Controller
 		]);
 		
 		$jammengajar = JamMengajar::find($id);
-		$jammengajar->id_semester = $request->input("id_semester");
 		$jammengajar->id_guru = $request->input("id_guru");
 		$jammengajar->id_mapel = $request->input("id_mapel");
 		$jammengajar->id_kelas = $request->input("id_kelas");
@@ -195,7 +191,7 @@ class JamMengajarController extends Controller
 
 		$text = 'mengedit '.$this->title;//.' '.$jammengajar->what;
 		$this->log($request, $text, ['jammengajar.id' => $jammengajar->id]);
-		return redirect()->route('jammengajar.index')->with('message_success', 'Jam Mengajar berhasil diubah!');
+		return redirect()->route('jammengajar.guru.index', $jammengajar->id_guru)->with('message_success', 'Jam Mengajar berhasil diubah!');
 	}
 
 	public function destroy(Request $request, $id)
