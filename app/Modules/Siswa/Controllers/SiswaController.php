@@ -28,6 +28,12 @@ class SiswaController extends Controller
 
 	public function index(Request $request)
 	{
+
+        if(session('active_role')['id'] == 'ce70ee2f-b43b-432b-b71c-30d073a4ba23')
+		{
+			return redirect(route('siswa.biodata.index'));
+		}
+        
 		$query = Siswa::query();
 		if($request->has('search')){
 			$search = $request->get('search');
@@ -37,6 +43,14 @@ class SiswaController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
+	}
+
+    public function biodata(Request $request)
+	{
+		$data['data'] = Siswa::find(session('id_siswa'));
+
+		$this->log($request, 'melihat halaman biodata');
+		return view('Siswa::biodata', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function kelulusan(Request $request)
