@@ -129,6 +129,14 @@ class SiswaController extends Controller
 		return redirect()->back()->with('message_success', 'Berkas berhasil diupload!');
 	}
 
+    	public function lihat_file(Request $request, $file, $jenis)
+	{
+		$data['file']  = $file;
+		$data['jenis']  = $jenis;
+
+		return view('Siswa::lihat_file', $data);
+	}
+
 	public function kelulusan(Request $request)
 	{
 		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
