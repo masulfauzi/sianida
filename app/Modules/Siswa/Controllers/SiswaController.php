@@ -143,6 +143,36 @@ class SiswaController extends Controller
 		return view('Siswa::download', array_merge($data, ['title' => $this->title]));
 	}
 
+    public function download_biodata(Request $request, $id_siswa = NULL)
+	{
+		if($id_siswa == NULL)
+		{
+			$id_siswa = session('id_siswa');
+		}
+
+		$data['data']	=	Siswa::find($id_siswa);
+
+		if(!$data['data']->file_ijazah_smp)
+		{
+			// return redirect()->back()->with('message_error', 'File Ijazah SMP belum di upload');
+			return "File Ijazah SMP belum di upload";
+		}
+		if(!$data['data']->file_kk)
+		{
+			// return redirect()->back()->with('message_error', 'File Kartu Keluarga belum di upload');
+			return "File Kartu Keluarga belum di upload";
+		}
+		if(!$data['data']->file_akta_lahir)
+		{
+			// return redirect()->back()->with('message_error', 'File Akta Kelahiran belum di upload');
+			return "File Akta Kelahiran belum di upload";
+		}
+
+		// return view("Siswa::download_biodata", array_merge($data, ['title' => $this->title]));
+		$pdf = PDF::loadview('Siswa::download_biodata',$data);
+    	return $pdf->download('BiodataPesertaUjian');
+	}
+
 	public function kelulusan(Request $request)
 	{
 		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
