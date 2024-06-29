@@ -94,6 +94,41 @@ class SiswaController extends Controller
 		return view('Siswa::upload_file', array_merge($data, ['title' => $this->title]));
 	}
 
+    	public function aksi_upload(Request $request)
+	{
+		$request->validate([
+            'file' => 'required|mimes:pdf,jpg,jpeg|max:10240'
+        ]);
+
+		$file = time().'.'.$request->file->extension();  
+
+        $request->file->move(public_path('uploads/'.$request->get('jenis')), $file);
+
+		$siswa = Siswa::find($request->get('id'));
+		if($request->get('jenis') == 'ijazah')
+		{
+			$siswa->file_ijazah_smp = $file;
+		}
+		else if($request->get('jenis') == 'skhun')
+		{
+			$siswa->file_skhun = $file;
+		}
+		else if($request->get('jenis') == 'kk')
+		{
+			$siswa->file_kk = $file;
+		}
+		else if($request->get('jenis') == 'akta')
+		{
+			$siswa->file_akta_lahir = $file;
+		}
+		$siswa->save();
+
+
+		$text = 'mengupload '.$request->get('jenis'); //' baru '.$gurumapel->what;
+		$this->log($request, $text);
+		return redirect()->back()->with('message_success', 'Berkas berhasil diupload!');
+	}
+
 	public function kelulusan(Request $request)
 	{
 		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
