@@ -53,6 +53,40 @@ class SiswaController extends Controller
 		return view('Siswa::biodata', array_merge($data, ['title' => $this->title]));
 	}
 
+    	public function store_biodata(Request $request)
+	{
+		$validate = $this->validate($request, [
+			'id' 			=> 'required',
+			'nama_siswa' 	=> 'required',
+			'tempat_lahir'	=> 'required',
+			'tgl_lahir'		=> 'required|date',
+			'nama_ayah'		=> 'required',
+			'nama_ibu'		=> 'required',
+			'alamat'		=> 'required',
+			'sekolah_asal'	=> 'required',
+			'no_ijazah_smp'	=> 'required',
+		]);
+
+		$siswa = Siswa::find($validate['id']);
+		$siswa->nama_siswa 		= $validate['nama_siswa'];
+		$siswa->tempat_lahir 	= $validate['tempat_lahir'];
+		$siswa->tgl_lahir		= $validate['tgl_lahir'];
+		$siswa->nama_ayah		= $validate['nama_ayah'];
+		$siswa->nama_ibu		= $validate['nama_ibu'];
+		$siswa->alamat			= $validate['alamat'];
+		$siswa->sekolah_asal	= $validate['sekolah_asal'];
+		$siswa->no_ijazah_smp	= $validate['no_ijazah_smp'];
+		$siswa->no_skhun		= $request->input('no_skhun');
+
+		$siswa->updated_by 		= Auth::id();
+		$siswa->save();
+
+
+		$text = 'Mengedit biodata';
+		$this->log($request, $text, ['siswa.id' => $validate['id']]);
+		return redirect()->back()->with('message_success', 'Biodata berhasil disimpan!');
+	}
+
 	public function kelulusan(Request $request)
 	{
 		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
