@@ -87,6 +87,13 @@ class SiswaController extends Controller
 		return redirect()->back()->with('message_success', 'Biodata berhasil disimpan!');
 	}
 
+    public function upload_file(Request $request)
+	{
+		$data['data'] = Siswa::find(session('id_siswa'));
+
+		return view('Siswa::upload_file', array_merge($data, ['title' => $this->title]));
+	}
+
 	public function kelulusan(Request $request)
 	{
 		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
