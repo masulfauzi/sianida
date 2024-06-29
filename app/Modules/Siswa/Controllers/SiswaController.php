@@ -137,6 +137,12 @@ class SiswaController extends Controller
 		return view('Siswa::lihat_file', $data);
 	}
 
+    public function downloads(Request $request)
+	{
+		$data['data']	= '';
+		return view('Siswa::download', array_merge($data, ['title' => $this->title]));
+	}
+
 	public function kelulusan(Request $request)
 	{
 		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
