@@ -62,53 +62,11 @@
                                     </form>
                                 </td>
                             </tr>
+                            
+
+                            
                             <tr>
                                 <td>2</td>
-                                <td>SKHUN SMP/MTs</td>
-                                <td align="center">
-                                    @if ($data->file_skhun)
-                                        <a href="JavaScript:newPopup('{{ route('siswa.lihat_file.index',[$data->file_skhun, 'skhun']) }}');">
-                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
-                                        </a>
-                                    @else
-                                        <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
-                                    @endif
-                                </td>
-                                <td>
-                                    <form action="{{ route('siswa.aksi_upload.index') }}"  method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{ $data->id }}">
-                                        <input type="hidden" name="jenis" value="skhun">
-                                        <input type="file" name="file" class="form-control">
-                                        <button type="submit" class="btn btn-primary mt-1">Upload</button>
-                                    </form>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>3</td>
-                                <td>Kartu Keluarga</td>
-                                <td align="center">
-                                    @if ($data->file_kk)
-                                        <a href="JavaScript:newPopup('{{ route('siswa.lihat_file.index',[$data->file_kk, 'kk']) }}');">
-                                            <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
-                                        </a>
-                                    @else
-                                        <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
-                                    @endif
-                                </td>
-                                <td>
-                                    <form action="{{ route('siswa.aksi_upload.index') }}"  method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{ $data->id }}">
-                                        <input type="hidden" name="jenis" value="kk">
-                                        <input type="file" name="file" class="form-control">
-                                        <button type="submit" class="btn btn-primary mt-1">Upload</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
                                 <td>Akta Kelahiran</td>
                                 <td align="center">
                                     @if ($data->file_akta_lahir)
