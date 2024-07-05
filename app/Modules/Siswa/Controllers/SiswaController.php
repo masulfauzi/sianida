@@ -110,7 +110,7 @@ class SiswaController extends Controller
     	public function aksi_upload(Request $request)
 	{
 		$request->validate([
-            'file' => 'required|mimes:pdf,jpg,jpeg|max:10240'
+            'file' => 'required|mimes:pdf,jpg,jpeg,png|max:10240'
         ]);
 
 		$file = time().'.'.$request->file->extension();  
