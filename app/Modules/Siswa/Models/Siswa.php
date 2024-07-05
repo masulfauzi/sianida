@@ -34,6 +34,22 @@ public function agama(){
 					->where('nik', $data->nik);
 	}
 
+	public static function get_biodata($id_semester)
+	{
+		return DB::table('siswa as s')
+					->join('pesertadidik as p', function($join) use ($id_semester) {
+						$join->on('s.id', '=', 'p.id_siswa');
+						$join->on('p.id_semester', '=', DB::raw("'".$id_semester."'"));
+					})
+					->join('kelas as k', 'p.id_kelas', '=', 'k.id')
+					->join('tingkat as t', function($join) {
+						$join->on('t.id', '=', 'k.id_tingkat');
+						$join->on('t.tingkat', '=', DB::raw("'XII'"));
+					})
+					->orderBy('k.kelas')
+					->get();
+	}
+
 	public static function get_siswa_by_id_user($id_user)
 	{
 		// dd();

@@ -45,8 +45,21 @@ class SiswaController extends Controller
 		return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function biodata_admin(Request $request)
+	{
+		$data['biodata'] = Siswa::get_biodata(session()->get('active_semester')['id']);
+
+		return view('Siswa::biodata_admin', array_merge($data, ['title' => $this->title]));
+	}
+
     public function biodata(Request $request)
 	{
+
+		if(session()->get('active_role')['id'] == '1fe8326c-22c4-4732-9c12-f7b83a16b842')
+		{
+			return redirect()->route('siswa.biodata.admin.index');
+		}
+
 		$data['data'] = Siswa::find(session('id_siswa'));
 
 		$this->log($request, 'melihat halaman biodata');

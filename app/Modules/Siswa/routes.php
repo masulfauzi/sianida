@@ -6,6 +6,7 @@ use App\Modules\Siswa\Controllers\SiswaController;
 Route::controller(SiswaController::class)->middleware(['web','auth'])->name('siswa.')->group(function(){
 	//custom route untuk biodata siswa
 	Route::get('/biodata', 'biodata')->name('biodata.index');
+	Route::get('/biodata/admin', 'biodata_admin')->name('biodata.admin.index');
 	Route::get('/biodata/upload', 'upload_file')->name('file.index');
 	Route::get('/biodata/{file}/lihat_file/{jenis}', 'lihat_file')->name('lihat_file.index');
 	Route::post('/biodata/upload', 'aksi_upload')->name('aksi_upload.index');
