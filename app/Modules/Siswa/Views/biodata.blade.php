@@ -71,6 +71,19 @@
                         </div>
                         <div class="row">
                             <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                <label>No HP (Whatsapp)</label>
+                            </div>
+                            <div class="col-md-9 form-group">
+                                <input type="text" name="no_hp" class="form-control" placeholder="Contoh 628512345678" value="{{ $data['no_hp'] }}" >
+                                @error('no_hp')
+                                    <div class="text-danger">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 text-sm-start text-md-end pt-2">
                                 <label>Tempat Lahir</label>
                             </div>
                             <div class="col-md-9 form-group">

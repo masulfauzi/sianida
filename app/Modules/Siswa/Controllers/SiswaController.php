@@ -78,6 +78,7 @@ class SiswaController extends Controller
 			'alamat'		=> 'required',
 			'sekolah_asal'	=> 'required',
 			'no_ijazah_smp'	=> 'required',
+			'no_hp'			=> 'required',
 		]);
 
 		$siswa = Siswa::find($validate['id']);
@@ -90,6 +91,7 @@ class SiswaController extends Controller
 		$siswa->sekolah_asal	= $validate['sekolah_asal'];
 		$siswa->no_ijazah_smp	= $validate['no_ijazah_smp'];
 		$siswa->no_skhun		= $request->input('no_skhun');
+		$siswa->no_hp			= $request->input('no_hp');
 
 		$siswa->updated_by 		= Auth::id();
 		$siswa->save();
