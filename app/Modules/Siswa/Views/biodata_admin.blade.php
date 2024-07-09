@@ -49,14 +49,18 @@
                                         <td>{{ $item->kelas }}</td>
                                         <td>
                                             @if ($item->file_akta_lahir)
-                                                <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                                <a href="JavaScript:newPopup('{{ route('siswa.lihat_file.index',[$item->file_akta_lahir, 'akta']) }}');">
+                                                    <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                                </a>
                                             @else
                                                 <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
                                             @endif
                                         </td>
                                         <td>
                                             @if ($item->file_ijazah_smp)
-                                                <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                                <a href="JavaScript:newPopup('{{ route('siswa.lihat_file.index',[$item->file_ijazah_smp, 'ijazah']) }}');">
+                                                    <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                                </a>
                                             @else
                                                 <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
                                             @endif
