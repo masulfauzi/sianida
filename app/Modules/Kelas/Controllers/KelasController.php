@@ -75,6 +75,21 @@ class KelasController extends Controller
 
 		
 	}
+
+	public function download_file_smp_image(Request $request, $id_kelas)
+	{
+		$file = Kelas::select('*')
+						->join('pesertadidik as p', 'p.id_kelas', '=', 'kelas.id')
+						->join('siswa as s', 'p.id_siswa', '=', 's.id')
+						->where('p.id_semester', session()->get('active_semester')['id'])
+						->where('kelas.id', $id_kelas)
+						->get();
+
+		$data['data'] = $file;
+
+		$this->log($request, 'download file ijazah gamba '.$this->title);
+		return view('Kelas::download_ijazah_gambar', array_merge($data, ['title' => $this->title]));
+	}
 	
 	public function asesmen(Request $request)
 	{
