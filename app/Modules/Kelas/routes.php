@@ -7,6 +7,7 @@ Route::controller(KelasController::class)->middleware(['web','auth'])->name('kel
 	// asesmen diagnostik
 	Route::get('/kelas/asesmen', 'asesmen')->name('asesmen.index');
 	Route::get('/kelas/asesmen/{kelas}', 'detail_asesmen')->name('detail_asesmen.show');
+	Route::get('/kelas/download_file_smp_pdf/{kelas}', 'download_file_smp_pdf')->name('download_file_smp_pdf.show');
 
 	
 	Route::get('/kelas', 'index')->name('index');

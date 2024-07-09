@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
+
 class KelasController extends Controller
 {
 	use Logger;
@@ -40,6 +42,38 @@ class KelasController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Kelas::kelas', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function download_file_smp_pdf(Request $request, $id_kelas)
+	{
+		$file = Kelas::select('*')
+						->join('pesertadidik as p', 'p.id_kelas', '=', 'kelas.id')
+						->join('siswa as s', 'p.id_siswa', '=', 's.id')
+						->where('p.id_semester', session()->get('active_semester')['id'])
+						->where('kelas.id', $id_kelas)
+						->get();
+
+		// dd($file);
+
+		$oMerger = PDFMerger::init();
+
+		foreach($file as $item)
+		{
+			$cek_pdf = pathinfo($item->file_ijazah_smp, PATHINFO_EXTENSION);
+			// dd($cek_pdf);
+			
+
+			if($cek_pdf == 'pdf')
+			{
+				// dd($item->file_ijazah_smp);
+				$oMerger->addPDF('uploads/ijazah/'.$item->file_ijazah_smp, 'all');
+			}
+		}
+		
+		$oMerger->merge();
+		$oMerger->download('merged_result.pdf');
+
+		
 	}
 	
 	public function asesmen(Request $request)
