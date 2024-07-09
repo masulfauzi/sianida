@@ -39,6 +39,7 @@
     @foreach ($data as $item)
         @php
             $cek_pdf = pathinfo($item->file_ijazah_smp, PATHINFO_EXTENSION);
+            $cek_pdf_akta = pathinfo($item->file_akta_lahir, PATHINFO_EXTENSION);
 
             
 
@@ -59,6 +60,20 @@
             @endphp
 
             <img class="{{ $orientation }}" width="100%" src="{{ url('uploads/ijazah/'.$item->file_ijazah_smp) }}" alt="">
+            <div class="page_break"></div>
+        @endif
+
+        @if ($cek_pdf_akta == 'jpg' OR $cek_pdf == 'jpeg' or $cek_pdf == 'png')
+            @php
+                list($width, $height) = getimagesize('uploads/akta/'.$item->file_akta_lahir);
+    
+                if( $width > $height)
+                    $orientation = "rotate90";
+                else
+                    $orientation = "";
+            @endphp
+
+            <img class="{{ $orientation }}" width="100%" src="{{ url('uploads/akta/'.$item->file_akta_lahir) }}" alt="">
             <div class="page_break"></div>
         @endif
     @endforeach
