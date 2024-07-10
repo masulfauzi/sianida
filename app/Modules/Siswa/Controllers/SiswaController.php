@@ -55,7 +55,7 @@ class SiswaController extends Controller
     public function biodata(Request $request)
 	{
 
-		if(session()->get('active_role')['id'] == '1fe8326c-22c4-4732-9c12-f7b83a16b842')
+		if(session()->get('active_role')['id'] == '1fe8326c-22c4-4732-9c12-f7b83a16b842' or session()->get('active_role')['id'] == 'bf1548f3-295c-4d73-809d-66ab7c240091')
 		{
 			return redirect()->route('siswa.biodata.admin.index');
 		}
