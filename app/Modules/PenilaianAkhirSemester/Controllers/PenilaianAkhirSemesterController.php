@@ -28,7 +28,7 @@ class PenilaianAkhirSemesterController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = JamMengajar::get_mapel_perangkat(get_semester('active_semester_id'), session('id_guru'));
+		$query = JamMengajar::get_mapel_perangkat(get_semester('active_semester_id'));
 		// dd($query);
 
 		$data['data'] = $query;
