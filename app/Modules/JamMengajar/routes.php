@@ -5,6 +5,7 @@ use App\Modules\JamMengajar\Controllers\JamMengajarController;
 
 Route::controller(JamMengajarController::class)->middleware(['web','auth'])->name('jammengajar.')->group(function(){
 	Route::get('/jammengajar/generate_sk', 'sk_mengajar')->name('sk.index');
+	Route::get('/jammengajar/cetak_jam_mengajar', 'cetak_jam_mengajar')->name('cetak.index');
 	Route::get('/jammengajar', 'index')->name('index');
 	Route::get('/jammengajar/data', 'data')->name('data.index');
 	Route::get('/jammengajar/{jammengajar}/create', 'create')->name('create');

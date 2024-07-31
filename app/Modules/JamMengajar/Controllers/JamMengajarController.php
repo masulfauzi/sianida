@@ -30,9 +30,19 @@ class JamMengajarController extends Controller
 	{
 		$data['data'] = JamMengajar::get_guru(session('active_semester')['id']);
 		$data['kelas'] = JamMengajar::get_kelas(session('active_semester')['id']);
+		$data['id_semester'] = session('active_semester')['id'];
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('JamMengajar::jammengajar', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function cetak_jam_mengajar(Request $request)
+	{
+		$data['data'] = JamMengajar::get_guru(session('active_semester')['id']);
+		$data['id_semester'] = session('active_semester')['id'];
+
+		$this->log($request, 'mencetak data jam mengajar guru');
+		return view('JamMengajar::cetak_jammengajar', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function sk_mengajar(Request $request)
