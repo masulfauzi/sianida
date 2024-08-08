@@ -32,7 +32,15 @@
                     <div class="col-lg-10 offset-lg-2">
                         <div class="row">
                             <div class='col-lg-2'><p>Unit Kerja</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $unitkerja->unit_kerja }}</p></div>
-									<div class='col-lg-2'><p>Induk</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $unitkerja->induk }}</p></div>
+									<div class='col-lg-2'><p>Induk</p></div><div class='col-lg-10'>
+                                        @if ($unitkerja->induk != '')
+                                        <p class='fw-bold'>{{ $unitkerja->indukunit->unit_kerja }}</p>
+                                        
+                                        @else
+                                        <p class='fw-bold'></p>
+                                            
+                                        @endif
+                                    </div>
 									
                         </div>
                     </div>
