@@ -27,17 +27,21 @@ class ModuleServiceProvider extends ServiceProvider
         $modulepath = app_path('Modules');
         $modules = File::directories($modulepath);
 
-        foreach($modules as $module){
-            $routefile = $module.'/routes.php';
+        foreach ($modules as $module) {
+            $routefile = $module . '/routes.php';
             // load routes
-            if(file_exists($routefile)){
+            if (file_exists($routefile)) {
                 include $routefile;
             }
 
             // load views
-            $viewdir = $module.'/Views';
-            if(is_dir($viewdir)){
-                $modulename = @end(explode("/", $module));
+            $viewdir = $module . '/Views';
+            if (is_dir($viewdir)) {
+                if (env('OS') == 'windows') {
+                    $modulename = @end(explode("\\", $module));
+                } else {
+                    $modulename = @end(explode("/", $module));
+                }
                 $this->loadViewsFrom($viewdir, $modulename);
             }
         }
