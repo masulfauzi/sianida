@@ -47,6 +47,7 @@
                             <tr>
                                 <th width="15">No</th>
                                 <th>Name</th>
+                                <th>Username</th>
                                 <th>Email</th>
                                 <th>Kode Identitas</th>
                                 <th>Role</th>
@@ -59,6 +60,7 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->name }}</td>
+                                    <td>{{ $item->username }}</td>
                                     <td>{{ $item->email }}</td>
                                     <td>{{ $item->identitas }}</td>
                                     <td>{{ @$item->roleuser->sortBy('role')->pluck('role')->implode(', ') }}</td>
