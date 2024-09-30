@@ -44,6 +44,15 @@ class SertifikatController extends Controller
 		$id_guru = session('id_guru');
 		$id_semester = session('active_semester')['id'];
 		$jenis_workshop = JenisWorkshop::find($request->id_jenis_workshop);
+		$sertifikat = Sertifikat::whereIdJeniWorkshop($jenis_workshop->id)->whereIdGuru($id_guru)->first();
+
+		if($sertifikat)
+		{
+			$link = $sertifikat->link;
+		}
+		else{
+			$link = '';
+		}
 
 		// dd($jenis_workshop);
 
@@ -52,7 +61,7 @@ class SertifikatController extends Controller
 			'id_jenis_workshop' => ['', Form::hidden("id_jenis_workshop", $jenis_workshop->id, null, ["class" => "form-control"])],
 			'id_semester' => ['', Form::hidden("id_semester", $id_semester, null, ["class" => "form-control"])],
 			'jenis_workshop' => ['Jenis Workshop', Form::text("jenis_workshop", $jenis_workshop->jenis_workshop, ["class" => "form-control select2", "disabled"])],
-			'link' => ['Link', Form::text("link", old("link"), ["class" => "form-control"])],
+			'link' => ['Link', Form::text("link", $link, ["class" => "form-control"])],
 
 		);
 
