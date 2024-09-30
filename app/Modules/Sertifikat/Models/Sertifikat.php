@@ -34,8 +34,11 @@ public function jenisWorkshop(){
 	{
 		return DB::table('jenis_workshop')
 					->select('jenis_workshop.*', 'sertifikat.link')
-					->join('sertifikat', 'sertifikat.id_jenis_workshop', '=', 'jenis_workshop.id', 'left')
-					->where('sertifikat.id_guru', $id_guru)
+					->leftJoin('sertifikat', function($join) use ($id_guru)
+					{
+						$join->on('jenis_workshop.id', '=', 'sertifikat.id_jenis_workshop');
+						$join->where('sertifikat.id_guru','=',$id_guru);
+					})
 					->get();
 	}
 

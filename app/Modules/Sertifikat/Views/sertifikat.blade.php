@@ -49,7 +49,16 @@
                                             @if ($item->link == null)
                                                 <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
                                             @else
-                                                <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                                @php
+                                                    $pecah = explode('guru.kemdikbud.go.id', $item->link);
+                                                    // dd($pecah);
+                                                @endphp
+
+                                                @if (count($pecah) == 1)
+                                                    Cek kembali link yang diupload.
+                                                @else
+                                                    <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                                @endif
                                             @endif
                                         </td>
 
@@ -58,9 +67,14 @@
                                                 href="{{ route('sertifikat.create', ['id_jenis_workshop' => $item->id]) }}">Upload
                                                 Bukti</a>
                                             @if ($item->link != null)
-                                                <a class="btn btn-danger"
-                                                    href="{{ url('sertifikat/'.$item->folder.'/'.Auth::user()->username.'.pdf') }}">Download Sertifikat
+                                                
+                                                @if (count($pecah) == 1)
+                                                @else
+                                                    <a class="btn btn-danger"
+                                                        href="{{ url('sertifikat/' . $item->folder . '/' . Auth::user()->username . '.pdf') }}">Download
+                                                        Sertifikat
                                                     </a>
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
