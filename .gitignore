@@ -15,4 +15,4 @@ yarn-error.log
 /public/uploads/*
 /public/ujian/*
 public/tmp/*
-/public/sertifikat/*
+/public/download_sertifikat/*
