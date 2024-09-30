@@ -71,7 +71,7 @@
                                                 @if (count($pecah) == 1)
                                                 @else
                                                     <a class="btn btn-danger"
-                                                        href="{{ url('sertifikat/' . $item->folder . '/' . Auth::user()->username . '.pdf') }}">Download
+                                                        href="{{ url('download_sertifikat/' . $item->folder . '/' . Auth::user()->username . '.pdf') }}">Download
                                                         Sertifikat
                                                     </a>
                                                 @endif
