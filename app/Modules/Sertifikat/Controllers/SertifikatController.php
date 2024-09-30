@@ -48,10 +48,12 @@ class SertifikatController extends Controller
 
 		if($sertifikat)
 		{
-			$link = $sertifikat->link;
+			$link_modul_ajar = $sertifikat->link_modul_ajar;
+			$link_video = $sertifikat->link_video;
 		}
 		else{
-			$link = '';
+			$link_modul_ajar = '';
+			$link_video = '';
 		}
 
 		// dd($jenis_workshop);
@@ -61,7 +63,8 @@ class SertifikatController extends Controller
 			'id_jenis_workshop' => ['', Form::hidden("id_jenis_workshop", $jenis_workshop->id, null, ["class" => "form-control"])],
 			'id_semester' => ['', Form::hidden("id_semester", $id_semester, null, ["class" => "form-control"])],
 			'jenis_workshop' => ['Jenis Workshop', Form::text("jenis_workshop", $jenis_workshop->jenis_workshop, ["class" => "form-control select2", "disabled"])],
-			'link' => ['Link', Form::text("link", $link, ["class" => "form-control"])],
+			'link_modul_ajar' => ['Link Modul Ajar', Form::text("link_modul_ajar", $link_modul_ajar, ["class" => "form-control"])],
+			'link Video' => ['Link Video', Form::text("link_video", $link_video, ["class" => "form-control"])],
 
 		);
 
@@ -75,7 +78,8 @@ class SertifikatController extends Controller
 			'id_guru' => 'required',
 			'id_semester' => 'required',
 			'id_jenis_workshop' => 'required',
-			'link' => 'required',
+			'link_modul_ajar' => 'required',
+			'link_video' => 'required',
 
 		]);
 
@@ -87,8 +91,9 @@ class SertifikatController extends Controller
 			$sertifikat->id_guru = $request->input("id_guru");
 			$sertifikat->id_semester = $request->input("id_semester");
 			$sertifikat->id_jenis_workshop = $request->input("id_jenis_workshop");
-			$sertifikat->link = $request->input("link");
-			$sertifikat->folder_sertifikat = $request->input("folder_sertifikat");
+			$sertifikat->link_modul_ajar = $request->input("link_modul_ajar");
+			$sertifikat->link_video = $request->input("link_video");
+			// $sertifikat->folder_sertifikat = $request->input("folder_sertifikat");
 
 			$sertifikat->updated_by = Auth::id();
 			$sertifikat->save();
@@ -97,7 +102,8 @@ class SertifikatController extends Controller
 			$sertifikat->id_guru = $request->input("id_guru");
 			$sertifikat->id_semester = $request->input("id_semester");
 			$sertifikat->id_jenis_workshop = $request->input("id_jenis_workshop");
-			$sertifikat->link = $request->input("link");
+			$sertifikat->link_modul_ajar = $request->input("link_modul_ajar");
+			$sertifikat->link_video = $request->input("link_video");
 			$sertifikat->folder_sertifikat = $request->input("folder_sertifikat");
 
 			$sertifikat->created_by = Auth::id();

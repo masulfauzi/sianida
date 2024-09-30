@@ -33,7 +33,7 @@ public function jenisWorkshop(){
 	public static function get_sertifikat_guru($id_guru,  $id_semester)
 	{
 		return DB::table('jenis_workshop')
-					->select('jenis_workshop.*', 'sertifikat.link')
+					->select('jenis_workshop.*', 'sertifikat.link_modul_ajar', 'sertifikat.link_video')
 					->leftJoin('sertifikat', function($join) use ($id_guru)
 					{
 						$join->on('jenis_workshop.id', '=', 'sertifikat.id_jenis_workshop');
