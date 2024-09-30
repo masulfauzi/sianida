@@ -44,7 +44,7 @@ class SertifikatController extends Controller
 		$id_guru = session('id_guru');
 		$id_semester = session('active_semester')['id'];
 		$jenis_workshop = JenisWorkshop::find($request->id_jenis_workshop);
-		$sertifikat = Sertifikat::whereIdJeniWorkshop($jenis_workshop->id)->whereIdGuru($id_guru)->first();
+		$sertifikat = Sertifikat::whereIdJenisWorkshop($jenis_workshop->id)->whereIdGuru($id_guru)->first();
 
 		if($sertifikat)
 		{
