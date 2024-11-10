@@ -38,9 +38,9 @@ class ModuleServiceProvider extends ServiceProvider
             $viewdir = $module . '/Views';
             if (is_dir($viewdir)) {
                 if (env('OS') == 'windows') {
-                    $modulename = @end(explode("\\", $module));
-                } else {
                     $modulename = @end(explode("/", $module));
+                } else {
+                    $modulename = @end(explode("\\", $module));
                 }
                 $this->loadViewsFrom($viewdir, $modulename);
             }
