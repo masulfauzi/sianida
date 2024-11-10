@@ -57,7 +57,7 @@ class KirimPesan implements ShouldQueue
                 ),
             ));
 
-            $response = curl_exec($curl);
+            $response = json_decode(curl_exec($curl));
 
             curl_close($curl);
             // echo $response;
