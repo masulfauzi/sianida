@@ -62,16 +62,17 @@ class KirimPesan implements ShouldQueue
             curl_close($curl);
             // echo $response;
 
+            if ($response->message_status == 'Success') {
+                $update = Pesan::find($kirim->id);
+                $update->status = 1;
+                $update->save();
+            }
+
             if ($response->error == 'Request Failed') {
                 $update = Pesan::find($kirim->id);
                 $update->created_at = date('Y-m-d H:i:s');
                 $update->save();
                 // dd($update);
-            }
-            if ($response->message_status == 'Success') {
-                $update = Pesan::find($kirim->id);
-                $update->status = 1;
-                $update->save();
             }
 
             $update_device = Device::find($device->id);
