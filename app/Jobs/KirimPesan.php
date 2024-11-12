@@ -67,7 +67,8 @@ class KirimPesan implements ShouldQueue
                 $update->created_at = date('Y-m-d H:i:s');
                 $update->save();
                 // dd($update);
-            } else if ($response->message_status == 'Success') {
+            }
+            if ($response->message_status == 'Success') {
                 $update = Pesan::find($kirim->id);
                 $update->status = 1;
                 $update->save();
