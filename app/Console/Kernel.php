@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->job(new KirimPesan)->everyMinute();
-        $schedule->job(new CekPerangkatSumatif)->dailyAt('13:00');
+        $schedule->job(new CekPerangkatSumatif)->dailyAt('06:00');
     }
 
     /**
