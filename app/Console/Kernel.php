@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Jobs\CekPerangkatSumatif;
 use App\Jobs\KirimPesan;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -18,6 +19,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->job(new KirimPesan)->everyMinute();
+        $schedule->job(new CekPerangkatSumatif)->dailyAt('13:00');
     }
 
     /**
