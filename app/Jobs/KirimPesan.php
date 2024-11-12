@@ -68,7 +68,7 @@ class KirimPesan implements ShouldQueue
                 $update->save();
             } else {
                 $update = Pesan::find($kirim->id);
-                $update->created_at = \Carbon\Carbon::now();
+                $update->created_at = date('Y-m-d H:i:s');
                 $update->save();
                 dd($update);
             }
