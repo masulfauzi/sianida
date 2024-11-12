@@ -66,7 +66,6 @@ class KirimPesan implements ShouldQueue
                 $update = Pesan::find($kirim->id);
                 $update->status = 1;
                 $update->save();
-                return true;
             }
 
             if (isset($response->error) && ($response->error == 'Request Failed')) {
