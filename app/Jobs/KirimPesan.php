@@ -62,7 +62,7 @@ class KirimPesan implements ShouldQueue
             curl_close($curl);
             // echo $response;
 
-            if ($response->message_status == 'Success') {
+            if (isset($response->message_status) && ($response->message_status == 'Success')) {
                 $update = Pesan::find($kirim->id);
                 $update->status = 1;
                 $update->save();
