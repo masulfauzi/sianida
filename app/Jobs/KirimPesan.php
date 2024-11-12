@@ -70,6 +70,7 @@ class KirimPesan implements ShouldQueue
                 $update = Pesan::find($kirim->id);
                 $update->created_at = \Carbon\Carbon::now();
                 $update->save();
+                dd($update);
             }
 
             $update_device = Device::find($device->id);
