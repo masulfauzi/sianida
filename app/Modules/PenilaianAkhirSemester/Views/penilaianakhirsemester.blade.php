@@ -34,9 +34,9 @@
                             <thead>
                                 <tr>
                                     <th width="15">No</th>
-                                    {{-- @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
-                                    @endif --}}
-                                    <td>Guru</td>
+                                    @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+                                        <td>Guru</td>
+                                    @endif
                                     <td>Mapel</td>
                                     <td>Tingkat</td>
                                     <td>Kisi-Kisi</td>
@@ -57,9 +57,9 @@
                                     @if ($perangkat)
                                         <tr>
                                             <td>{{ $no++ }}</td>
-                                            {{-- @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
-                                            @endif --}}
-                                            <td>{{ $item->nama_guru }}</td>
+                                            @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+                                                <td>{{ $item->nama_guru }}</td>
+                                            @endif
                                             <td>{{ $item->mapel }}</td>
                                             <td>{{ $item->tingkat }}</td>
                                             {{-- <td>{{ $item->id_semester }}</td> --}}
@@ -105,7 +105,9 @@
                                     @else
                                         <tr>
                                             <td>{{ $no++ }}</td>
-                                            {{-- <td>{{ $item->id_guru }}</td> --}}
+                                            @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
+                                                <td>{{ $item->nama_guru }}</td>
+                                            @endif
                                             <td>{{ $item->mapel }}</td>
                                             <td>{{ $item->tingkat }}</td>
                                             {{-- <td>{{ $item->id_semester }}</td> --}}
