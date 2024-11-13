@@ -65,7 +65,7 @@
                                             {{-- <td>{{ $item->id_semester }}</td> --}}
                                             <td>
                                                 @if ($perangkat->kisi_kisi)
-                                                    <a href="{{ url('uploads/pas/' . $perangkat->kisi_kisi) }}"
+                                                    <a href="{{ url('uploads/kisikisi/' . $perangkat->kisi_kisi) }}"
                                                         target="_blank">
                                                         <img src="{{ asset('assets/images/icon/check.png') }}"
                                                             alt="">
@@ -76,7 +76,7 @@
                                             </td>
                                             <td>
                                                 @if ($perangkat->kunci)
-                                                    <a href="{{ url('uploads/pas/' . $perangkat->kunci) }}"
+                                                    <a href="{{ url('uploads/norma/' . $perangkat->kunci) }}"
                                                         target="_blank">
                                                         <img src="{{ asset('assets/images/icon/check.png') }}"
                                                             alt="">
@@ -87,7 +87,7 @@
                                             </td>
                                             <td>
                                                 @if ($perangkat->perangkat)
-                                                    <a href="{{ url('uploads/pas/' . $perangkat->kunci) }}"
+                                                    <a href="{{ url('uploads/soal/' . $perangkat->perangkat) }}"
                                                         target="_blank">
                                                         <img src="{{ asset('assets/images/icon/check.png') }}"
                                                             alt="">
