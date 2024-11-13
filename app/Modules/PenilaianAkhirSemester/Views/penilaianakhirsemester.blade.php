@@ -59,7 +59,7 @@
                                             <td>{{ $no++ }}</td>
                                             {{-- @if (session('active_role')['id'] != '9ec7541e-5a5e-4a3a-a255-6ffb46895f46')
                                             @endif --}}
-                                            <td>{{ $item->nama }}</td>
+                                            <td>{{ $item->nama_guru }}</td>
                                             <td>{{ $item->mapel }}</td>
                                             <td>{{ $item->tingkat }}</td>
                                             {{-- <td>{{ $item->id_semester }}</td> --}}
