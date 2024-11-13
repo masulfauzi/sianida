@@ -29,7 +29,7 @@ class PenilaianAkhirSemesterController extends Controller
 
 	public function index(Request $request)
 	{
-		if (session('id_guru') != NULL) {
+		if (session('active_role')['id'] == '9ec7541e-5a5e-4a3a-a255-6ffb46895f46') {
 			$query = JamMengajar::get_mapel_perangkat(get_semester('active_semester_id'), session('id_guru'));
 		} else {
 			$query = JamMengajar::get_mapel_perangkat(get_semester('active_semester_id'));
