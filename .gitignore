@@ -16,3 +16,4 @@ yarn-error.log
 /public/ujian/*
 public/tmp/*
 /public/download_sertifikat/*
+/public/file_pesan/*
