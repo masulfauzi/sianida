@@ -35,23 +35,12 @@
                                     <div class="card">
                                         <div class="card-content">
                                             <div class="card-body">
-                                                <form class="form form-horizontal" action="{{ route('pesan.store') }}"
-                                                    method="POST" enctype="multipart/form-data">
+                                                <form class="form form-horizontal"
+                                                    action="{{ route('pesan.semua_siswa.store') }}" method="POST"
+                                                    enctype="multipart/form-data">
                                                     <div class="form-body">
                                                         @csrf
-                                                        <div class="row">
-                                                            <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                                                <label>Nomor</label>
-                                                            </div>
-                                                            <div class="col-md-9 form-group">
-                                                                {{ Form::text('nomor', old('nomor'), ['class' => 'form-control', 'placeholder' => '']) }}
-                                                                @error('nomor')
-                                                                    <div class="text-danger">
-                                                                        {{ $message }}
-                                                                    </div>
-                                                                @enderror
-                                                            </div>
-                                                        </div>
+
                                                         <div class="row mb-1">
                                                             <div class="col-md-3">
 
@@ -113,7 +102,7 @@
                             </div>
 
                         </div>
-                        
+
 
                     </div>
 

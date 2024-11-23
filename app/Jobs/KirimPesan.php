@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Modules\Device\Models\Device;
+use App\Modules\FilePesan\Models\FilePesan;
 use App\Modules\Pesan\Models\Pesan;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -37,30 +38,66 @@ class KirimPesan implements ShouldQueue
         foreach ($pesan as $kirim) {
             $device = Device::orderBy('last_used', 'asc')->first();
 
-            $curl = curl_init();
+            if ($kirim->id_file != null) {
 
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://app.saungwa.com/api/create-message',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => array(
-                    'appkey' => $device->app_key,
-                    'authkey' => $device->auth_key,
-                    'to' => $kirim->nomor,
-                    'message' => $kirim->isi_pesan,
-                    'sandbox' => 'false'
-                ),
-            ));
+                $file = FilePesan::find($kirim->id_file);
 
-            $response = json_decode(curl_exec($curl));
 
-            curl_close($curl);
-            // echo $response;
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://app.saungwa.com/api/create-message',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => array(
+                        'appkey' => $device->app_key,
+                        'authkey' => $device->auth_key,
+                        'to' => $kirim->nomor,
+                        'message' => $kirim->isi_pesan,
+                        'file' => 'https://apps.smkn2semarang.sch.id/file_pesan/'.$file->nama_file,
+                        'sandbox' => 'false'
+                    ),
+                ));
+
+                $response = json_decode(curl_exec($curl));
+
+                curl_close($curl);
+                // echo $response;
+            }
+            else{
+                $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://app.saungwa.com/api/create-message',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => array(
+                        'appkey' => $device->app_key,
+                        'authkey' => $device->auth_key,
+                        'to' => $kirim->nomor,
+                        'message' => $kirim->isi_pesan,
+                        'sandbox' => 'false'
+                    ),
+                ));
+
+                $response = json_decode(curl_exec($curl));
+
+                curl_close($curl);
+                // echo $response;
+            }
+
+
+
 
             if (isset($response->message_status) && ($response->message_status == 'Success')) {
                 $update = Pesan::find($kirim->id);

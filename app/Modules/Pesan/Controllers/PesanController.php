@@ -9,6 +9,8 @@ use App\Modules\Log\Models\Log;
 use App\Modules\Pesan\Models\Pesan;
 
 use App\Http\Controllers\Controller;
+use App\Modules\FilePesan\Models\FilePesan;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
 use Illuminate\Support\Facades\Auth;
 
 class PesanController extends Controller
@@ -38,15 +40,79 @@ class PesanController extends Controller
 	public function create(Request $request)
 	{
 
-		$data['forms'] = array(
-			'nomor' => ['Nomor', Form::text("nomor", old("nomor"), ["class" => "form-control", "placeholder" => ""])],
-			'isi_pesan' => ['Isi Pesan', Form::textarea("isi_pesan", old("isi_pesan"), ["class" => "form-control element", "id" => "element"])],
-			'status' => ['Status', Form::text("status", old("status"), ["class" => "form-control", "placeholder" => ""])],
-
-		);
+		$data['forms'] = array();
 
 		$this->log($request, 'membuka form tambah ' . $this->title);
 		return view('Pesan::pesan_create', array_merge($data, ['title' => $this->title]));
+	}
+	
+	public function create_semua_siswa(Request $request)
+	{
+
+		$data['forms'] = array();
+
+		$this->log($request, 'membuka form tambah ' . $this->title);
+		return view('Pesan::pesan_semua_siswa_create', array_merge($data, ['title' => $this->title]));
+	}
+	public function create_banyak_nomor(Request $request)
+	{
+
+		$data['forms'] = array();
+
+		$this->log($request, 'membuka form tambah ' . $this->title);
+		return view('Pesan::pesan_banyak_nomor_create', array_merge($data, ['title' => $this->title]));
+	}
+
+	function store_banyak_nomor(Request $request)
+	{
+		$this->validate($request, [
+			'nomor' => 'required',
+			'isi_pesan' => 'required',
+			// 'status' => 'required',
+		]);
+
+		$pecah_nomor = explode(',', $request->input('nomor'));
+
+		if ($request->has('file')) {
+			$fileName = time() . '.' . $request->file->extension();
+
+			$request->file->move(public_path('file_pesan/'), $fileName);
+
+			$file = new FilePesan();
+			$file->nama_file = $fileName;
+
+			$file->created_by = Auth::id();
+			$file->save();
+
+			for($i=0; $i<count($pecah_nomor); $i++)
+			{
+				$pesan = new Pesan();
+				$pesan->nomor = trim($pecah_nomor[$i]);
+				$pesan->isi_pesan = $request->input("isi_pesan");
+				$pesan->status = 0;
+				$pesan->id_file = $file->id;
+
+				$pesan->created_by = Auth::id();
+				$pesan->save();
+			}
+
+			
+		} else {
+			for($i=0; $i<count($pecah_nomor); $i++)
+			{
+				$pesan = new Pesan();
+				$pesan->nomor = trim($pecah_nomor[$i]);
+				$pesan->isi_pesan = $request->input("isi_pesan");
+				$pesan->status = 0;
+
+				$pesan->created_by = Auth::id();
+				$pesan->save();
+			}
+		}
+
+		$text = 'membuat ' . $this->title; //' baru '.$pesan->what;
+		$this->log($request, $text, ['pesan.id' => $pesan->id]);
+		return redirect()->route('pesan.index')->with('message_success', 'Pesan berhasil ditambahkan!');
 	}
 
 	function store(Request $request)
@@ -54,17 +120,88 @@ class PesanController extends Controller
 		$this->validate($request, [
 			'nomor' => 'required',
 			'isi_pesan' => 'required',
-			'status' => 'required',
-
+			// 'status' => 'required',
 		]);
 
-		$pesan = new Pesan();
-		$pesan->nomor = $request->input("nomor");
-		$pesan->isi_pesan = $request->input("isi_pesan");
-		$pesan->status = $request->input("status");
+		if ($request->has('file')) {
+			$fileName = time() . '.' . $request->file->extension();
 
-		$pesan->created_by = Auth::id();
-		$pesan->save();
+			$request->file->move(public_path('file_pesan/'), $fileName);
+
+			$file = new FilePesan();
+			$file->nama_file = $fileName;
+
+			$file->created_by = Auth::id();
+			$file->save();
+
+			$pesan = new Pesan();
+			$pesan->nomor = $request->input("nomor");
+			$pesan->isi_pesan = $request->input("isi_pesan");
+			$pesan->status = 0;
+			$pesan->id_file = $file->id;
+
+			$pesan->created_by = Auth::id();
+			$pesan->save();
+		} else {
+			$pesan = new Pesan();
+			$pesan->nomor = $request->input("nomor");
+			$pesan->isi_pesan = $request->input("isi_pesan");
+			$pesan->status = 0;
+
+			$pesan->created_by = Auth::id();
+			$pesan->save();
+		}
+
+		$text = 'membuat ' . $this->title; //' baru '.$pesan->what;
+		$this->log($request, $text, ['pesan.id' => $pesan->id]);
+		return redirect()->route('pesan.index')->with('message_success', 'Pesan berhasil ditambahkan!');
+	}
+
+	public function store_semua_siswa(Request $request)
+	{
+		$this->validate($request, [
+			// 'nomor' => 'required',
+			'isi_pesan' => 'required',
+			// 'status' => 'required',
+		]);
+
+		$siswa = Pesertadidik::whereIdSemester(session('active_semester')['id'])
+			->select('s.no_hp')
+			->join('siswa as s', 's.id', '=', 'pesertadidik.id_siswa')
+			->get();
+
+		if ($request->has('file')) {
+			$fileName = time() . '.' . $request->file->extension();
+
+			$request->file->move(public_path('file_pesan/'), $fileName);
+
+			$file = new FilePesan();
+			$file->nama_file = $fileName;
+
+			$file->created_by = Auth::id();
+			$file->save();
+
+			foreach ($siswa as $sis) {
+				$pesan = new Pesan();
+				$pesan->nomor = $sis->no_hp;
+				$pesan->isi_pesan = $request->input("isi_pesan");
+				$pesan->status = 0;
+				$pesan->id_file = $file->id;
+
+				$pesan->created_by = Auth::id();
+				$pesan->save();
+			}
+		} else {
+			foreach ($siswa as $sis) {
+				$pesan = new Pesan();
+				$pesan->nomor = $sis->no_hp;
+				$pesan->isi_pesan = $request->input("isi_pesan");
+				$pesan->status = 0;
+
+				$pesan->created_by = Auth::id();
+				$pesan->save();
+			}
+		}
 
 		$text = 'membuat ' . $this->title; //' baru '.$pesan->what;
 		$this->log($request, $text, ['pesan.id' => $pesan->id]);
