@@ -33,7 +33,7 @@ class KirimPesan implements ShouldQueue
      */
     public function handle()
     {
-        $pesan = Pesan::whereStatus(0)->orderBy('created_at', 'asc')->limit(3)->get();
+        $pesan = Pesan::whereStatus(0)->orderBy('created_at', 'asc')->limit(10)->get();
 
         foreach ($pesan as $kirim) {
             $device = Device::orderBy('last_used', 'asc')->first();
