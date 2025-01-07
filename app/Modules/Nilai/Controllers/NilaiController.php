@@ -96,7 +96,7 @@ class NilaiController extends Controller
 	{
 		// dd(session('id_siswa'));
 
-		$data['ref_semester'] = Semester::orderBy('urutan')->all()->pluck('semester', 'id');
+		$data['ref_semester'] = Semester::orderBy('urutan')->get()->pluck('semester', 'id');
 		$data['ref_semester']->prepend('-PILIH SALAH SATU-', '');
 
 		$semester = $request->input('id_semester');
