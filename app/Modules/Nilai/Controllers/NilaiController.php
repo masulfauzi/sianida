@@ -13,6 +13,7 @@ use App\Modules\Mapel\Models\Mapel;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Jurusan\Models\Jurusan;
+use App\Modules\Konfirmasinilai\Models\Konfirmasinilai;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -104,12 +105,14 @@ class NilaiController extends Controller
 		if ($semester == NULL) {
 			$query = Nilai::query()->whereIdSiswa('xxxxxxx');
 			$data['semester'] = NULL;
+			$data['konfirmasi'] = NULL;
 		} else {
 			// dd($semester);
 			$id_siswa = session('id_siswa');
 			$data['semester'] = Semester::find($semester);
 			$query = Nilai::query()->whereIdSemester($semester)->whereIdSiswa($id_siswa)->get();
-			// dd($query);
+			$data['konfirmasi'] = Konfirmasinilai::whereIdSiswa($id_siswa)->whereIdSemester($semester)->first();
+			// dd($data['konfirmasi']);
 		}
 
 		$data['id_semester'] = $semester;
