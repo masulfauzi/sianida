@@ -23,12 +23,9 @@ class AktivasiController extends Controller
     {
         $data_siswa = Siswa::cek_aktivasi_siswa($request);
 
-        if($data_siswa->count() > 0)
-        {
+        if ($data_siswa->count() > 0) {
             return redirect()->route('aktivasi.input', $data_siswa->first()->id)->with('message_success', 'Silahkan Isi Form di Bawah Ini.');
-        }
-        else
-        {
+        } else {
             return redirect()->route('aktivasi')->with('message_danger', "Data Tidak Ditemukan");
         }
     }
@@ -46,10 +43,15 @@ class AktivasiController extends Controller
     public function registrasi(Request $request)
     {
         $this->validate($request, [
-			'username'  => 'required|unique:users,username',
-			'email'     => 'required|email|unique:users,email',
-			'password'  => 'required|min:8|confirmed'
-		]);
+            'username'  => 'required|unique:users,username',
+            'email'     => 'required|email|unique:users,email',
+            'password'  => 'required|min:8|confirmed',
+            'no_hp'  => 'required|min:8|regex:/^(62)8[1-9][0-9]{6,9}$/'
+        ]);
+
+        $data_siswa = Siswa::find($request->id);
+        $data_siswa->no_hp = $request->no_hp;
+        $data_siswa->save();
 
         $data_user = [
             'id'            => Str::uuid(),
@@ -77,11 +79,9 @@ class AktivasiController extends Controller
     public function radius()
     {
         $data = DB::table('users')
-                    ->whereNull('is_singkron')
-                    ->get();
+            ->whereNull('is_singkron')
+            ->get();
 
         return json_encode($data);
     }
-
-    
 }

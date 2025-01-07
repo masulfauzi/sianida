@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> {{  config('app.name', 'Laralag') }}</title>
-    
+    <title> {{ config('app.name', 'Laralag') }}</title>
+
     <link rel="stylesheet" href="{{ asset('assets/css/main/app.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}" type="image/png">
@@ -77,107 +78,135 @@
                 <hr class="m-0 bg-primary">
             </header>
             <div class="content-wrapper container">
-                
 
-<div class="page-content">
-    <section class="row">
-        <div class="col-12 col-lg-3">
-        </div>
-        <div class="col-12 col-lg-6">
-            @include('include.flash')
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Aktivasi Akun Sianida</h4>
+
+                <div class="page-content">
+                    <section class="row">
+                        <div class="col-12 col-lg-3">
                         </div>
-                        <div class="card-body">
-                            <form class="form form-horizontal" action="{{ route('registrasi') }}" method="POST">
-                                <div class="form-body">
-                                    @csrf 
-                                    {!! Form::hidden('nik', $siswa->nik) !!}
-                                    {!! Form::hidden('name', $siswa->nama_siswa) !!}
-                                    {!! Form::hidden('username', $siswa->nisn) !!}
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>Nama</label>
+                        <div class="col-12 col-lg-6">
+                            @include('include.flash')
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4>Aktivasi Akun Sianida</h4>
                                         </div>
-                                        <div class="col-md-9 form-group">
-                                            <input id="nisn" type="text" class="form-control" placeholder="Nama Siswa" value="{{ $siswa->nama_siswa }}" disabled>
+                                        <div class="card-body">
+                                            <form class="form form-horizontal" action="{{ route('registrasi') }}"
+                                                method="POST">
+                                                <div class="form-body">
+                                                    @csrf
+                                                    {!! Form::hidden('nik', $siswa->nik) !!}
+                                                    {!! Form::hidden('name', $siswa->nama_siswa) !!}
+                                                    {!! Form::hidden('username', $siswa->nisn) !!}
+                                                    {!! Form::hidden('id', $siswa->id) !!}
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>Nama</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input id="nisn" type="text" class="form-control"
+                                                                placeholder="Nama Siswa"
+                                                                value="{{ $siswa->nama_siswa }}" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>NISN</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input id="nisn" type="text" class="form-control"
+                                                                placeholder="NISN" value="{{ $siswa->nisn }}"
+                                                                disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>NIS</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input id="nis" type="text" class="form-control"
+                                                                placeholder="NIS" value="{{ $siswa->nis }}" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>NIK</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input id="nik" type="text" class="form-control"
+                                                                placeholder="NIK" value="{{ $siswa->nik }}" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>Username</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input id="username" type="text" class="form-control"
+                                                                placeholder="Username" value="{{ $siswa->nisn }}"
+                                                                disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>Email</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input name="email" id="email" type="email"
+                                                                class="form-control" placeholder="E-Mail"
+                                                                value="{{ old('email') }}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>No HP</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input name="no_hp" id="no_hp" type="number"
+                                                                class="form-control"
+                                                                placeholder="Contoh: 6285123456789"
+                                                                value="{{ old('no_hp') }}" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>Password</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input name="password" id="password" type="password"
+                                                                class="form-control" placeholder="Password" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                            <label>Ulangi Password</label>
+                                                        </div>
+                                                        <div class="col-md-9 form-group">
+                                                            <input name="password_confirmation" id="re_password"
+                                                                type="password" class="form-control"
+                                                                placeholder="Password Confirmation" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="offset-md-3 ps-2">
+                                                        <button class="btn btn-primary" type="submit">Simpan</button>
+                                                        &nbsp;
+                                                        <a href="{{ route('jadwal.index') }}"
+                                                            class="btn btn-secondary">Batal</a>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>NISN</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input id="nisn" type="text" class="form-control" placeholder="NISN" value="{{ $siswa->nisn }}" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>NIS</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input id="nis" type="text" class="form-control" placeholder="NIS" value="{{ $siswa->nis }}" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>NIK</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input id="nik" type="text" class="form-control" placeholder="NIK" value="{{ $siswa->nik }}" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>Username</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input id="username" type="text" class="form-control" placeholder="Username" value="{{ $siswa->nisn }}" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>Email</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input name="email" id="email" type="email" class="form-control" placeholder="E-Mail" value="{{ old('email') }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>Password</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input name="password" id="password" type="password" class="form-control" placeholder="Password" required>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>Ulangi Password</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input name="password_confirmation" id="re_password" type="password" class="form-control" placeholder="Password Confirmation" required>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="offset-md-3 ps-2">
-                                        <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
-                                        <a href="{{ route('jadwal.index') }}" class="btn btn-secondary">Batal</a>
-                                    </div>
-                              </div>
-                            </form>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
+
+                    </section>
                 </div>
-            </div>
-            
-        </div>
-        
-    </section>
-</div>
 
             </div>
 
@@ -189,7 +218,7 @@
                         </div>
                         <div class="float-end">
                             <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="https://saugi.me">Saugi</a></p>
+                                    href="https://saugi.me">Saugi</a></p>
                         </div>
                     </div>
                 </div>
@@ -199,4 +228,5 @@
     <script src="{{ asset('assets/js/pages/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/pages/horizontal-layout.js') }}"></script>
 </body>
+
 </html>
