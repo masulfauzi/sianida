@@ -46,7 +46,7 @@ class AktivasiController extends Controller
             'username'  => 'required|unique:users,username',
             'email'     => 'required|email|unique:users,email',
             'password'  => 'required|min:8|confirmed',
-            'no_hp'  => 'required|min:8|regex:/^(62)8[1-9][0-9]{6,9}$/'
+            'no_hp'  => 'required|min:8|regex:/^(62)9[1-9][0-9]{6,9}$/'
         ]);
 
         $data_siswa = Siswa::find($request->id);
