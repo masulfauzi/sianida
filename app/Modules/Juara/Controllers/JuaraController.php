@@ -52,14 +52,12 @@ class JuaraController extends Controller
 	function store(Request $request)
 	{
 		$this->validate($request, [
-			'id_tingkat_juara' => 'required',
 			'juara' => 'required',
 			'poin' => 'required',
 
 		]);
 
 		$juara = new Juara();
-		$juara->id_tingkat_juara = $request->input("id_tingkat_juara");
 		$juara->juara = $request->input("juara");
 		$juara->poin = $request->input("poin");
 
