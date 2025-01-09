@@ -13,7 +13,9 @@ use App\Modules\Mapel\Models\Mapel;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Jurusan\Models\Jurusan;
+use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Konfirmasinilai\Models\Konfirmasinilai;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -307,5 +309,65 @@ class NilaiController extends Controller
 		$text = 'menghapus ' . $this->title; //.' '.$nilai->what;
 		$this->log($request, $text, ['nilai.id' => $nilai->id]);
 		return back()->with('message_success', 'Nilai berhasil dihapus!');
+	}
+
+	public function verif_nilai(Request $request)
+	{
+		$data['kelas'] = Kelas::orderBy('kelas')->paginate(12)->withQueryString();
+
+		$this->log($request, 'melihat halaman manajemen data ' . $this->title);
+		return view('Nilai::verif_daftar_kelas', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function daftar_siswa(Request $request, $id_kelas)
+	{
+		$data['siswa'] = Pesertadidik::join('siswa as s', 'pesertadidik.id_siswa', '=', 's.id')
+			->where('pesertadidik.id_kelas', '=', $id_kelas)
+			->where('pesertadidik.id_semester', '=', session('active_semester')['id'])
+			->orderBy('s.nama_siswa')
+			->get();
+
+		// dd($data['siswa']);
+
+		$this->log($request, 'melihat halaman manajemen data ' . $this->title);
+		return view('Nilai::verif_daftar_siswa', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function daftar_nilai(Request $request, $id_siswa)
+	{
+		$data['semester'] = Nilai::whereIdSiswa($id_siswa)->groupBy('id_semester')->get();
+		$data['nilai']		= Nilai::whereIdSiswa($id_siswa)->get();
+		$data['konfirmasi']	= Konfirmasinilai::where('id_siswa', '=', $id_siswa)->get();
+
+		// dd($data['konfirmasi']);
+
+		$this->log($request, 'melihat halaman manajemen data ' . $this->title);
+		return view('Nilai::verif_daftar_nilai', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function simpan_verif(Request $request)
+	{
+		$jumlah_data = count($request->id_nilai);
+
+		for ($i = 0; $i < $jumlah_data; $i++) {
+			$nilai = Nilai::find($request->id_nilai[$i]);
+
+			$nilai->nilai = $request->nilai[$i];
+			$nilai->save();
+
+			// dd($nilai);
+		}
+
+		$konfirmasi = Konfirmasinilai::find($request->id_konfirmasi);
+
+		$konfirmasi->is_verif = 1;
+		$konfirmasi->save();
+
+		// dd($jumlah_data);
+
+
+		$text = 'memverifikasi nilai ' . $this->title; //.' '.$nilai->what;
+		$this->log($request, $text, ['nilai.id' => $nilai->id]);
+		return back()->with('message_success', 'Nilai berhasil diverifikasi!');
 	}
 }

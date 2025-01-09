@@ -27,4 +27,11 @@ class Konfirmasinilai extends Model
 	{
 		return $this->belongsTo(Semester::class, "id_semester", "id");
 	}
+
+	public static function get_konfirmasi($id_siswa)
+	{
+		return Konfirmasinilai::where('id_siswa', '=', $id_siswa)
+			->where('is_verif', '=', '0')
+			->get();
+	}
 }
