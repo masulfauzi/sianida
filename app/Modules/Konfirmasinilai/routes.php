@@ -3,7 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\Konfirmasinilai\Controllers\KonfirmasinilaiController;
 
-Route::controller(KonfirmasinilaiController::class)->middleware(['web','auth'])->name('konfirmasinilai.')->group(function(){
+Route::controller(KonfirmasinilaiController::class)->middleware(['web', 'auth'])->name('konfirmasinilai.')->group(function () {
+	Route::get('/konfirmasinilai/batal/{konfirmasinilai}', 'batal_konfirmasi')->name('batal_konfirmasi.store');
+
+
+
+
+
+
+
+
+
 	Route::get('/konfirmasinilai', 'index')->name('index');
 	Route::get('/konfirmasinilai/data', 'data')->name('data.index');
 	Route::get('/konfirmasinilai/create', 'create')->name('create');

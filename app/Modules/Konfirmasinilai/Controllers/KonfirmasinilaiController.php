@@ -22,6 +22,15 @@ class KonfirmasinilaiController extends Controller
 		$this->log = $log;
 	}
 
+	public function batal_konfirmasi(Request $request, Konfirmasinilai $konfirmasinilai)
+	{
+		$konfirmasinilai->delete();
+
+		$text = 'menghapus ' . $this->title; //.' '.$konfirmasinilai->what;
+		$this->log($request, $text, ['konfirmasinilai.id' => $konfirmasinilai->id]);
+		return back()->with('message_success', 'Konfirmasinilai berhasil dihapus!');
+	}
+
 	public function index(Request $request)
 	{
 		$query = Konfirmasinilai::query();

@@ -12,18 +12,19 @@ use App\Modules\Semester\Models\Semester;
 
 class Konfirmasinilai extends Model
 {
-	use SoftDeletes;
+	// use SoftDeletes;
 	use UsesUuid;
 
 	protected $dates      = ['deleted_at'];
 	protected $table      = 'konfirmasinilai';
-	protected $fillable   = ['*'];	
+	protected $fillable   = ['*'];
 
-	public function siswa(){
-		return $this->belongsTo(Siswa::class,"id_siswa","id");
+	public function siswa()
+	{
+		return $this->belongsTo(Siswa::class, "id_siswa", "id");
 	}
-public function semester(){
-		return $this->belongsTo(Semester::class,"id_semester","id");
+	public function semester()
+	{
+		return $this->belongsTo(Semester::class, "id_semester", "id");
 	}
-
 }
