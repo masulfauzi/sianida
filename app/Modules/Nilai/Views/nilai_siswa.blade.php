@@ -147,7 +147,8 @@
                                                 <label>Bukti</label>
                                             </div>
                                             <div class="col-md-9 form-group">
-                                                <input type="file" name="bukti" class="form-control">
+                                                <input type="file" name="bukti" class="form-control" accept="image/*"
+                                                    capture="camera">
 
                                             </div>
                                         </div>
