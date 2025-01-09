@@ -109,6 +109,10 @@
                                 <img src="{{ url('uploads/bukti_nilai/' . $konfirmasi->bukti) }}" width="400px;"
                                     alt="Foto Pekerjaan">
                             @endif
+
+                            <a href="{{ route('konfirmasinilai.batal_konfirmasi.store', $konfirmasi->id) }}"
+                                class="btn btn-danger">Reset
+                                Konfirmasi</a>
                         @else
                             <form class="form form-horizontal" method="POST" enctype="multipart/form-data"
                                 action="{{ route('konfirmasinilai.store') }}">
