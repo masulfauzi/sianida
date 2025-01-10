@@ -332,6 +332,11 @@ class NilaiController extends Controller
 			->orderBy('s.nama_siswa')
 			->get();
 
+		// session()->set('id_kelas', $id_kelas);
+		session(['id_kelas' => $id_kelas]);
+
+		// dd(session('id_kelas'));
+
 		// dd($data['siswa']);
 
 		$this->log($request, 'melihat halaman manajemen data ' . $this->title);
