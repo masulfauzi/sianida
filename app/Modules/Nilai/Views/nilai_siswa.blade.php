@@ -6,6 +6,48 @@
             display: none;
         }
     </style>
+    <style>
+        .timer {
+            margin: 0 0 45px;
+            font-family: sans-serif;
+            color: #fff;
+            display: inline-block;
+            font-weight: 100;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        .timer div {
+            padding: 10px;
+            border-radius: 3px;
+            background: #6b02ff;
+            display: inline-block;
+            font-family: Oswald;
+            font-size: 26px;
+            font-weight: 400;
+            width: 80px;
+        }
+
+        .timer .smalltext {
+            color: #ffffff;
+            font-size: 12px;
+            font-family: Poppins;
+            font-weight: 500;
+            display: block;
+            padding: 0;
+            width: auto;
+        }
+
+        .timer #time-up {
+            margin: 8px 0 0;
+            text-align: left;
+            font-size: 14px;
+            font-style: normal;
+            color: #000000;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+    </style>
 @endsection
 
 @section('main')
@@ -114,60 +156,81 @@
                                 class="btn btn-danger">Reset
                                 Konfirmasi</a>
                         @else
-                            <form class="form form-horizontal" method="POST" enctype="multipart/form-data"
-                                action="{{ route('konfirmasinilai.store') }}">
-                                @csrf
-                                <input type="hidden" name="id_siswa" value="{{ session('id_siswa') }}">
-                                <input type="hidden" name="id_semester" value="{{ $id_semester }}">
-                                <div class="form-body">
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label>Konfirmasi Nilai</label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-                                            <input type="radio" name="is_sesuai" value="1"
-                                                onclick="disableKeterangan()">
-                                            Sudah Sesuai
-                                            <br>
-                                            <input type="radio" name="is_sesuai" value="0"
-                                                onclick="enableKeterangan()">
-                                            Belum Sesuai
-
-                                        </div>
-                                    </div>
-                                    <div class="keterangan sembunyi" id="keterangan">
-
-                                        <div class="row">
-                                            <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                                <label>Keterangan</label>
-                                            </div>
-                                            <div class="col-md-9 form-group">
-                                                <textarea name="keterangan" cols="30" rows="10" class="form-control rich-editor"></textarea>
-
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                                <label>Bukti</label>
-                                            </div>
-                                            <div class="col-md-9 form-group">
-                                                <input type="file" name="bukti" class="form-control" accept="image/*"
-                                                    capture="camera">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-3 text-sm-start text-md-end pt-2">
-                                            <label></label>
-                                        </div>
-                                        <div class="col-md-9 form-group">
-
-                                            <button class="btn btn-primary" type="submit">Simpan</button>
-                                        </div>
-                                    </div>
+                            <h5 id="xpengumuman">Konfirmasi Nilai telah berakhir</h5>
+                            <h5 id="pengumuman">Konfirmasi Nilai akan berakhir pada:</h5>
+                            <div class="timer" id="timer">
+                                <div>
+                                    <span class="hours" id="hour"></span>
+                                    <div class="smalltext">Jam</div>
                                 </div>
-                            </form>
+                                <div>
+                                    <span class="minutes" id="minute"></span>
+                                    <div class="smalltext">Menit</div>
+                                </div>
+                                <div>
+                                    <span class="seconds" id="second"></span>
+                                    <div class="smalltext">Detik</div>
+                                </div>
+                                <p id="time-up"></p>
+                            </div>
+                            @if ($waktu_sekarang > $batas_waktu)
+                                <h3>Waktu verifikasi nilai sudah habis.</h3>
+                            @else
+                                <form class="form form-horizontal" method="POST" enctype="multipart/form-data"
+                                    action="{{ route('konfirmasinilai.store') }}">
+                                    @csrf
+                                    <input type="hidden" name="id_siswa" value="{{ session('id_siswa') }}">
+                                    <input type="hidden" name="id_semester" value="{{ $id_semester }}">
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                <label>Konfirmasi Nilai</label>
+                                            </div>
+                                            <div class="col-md-9 form-group">
+                                                <input type="radio" name="is_sesuai" value="1"
+                                                    onclick="disableKeterangan()">
+                                                Sudah Sesuai
+                                                <br>
+                                                <input type="radio" name="is_sesuai" value="0"
+                                                    onclick="enableKeterangan()">
+                                                Belum Sesuai
+
+                                            </div>
+                                        </div>
+                                        <div class="keterangan sembunyi" id="keterangan">
+
+                                            <div class="row">
+                                                <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                    <label>Keterangan</label>
+                                                </div>
+                                                <div class="col-md-9 form-group">
+                                                    <textarea name="keterangan" cols="30" rows="10" class="form-control rich-editor"></textarea>
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                    <label>Bukti</label>
+                                                </div>
+                                                <div class="col-md-9 form-group">
+                                                    <input type="file" name="bukti" class="form-control"
+                                                        accept="image/*" capture="camera">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                                <label></label>
+                                            </div>
+                                            <div class="col-md-9 form-group">
+
+                                                <button class="btn btn-primary" type="submit">Simpan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            @endif
                         @endif
 
 
@@ -201,5 +264,43 @@
 
 
         }
+    </script>
+
+    <script>
+        // Set the date we're counting down to
+        var countDownDate = new Date("{{ $batas_pengisian }}").getTime();
+        $("#xpengumuman").hide();
+
+        // Update the count down every 1 second
+        var x = setInterval(function() {
+
+            // Get today's date and time
+            var now = new Date().getTime();
+
+            // Find the distance between now and the count down date
+            var distance = countDownDate - now;
+
+            // Time calculations for days, hours, minutes and seconds
+            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("hour").innerHTML = hours;
+            document.getElementById("minute").innerHTML = minutes;
+            document.getElementById("second").innerHTML = seconds;
+
+            // Display the result in the element with id="demo"
+            //   document.getElementById("demo").innerHTML = "Pengumuman dapat dilihat " + days + " Hari " + hours + " Jam "
+            //   + minutes + " Menit " + seconds + " Detik lagi.";
+
+            // If the count down is finished, write some text
+            if (distance < 0) {
+                clearInterval(x);
+                // document.getElementById("demo").innerHTML = "EXPIRED";
+                $("#xpengumuman").show();
+                $("#pengumuman").hide();
+                $("#timer").hide();
+            }
+        }, 1000);
     </script>
 @endsection

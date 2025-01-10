@@ -118,6 +118,11 @@ class NilaiController extends Controller
 		}
 
 		$data['id_semester'] = $semester;
+		$data['batas_pengisian'] = "2025-01-10 09:59:59";
+		$data['batas_waktu'] = strtotime($data['batas_pengisian']);
+		$data['waktu_sekarang'] = time();
+
+		// dd($data['batas_waktu']);
 
 
 		$data['data'] = $query;
