@@ -67,7 +67,7 @@ class KonfirmasinilaiController extends Controller
 			'id_semester' => 'required',
 			'is_sesuai' => 'required',
 			// 'keterangan' => 'required',
-			// 'bukti' => 'required',
+			'bukti' => 'max:1024',
 
 		]);
 
