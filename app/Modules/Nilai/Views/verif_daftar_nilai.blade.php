@@ -28,6 +28,11 @@
                 </h6>
                 <div class="card-body">
                     <div class="row">
+                        <div class="col-3">Nama</div>
+                        <div class="col-3">{{ $siswa->nama_siswa }}</div>
+    
+                    </div>
+                    <div class="row">
                         <div class="col-9"></div>
                         <div class="col-3">
                             <a href="{{ route('nilai.daftar_siswa.index', session('id_kelas')) }}" class="btn btn-success">Kembali</a>

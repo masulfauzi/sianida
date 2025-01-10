@@ -348,6 +348,7 @@ class NilaiController extends Controller
 		$data['semester'] = Nilai::whereIdSiswa($id_siswa)->groupBy('id_semester')->get();
 		$data['nilai']		= Nilai::whereIdSiswa($id_siswa)->get();
 		$data['konfirmasi']	= Konfirmasinilai::where('id_siswa', '=', $id_siswa)->get();
+		$data['siswa']		= Siswa::find($id_siswa);
 
 		// dd($data['konfirmasi']);
 
