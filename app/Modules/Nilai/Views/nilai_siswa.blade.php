@@ -289,6 +289,7 @@
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+            document.getElementById("day").innerHTML = days;
             document.getElementById("hour").innerHTML = hours;
             document.getElementById("minute").innerHTML = minutes;
             document.getElementById("second").innerHTML = seconds;
