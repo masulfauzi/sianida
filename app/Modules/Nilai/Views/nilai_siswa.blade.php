@@ -160,6 +160,10 @@
                             <h5 id="pengumuman">Konfirmasi Nilai akan berakhir pada:</h5>
                             <div class="timer" id="timer">
                                 <div>
+                                    <span class="days" id="day"></span>
+                                    <div class="smalltext">Hari</div>
+                                </div>
+                                <div>
                                     <span class="hours" id="hour"></span>
                                     <div class="smalltext">Jam</div>
                                 </div>
@@ -280,6 +284,7 @@
             var distance = countDownDate - now;
 
             // Time calculations for days, hours, minutes and seconds
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
             var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
