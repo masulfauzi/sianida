@@ -78,6 +78,10 @@ class PrestasiController extends Controller
 		// $ref_siswa = Siswa::all()->pluck('nama_siswa','id');
 		$id_siswa = session()->get('id_siswa');
 
+		$data['batas_pengisian'] = "2025-01-13 09:59:59";
+		$data['batas_waktu'] = strtotime($data['batas_pengisian']);
+		$data['waktu_sekarang'] = time();
+
 		$data['forms'] = array(
 			'id_juara' => ['Juara', Form::select("id_juara", $ref_juara, null, ["class" => "form-control select2"])],
 			'prestasi' => ['Prestasi', Form::text("prestasi", old("prestasi"), ["class" => "form-control", "placeholder" => ""])],
