@@ -130,10 +130,32 @@ class PrestasiController extends Controller
 		// dd($request->id_prestasi);
 
 		$data['prestasi'] = Prestasi::find($request->id_prestasi);
+		$data['ref_juara']	 = Juara::orderBy('poin')->pluck('juara', 'id');
 
 		$text = 'membuka form verifikasi prestasi ' . $this->title; //.' '.$prestasi->what;
-		$this->log($request, $text, ['prestasi.id' => $request->id_prestasi]);
+		$this->log($request, $text, ['prestasi.id' => $request->id]);
 		return view('Prestasi::verif_detail_prestasi', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function aksi_verif_prestasi(Request $request)
+	{
+		$this->validate($request, [
+			'id_juara' => 'required',
+			'is_pakai' => 'required',
+
+		]);
+
+		$prestasi = Prestasi::find($request->id_prestasi);
+		$prestasi->is_pakai = $request->is_pakai;
+		$prestasi->id_juara = $request->id_juara;
+
+		$prestasi->save();
+
+		$text = 'melakukan verifikasi prestasi ' . $this->title; //' baru '.$prestasi->what;
+		$this->log($request, $text, ['prestasi.id' => $prestasi->id]);
+		return redirect()->back()->with('message_success', 'Prestasi berhasil ditambahkan!');
+
+		// dd($prestasi);
 	}
 
 	public function show(Request $request, Prestasi $prestasi)

@@ -8,6 +8,7 @@ Route::controller(PrestasiController::class)->middleware(['web', 'auth'])->name(
 	Route::get('/prestasi/admin', 'index_admin')->name('admin.index');
 	Route::get('/prestasi/ubah_status/{prestasi}/{status}', 'ubah_status')->name('ubah_status.edit');
 	Route::get('/verif_prestasi', 'verif_prestasi')->name('verif_prestasi.index');
+	Route::post('/verif_prestasi', 'aksi_verif_prestasi')->name('verif_prestasi.store');
 	Route::get('/verif_prestasi/siswa/{id_kelas}', 'daftar_siswa')->name('daftar_siswa.index');
 	Route::get('/verif_prestasi/prestasi/{id_siswa}', 'daftar_prestasi')->name('daftar_prestasi.index');
 	Route::get('/verif_prestasi/detail_prestasi', 'detail_prestasi')->name('detail.index');

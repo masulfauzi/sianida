@@ -55,8 +55,6 @@
                     Tabel Data {{ $title }}
                 </h6>
                 <div class="card-body">
-
-                    @include('include.flash')
                     <div class="table-responsive-md col-12">
                         <table class="table" id="table1">
                             <thead>
