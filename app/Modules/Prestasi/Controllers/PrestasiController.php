@@ -247,6 +247,8 @@ class PrestasiController extends Controller
 			->orderBy('s.nama_siswa')
 			->get();
 
+		session(['id_kelas' => $id_kelas]);
+
 		// dd($data['siswa']);
 
 		$this->log($request, 'melihat halaman manajemen data ' . $this->title);
