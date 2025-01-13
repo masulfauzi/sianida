@@ -223,7 +223,7 @@ class SnbpController extends Controller
 		$urutkan = Snbp::get_nilai_snbp_jurusan($jurusan->id, $id_semester);
 
 		// $kuota = 40 / 100 * count($urutkan);
-		$kuota = $semester->kuota_snbp;
+		$kuota = $jurusan->kuota_snbp;
 
 		$no = 1;
 		foreach ($urutkan as $urutan) {
