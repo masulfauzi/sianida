@@ -68,14 +68,18 @@
                             <tbody>
                                 @php $no = 1; @endphp
                                 @forelse ($prestasi as $item)
-                                    <tr class="">
-                                        <td>{{ $no++ }}</td>
-                                        <td>{{ $item->prestasi }}</td>
+                                    @if ($item->is_verif == 1)
+                                        <tr class="">
+                                        @else
+                                        <tr class="table-danger">
+                                    @endif
+                                    <td>{{ $no++ }}</td>
+                                    <td>{{ $item->prestasi }}</td>
 
-                                        <td>
-                                            <button class="btn btn-primary"
-                                                onclick="detail_prestasi('{{ $item->id }}')">Detail</button>
-                                        </td>
+                                    <td>
+                                        <button class="btn btn-primary"
+                                            onclick="detail_prestasi('{{ $item->id }}')">Detail</button>
+                                    </td>
                                     </tr>
                                 @empty
                                     <tr>

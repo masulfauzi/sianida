@@ -148,6 +148,7 @@ class PrestasiController extends Controller
 		$prestasi = Prestasi::find($request->id_prestasi);
 		$prestasi->is_pakai = $request->is_pakai;
 		$prestasi->id_juara = $request->id_juara;
+		$prestasi->is_verif = 1;
 
 		$prestasi->save();
 
