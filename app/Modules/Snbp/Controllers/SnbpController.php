@@ -204,7 +204,7 @@ class SnbpController extends Controller
 				->orderBy('j.poin', 'desc')
 				->first();
 
-			if (count($prestasi) > 0) {
+			if ($prestasi) {
 				dd($prestasi);
 			}
 		}
