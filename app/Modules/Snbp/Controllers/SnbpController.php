@@ -161,6 +161,7 @@ class SnbpController extends Controller
 		foreach ($siswa as $item) {
 			$prestasi = Prestasi::join('juara as j', 'prestasi.id_juara', '=', 'j.id')
 				->where('prestasi.id_siswa', $item->id)
+				->where('prestasi.is_pakai', '1')
 				->orderBy('j.poin', 'desc')
 				->first();
 
