@@ -159,6 +159,17 @@ class SnbpController extends Controller
 		// dd($hapus);
 
 		foreach ($siswa as $item) {
+			$prestasi = Prestasi::join('juara as j', 'prestasi.id_juara', '=', 'j.id')
+				->where('prestasi.id_siswa', $item->id)
+				->orderBy('j.poin', 'desc')
+				->first();
+
+			if ($prestasi) {
+				$nilai_tambah = $prestasi->poin;
+			} else {
+				$nilai_tambah = 0;
+			}
+
 			$semester = Nilai::whereIdSiswa($item->id)->groupBy('id_semester')->get();
 
 			$data_nilai = array();
@@ -183,9 +194,13 @@ class SnbpController extends Controller
 				->first();
 			// dd($cek_snbp);
 
+			$rata_rata = $data_nilai_collection->sum() / count($data_nilai_collection);
+
 			if ($cek_snbp) {
 				$snbp = Snbp::find($cek_snbp->id);
-				$snbp->rata_rata = $data_nilai_collection->sum() / count($data_nilai_collection);
+				$snbp->rata_rata = $rata_rata;
+				$snbp->nilai_tambah = $nilai_tambah;
+				$snbp->total = $rata_rata + $nilai_tambah;
 
 				$snbp->updated_by = Auth::id();
 				$snbp->save();
@@ -193,19 +208,12 @@ class SnbpController extends Controller
 				$snbp = new Snbp();
 				$snbp->id_semester = session('active_semester')['id'];
 				$snbp->id_siswa = $item->id;
-				$snbp->rata_rata = $data_nilai_collection->sum() / count($data_nilai_collection);
+				$snbp->rata_rata = $rata_rata;
+				$snbp->nilai_tambah = $nilai_tambah;
+				$snbp->total = $rata_rata + $nilai_tambah;
 
 				$snbp->created_by = Auth::id();
 				$snbp->save();
-			}
-
-			$prestasi = Prestasi::join('juara as j', 'prestasi.id_juara', '=', 'j.id')
-				->where('prestasi.id_siswa', $item->id)
-				->orderBy('j.poin', 'desc')
-				->first();
-
-			if ($prestasi) {
-				dd($prestasi);
 			}
 		}
 
