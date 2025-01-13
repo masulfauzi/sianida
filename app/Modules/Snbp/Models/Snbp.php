@@ -17,43 +17,44 @@ class Snbp extends Model
 
 	protected $dates      = ['deleted_at'];
 	protected $table      = 'snbp';
-	protected $fillable   = ['*'];	
+	protected $fillable   = ['*'];
 
-	public function semester(){
-		return $this->belongsTo(Semester::class,"id_semester","id");
+	public function semester()
+	{
+		return $this->belongsTo(Semester::class, "id_semester", "id");
 	}
-public function siswa(){
-		return $this->belongsTo(Siswa::class,"id_siswa","id");
+	public function siswa()
+	{
+		return $this->belongsTo(Siswa::class, "id_siswa", "id");
 	}
 
 	public static function get_nilai_snbp_jurusan($id_jurusan, $id_semester)
 	{
 		return DB::table('snbp')
-					->select('snbp.*', 's.nama_siswa', 's.nisn')
-					->join('pesertadidik as p', 'p.id_siswa', '=', 'snbp.id_siswa')
-					->join('siswa as s', 'p.id_siswa', '=', 's.id')
-					->join('kelas as k', 'k.id','=', 'p.id_kelas')
-					->where('k.id_jurusan', $id_jurusan)
-					->where('snbp.id_semester', $id_semester)
-					->where('p.id_semester', $id_semester)
-					// ->orderBy('snbp.is_berminat', 'DESC')
-					->orderBy('snbp.rata_rata', 'DESC')
-					->get();
+			->select('snbp.*', 's.nama_siswa', 's.nisn')
+			->join('pesertadidik as p', 'p.id_siswa', '=', 'snbp.id_siswa')
+			->join('siswa as s', 'p.id_siswa', '=', 's.id')
+			->join('kelas as k', 'k.id', '=', 'p.id_kelas')
+			->where('k.id_jurusan', $id_jurusan)
+			->where('snbp.id_semester', $id_semester)
+			->where('p.id_semester', $id_semester)
+			// ->orderBy('snbp.is_berminat', 'DESC')
+			->orderBy('snbp.total', 'DESC')
+			->get();
 	}
-	
+
 	public static function get_nilai_snbp_jurusan_final($id_jurusan, $id_semester)
 	{
 		return DB::table('snbp')
-					->select('snbp.*', 's.nama_siswa', 's.nisn')
-					->join('pesertadidik as p', 'p.id_siswa', '=', 'snbp.id_siswa')
-					->join('siswa as s', 'p.id_siswa', '=', 's.id')
-					->join('kelas as k', 'k.id','=', 'p.id_kelas')
-					->where('k.id_jurusan', $id_jurusan)
-					->where('snbp.id_semester', $id_semester)
-					->where('p.id_semester', $id_semester)
-					->orderBy('snbp.is_berminat', 'DESC')
-					->orderBy('snbp.rata_rata', 'DESC')
-					->get();
+			->select('snbp.*', 's.nama_siswa', 's.nisn')
+			->join('pesertadidik as p', 'p.id_siswa', '=', 'snbp.id_siswa')
+			->join('siswa as s', 'p.id_siswa', '=', 's.id')
+			->join('kelas as k', 'k.id', '=', 'p.id_kelas')
+			->where('k.id_jurusan', $id_jurusan)
+			->where('snbp.id_semester', $id_semester)
+			->where('p.id_semester', $id_semester)
+			->orderBy('snbp.is_berminat', 'DESC')
+			->orderBy('snbp.rata_rata', 'DESC')
+			->get();
 	}
-
 }
