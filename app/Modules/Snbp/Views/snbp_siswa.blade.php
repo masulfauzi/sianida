@@ -40,7 +40,7 @@
                         </div>
                     @else
                         <div class="table-responsive-md col-12">
-                            <p class="text-center text-xl"><strong>MAAF! ANDA TIDAK TERMASUK ELIGIBLE</strong>.</p>
+                            <p class="text-center text-xl"><strong>MAAF! ANDA TIDAK TERMASUK SISWA ELIGIBLE</strong>.</p>
                             <p class="text-center text-xl">Anda peringkat {{ $data->peringkat }} dari
                                 {{ count($pesertadidik) }}.</p>
                         </div>
