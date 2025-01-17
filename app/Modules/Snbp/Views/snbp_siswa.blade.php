@@ -71,31 +71,7 @@
 
         </section>
 
-        {{-- <section class="section">
-        <div class="card">
-            <h6 class="card-header">
-                Info Data Eligible FINAL
-            </h6>
-            <div class="card-body">
-                
-                @include('include.flash')
-                
-                @if ($data->is_eligible_final == 1)
-                    <div class="table-responsive-md col-12">
-                        <p class="text-center text-xl"><strong>SELAMAT!</strong> Anda termasuk dalam siswa <strong>ELIGIBLE</strong>.</p>
-                        <p class="text-center text-xl">Anda peringkat {{ $data->peringkat_final }} dari {{ count($pesertadidik) }}.</p>
-                    </div>
-                @else
-                    <div class="table-responsive-md col-12">
-                        <p class="text-center text-xl"><strong>Maaf!</strong> Anda termasuk dalam siswa <strong>TIDAK ELIGIBLE</strong>.</p>
-                        <p class="text-center text-xl">Anda peringkat {{ $data->peringkat_final }} dari {{ count($pesertadidik) }}.</p>
-                    </div>
-                @endif
-                
-            </div>
-        </div>
 
-    </section> --}}
 
         <section class="section">
             <div class="card">
@@ -262,7 +238,35 @@
 
         @endif
 
+        <section class="section">
+            <div class="card">
+                <h6 class="card-header">
+                    Info Data Eligible FINAL
+                </h6>
+                <div class="card-body">
 
+                    @include('include.flash')
+
+                    @if ($data->is_eligible_final == 1)
+                        <div class="table-responsive-md col-12">
+                            <p class="text-center text-xl"><strong>SELAMAT!</strong> Anda termasuk dalam siswa
+                                <strong>ELIGIBLE</strong>.
+                            </p>
+                            <p class="text-center text-xl">Anda peringkat {{ $data->peringkat_final }} dari
+                                {{ count($pesertadidik) }}.</p>
+                        </div>
+                    @else
+                        <div class="table-responsive-md col-12">
+                            <p class="text-center text-xl"><strong>MAAF! ANDA TIDAK TERMASUK SISWA ELIGIBLE</strong>.</p>
+                            <p class="text-center text-xl">Anda peringkat {{ $data->peringkat_final }} dari
+                                {{ count($pesertadidik) }}.</p>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+
+        </section>
 
     </div>
 @endsection
