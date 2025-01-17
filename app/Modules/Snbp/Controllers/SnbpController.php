@@ -111,7 +111,7 @@ class SnbpController extends Controller
 
 		$urutkan = Snbp::get_nilai_snbp_jurusan_final($jurusan->id, session('active_semester')['id']);
 
-		$kuota = 40 / 100 * count($urutkan);
+		$kuota = $jurusan->kuota_snbp;
 
 		$no = 1;
 		foreach ($urutkan as $urutan) {
