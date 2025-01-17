@@ -252,14 +252,12 @@
                             <p class="text-center text-xl"><strong>SELAMAT!</strong> Anda termasuk dalam siswa
                                 <strong>ELIGIBLE</strong>.
                             </p>
-                            <p class="text-center text-xl">Anda peringkat {{ $data->peringkat_final }} dari
-                                {{ count($pesertadidik) }}.</p>
+                            <p class="text-center text-xl">Jangan lupa untuk membuat akun di SNBP.</p>
                         </div>
                     @else
                         <div class="table-responsive-md col-12">
                             <p class="text-center text-xl"><strong>MAAF! ANDA TIDAK TERMASUK SISWA ELIGIBLE</strong>.</p>
-                            <p class="text-center text-xl">Anda peringkat {{ $data->peringkat_final }} dari
-                                {{ count($pesertadidik) }}.</p>
+                            {{-- <p class="text-center text-xl">Tetap Semangat!</p> --}}
                         </div>
                     @endif
 
