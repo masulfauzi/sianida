@@ -37,7 +37,7 @@
                             <p class="text-center text-xl"><strong>SELAMAT!</strong> Anda termasuk dalam siswa
                                 <strong>ELIGIBLE</strong>.
                             </p>
-                            <p class="text-center text-xl">Jangan lupa untuk membuat akun di SNBP.</p>
+                            <p class="text-center text-xl">Jangan lupa untuk membuat akun di SNPMB.</p>
                         </div>
                     @else
                         <div class="table-responsive-md col-12">
