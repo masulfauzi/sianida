@@ -41,6 +41,35 @@ class SnbpController extends Controller
 		return view('Snbp::snbp', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function nilai_jurusan(Request $request, Jurusan $jurusan)
+	{
+		$data['data'] 			= Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id'])->where('is_eligible_final', '1')->sortBy('peringkat')->sortBy('peringkat_final');
+		$data['ref_semester']	= Semester::orderBy('urutan')->pluck('semester', 'id');
+		$data['ref_semester']->prepend('-PILIH SALAH SATU-', '');
+
+		$semester_aktif = $request->id_semester;
+		// dd($semester_aktif);
+
+		if ($semester_aktif) {
+			$id_siswa = [];
+			foreach ($data['data'] as $siswa) {
+				$id_siswa[] = $siswa->id_siswa;
+			}
+			$data['nilai'] = Nilai::whereIn('id_siswa', $id_siswa)->where('nilai.id_semester', $semester_aktif)->get();
+			$data['mapel'] = Nilai::join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
+				->whereIn('id_siswa', $id_siswa)
+				->where('nilai.id_semester', $semester_aktif)
+				->groupBy('nilai.id_mapel')
+				->get();
+			// dd($mapel);
+		} else {
+			// dd("tidak ada semester aktif");
+		}
+
+		$this->log($request, 'melihat halaman nilai snbp');
+		return view('Snbp::nilai_jurusan', array_merge($data, ['title' => $this->title]));
+	}
+
 	public function index_siswa(Request $request)
 	{
 		// dd(session('id_siswa'));
