@@ -63,7 +63,7 @@ class SnbpController extends Controller
 				->get();
 			// dd($mapel);
 		} else {
-			// dd("tidak ada semester aktif");
+			$data['mapel'] = '';
 		}
 
 		$this->log($request, 'melihat halaman nilai snbp');
