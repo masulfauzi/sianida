@@ -48,6 +48,7 @@ class SnbpController extends Controller
 		$data['ref_semester']->prepend('-PILIH SALAH SATU-', '');
 
 		$semester_aktif = $request->id_semester;
+		$data['semester_aktif'] = $semester_aktif;
 		// dd($semester_aktif);
 
 		if ($semester_aktif) {

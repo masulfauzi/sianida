@@ -36,7 +36,7 @@
                                     <label>Pilih Semester</label>
                                 </div>
                                 <div class="col-md-9 form-group">
-                                    {{ Form::select('id_semester', $ref_semester, null, ['class' => 'form-control select2', 'required']) }}
+                                    {{ Form::select('id_semester', $ref_semester, $semester_aktif, ['class' => 'form-control select2', 'required']) }}
 
                                 </div>
                             </div>
