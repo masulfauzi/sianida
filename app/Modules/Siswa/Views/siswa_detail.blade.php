@@ -102,8 +102,8 @@
                                 </div>
                                 <div class="tab-pane fade m-3 @if ($tab == 'abm') show active @endif"
                                     id="abm" role="tabpanel" aria-labelledby="profile-tab">
-                                    <object data="{{ url('download/abm/' . $siswa->nisn . '.pdf') }}" type="application/pdf"
-                                        width="100%" height="500px">
+                                    <object data="{{ url('download/abm/' . $siswa->nisn . '.pdf') }}"
+                                        type="application/pdf" width="100%" height="900px">
                                         <p>Unable to display PDF file. <a
                                                 href="{{ url('download/abm/' . $siswa->nisn . '.pdf') }}">Download</a>
                                             instead.</p>
