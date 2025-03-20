@@ -82,7 +82,7 @@
                                         <td>
                                             @if ($item->norma_penilaian)
                                                 <a
-                                                    href="JavaScript:newPopup('{{ url('/gurumapel/' . $item->norma_penilaian . '/lihat/kisikisi') }}');">
+                                                    href="JavaScript:newPopup('{{ url('/gurumapel/' . $item->norma_penilaian . '/lihat/norma') }}');">
                                                     <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
                                                 </a>
                                             @else
@@ -92,7 +92,7 @@
                                         <td>
                                             @if ($item->soal)
                                                 <a
-                                                    href="JavaScript:newPopup('{{ url('/gurumapel/' . $item->soal . '/lihat/kisikisi') }}');">
+                                                    href="JavaScript:newPopup('{{ url('/gurumapel/' . $item->soal . '/lihat/soal') }}');">
                                                     <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
                                                 </a>
                                             @else
