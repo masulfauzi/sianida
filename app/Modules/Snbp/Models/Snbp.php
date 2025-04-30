@@ -41,7 +41,7 @@ class Snbp extends Model
 				->where('p.id_semester', $id_semester)
 				->where('k.id', $id_kelas)
 				// ->orderBy('snbp.is_berminat', 'DESC')
-				->orderBy('snbp.total', 'DESC')
+				->orderBy('s.nama_siswa', 'DESC')
 				->get();
 		} else {
 			return DB::table('snbp')
@@ -53,7 +53,7 @@ class Snbp extends Model
 				->where('snbp.id_semester', $id_semester)
 				->where('p.id_semester', $id_semester)
 				// ->orderBy('snbp.is_berminat', 'DESC')
-				->orderBy('snbp.total', 'DESC')
+				->orderBy('s.nama_siswa', 'DESC')
 				->get();
 		}
 	}
