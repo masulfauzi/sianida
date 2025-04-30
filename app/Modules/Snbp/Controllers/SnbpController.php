@@ -12,6 +12,7 @@ use App\Modules\Siswa\Models\Siswa;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Jurusan\Models\Jurusan;
+use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Nilai\Models\Nilai;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
 use App\Modules\Prestasi\Models\Prestasi;
@@ -43,12 +44,19 @@ class SnbpController extends Controller
 
 	public function nilai_jurusan(Request $request, Jurusan $jurusan)
 	{
-		$data['data'] 			= Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id'])->where('is_eligible_final', '1')->sortBy('peringkat')->sortBy('peringkat_final');
-		$data['ref_semester']	= Semester::orderBy('urutan')->pluck('semester', 'id');
+		$data['data'] = Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id'], $request->id_kelas)
+			// ->where('is_eligible_final', '1')
+			->sortBy('peringkat')
+			->sortBy('peringkat_final');
+		$data['ref_semester'] = Semester::orderBy('urutan')->pluck('semester', 'id');
 		$data['ref_semester']->prepend('-PILIH SALAH SATU-', '');
+		$data['ref_kelas'] = Kelas::join('tingkat as t', 'kelas.id_tingkat', '=', 't.id')->where('t.tingkat', 'XII')->where('id_jurusan', $jurusan->id)->pluck('kelas.kelas', 'kelas.id');
+		$data['ref_kelas']->prepend('-PILIH SALAH SATU-', '');
 
 		$semester_aktif = $request->id_semester;
+		$kelas_aktif = $request->id_kelas;
 		$data['semester_aktif'] = $semester_aktif;
+		$data['kelas_aktif'] = $kelas_aktif;
 		// dd($semester_aktif);
 
 		if ($semester_aktif) {

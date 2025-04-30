@@ -42,6 +42,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3 text-sm-start text-md-end pt-2">
+                                    <label>Pilih Kelas</label>
+                                </div>
+                                <div class="col-md-9 form-group">
+                                    {{ Form::select('id_kelas', $ref_kelas, $kelas_aktif, ['class' => 'form-control select2', 'required']) }}
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 text-sm-start text-md-end pt-2">
                                     <button type="submit" class="btn btn-primary">Filter Data</button>
                                 </div>
                                 <div class="col-md-9 form-group">
