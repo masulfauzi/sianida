@@ -44,10 +44,10 @@ class SnbpController extends Controller
 
 	public function nilai_jurusan(Request $request, Jurusan $jurusan)
 	{
-		$data['data'] = Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id'], $request->id_kelas)
-			// ->where('is_eligible_final', '1')
-			->sortBy('peringkat')
-			->sortBy('peringkat_final');
+		$data['data'] = Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id'], $request->id_kelas);
+		// ->where('is_eligible_final', '1')
+		// ->sortBy('peringkat')
+		// ->sortBy('peringkat_final');
 		$data['ref_semester'] = Semester::orderBy('urutan')->pluck('semester', 'id');
 		$data['ref_semester']->prepend('-PILIH SALAH SATU-', '');
 		$data['ref_kelas'] = Kelas::join('tingkat as t', 'kelas.id_tingkat', '=', 't.id')->where('t.tingkat', 'XII')->where('id_jurusan', $jurusan->id)->pluck('kelas.kelas', 'kelas.id');
