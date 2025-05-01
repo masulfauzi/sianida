@@ -63,6 +63,8 @@
                                                 class="btn btn-sm btn-outline-primary">Detail</a>
                                             <a href="{{ route('snbp.nilai_jurusan.index', $item->id) }}"
                                                 class="btn btn-sm btn-outline-success">Nilai</a>
+                                            <a href="{{ route('snbp.skl_jurusan.index', $item->id) }}"
+                                                class="btn btn-sm btn-outline-secondary">SKL</a>
                                         </td>
                                     </tr>
                                 @empty

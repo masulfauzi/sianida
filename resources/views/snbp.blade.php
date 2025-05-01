@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> {{  config('app.name', 'Laralag') }}</title>
-    
+    <title> {{ config('app.name', 'Laralag') }}</title>
+
     <link rel="stylesheet" href="{{ asset('assets/css/main/app.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.png') }}" type="image/png">
@@ -77,40 +78,43 @@
                 <hr class="m-0 bg-primary">
             </header>
             <div class="content-wrapper container">
-                
 
-<div class="page-content">
-    <section class="row">
-        <div class="col-12 col-lg-4">
-        </div>
-        <div class="col-12 col-lg-4">
-            
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4>Cek Status Siswa Eligible</h4>
+
+                <div class="page-content">
+                    <section class="row">
+                        <div class="col-12 col-lg-4">
                         </div>
-                        <div class="card-body">
-                            <form action="{{ route('snbp') }}" method="POST">
-                                @csrf
-                                <x-form-group class="position-relative has-icon-left mb-4">
-                                    <input type="text" class="form-control form-control-xl" placeholder="NISN" name="nisn" :value="old('nisn')" required autofocus>
-                                    <div class="form-control-icon">
-                                        <i class="bi bi-person"></i>
+                        <div class="col-12 col-lg-4">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4>Cek Status Siswa Eligible</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <form action="{{ route('snbp') }}" method="POST">
+                                                @csrf
+                                                <x-form-group class="position-relative has-icon-left mb-4">
+                                                    <input type="text" class="form-control form-control-xl"
+                                                        placeholder="NISN" name="nisn" :value="old('nisn')"
+                                                        required autofocus>
+                                                    <div class="form-control-icon">
+                                                        <i class="bi bi-person"></i>
+                                                    </div>
+                                                </x-form-group>
+                                                <button
+                                                    class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Kirim!</button>
+                                            </form>
+                                        </div>
                                     </div>
-                                </x-form-group>
-                                <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Kirim!</button>
-                            </form>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
+
+                    </section>
                 </div>
-            </div>
-            
-        </div>
-        
-    </section>
-</div>
 
             </div>
 
@@ -122,7 +126,7 @@
                         </div>
                         <div class="float-end">
                             <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="https://saugi.me">Saugi</a></p>
+                                    href="https://saugi.me">Saugi</a></p>
                         </div>
                     </div>
                 </div>
@@ -132,4 +136,5 @@
     <script src="{{ asset('assets/js/pages/dashboard.js') }}"></script>
     <script src="{{ asset('assets/js/pages/horizontal-layout.js') }}"></script>
 </body>
+
 </html>

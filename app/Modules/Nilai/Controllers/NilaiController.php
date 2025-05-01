@@ -198,6 +198,7 @@ class NilaiController extends Controller
 
 			$siswa = Siswa::whereNisn($data[$i][2])->first();
 
+
 			if ($siswa) {
 				for ($j = 3; $j < $jml_kolom; $j++) {
 					$cek_nilai = Nilai::query()->whereIdSemester($request->input("id_semester"))
@@ -346,9 +347,9 @@ class NilaiController extends Controller
 	public function daftar_nilai(Request $request, $id_siswa)
 	{
 		$data['semester'] = Nilai::whereIdSiswa($id_siswa)->groupBy('id_semester')->get();
-		$data['nilai']		= Nilai::whereIdSiswa($id_siswa)->get();
-		$data['konfirmasi']	= Konfirmasinilai::where('id_siswa', '=', $id_siswa)->get();
-		$data['siswa']		= Siswa::find($id_siswa);
+		$data['nilai'] = Nilai::whereIdSiswa($id_siswa)->get();
+		$data['konfirmasi'] = Konfirmasinilai::where('id_siswa', '=', $id_siswa)->get();
+		$data['siswa'] = Siswa::find($id_siswa);
 
 		// dd($data['konfirmasi']);
 

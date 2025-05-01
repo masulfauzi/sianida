@@ -42,6 +42,46 @@ class SnbpController extends Controller
 		return view('Snbp::snbp', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function skl_jurusan(Request $request, Jurusan $jurusan)
+	{
+		$data['siswa'] = Siswa::join('pesertadidik as p', 'siswa.id', '=', 'p.id_siswa')
+			->join('kelas as k', 'p.id_kelas', '=', 'k.id')
+			->where('p.id_semester', session('active_semester')['id'])
+			->where('k.id_jurusan', $jurusan->id)
+			// ->select('siswa.*', 'k.kelas')
+			->orderBy('k.kelas')
+			->orderBy('siswa.nama_siswa')
+			->limit(10)
+			->get();
+		// dd($data);
+
+		$data['semester'] = Semester::orderBy('urutan', 'DESC')->limit(6)->get();
+		// dd($data['semester']);
+
+		$id_siswa = [];
+		foreach ($data['siswa'] as $siswa) {
+			$id_siswa[] = $siswa->id_siswa;
+		}
+
+		// dd($id_siswa);
+
+		$data['mapel'] = Nilai::select('m.*')
+			->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
+			->whereIn('nilai.id_siswa', $id_siswa)
+			->groupBy('nilai.id_mapel')
+			->get();
+
+		$data['nilai'] = Nilai::select('nilai.*')
+			->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
+			->whereIn('nilai.id_siswa', $id_siswa)
+			// ->limit(10)
+			->get();
+
+		// dd($data['nilai']);
+
+		return view('Snbp::skl_jurusan', $data);
+	}
+
 	public function nilai_jurusan(Request $request, Jurusan $jurusan)
 	{
 		$data['data'] = Snbp::get_nilai_snbp_jurusan($jurusan->id, session('active_semester')['id'], $request->id_kelas);
