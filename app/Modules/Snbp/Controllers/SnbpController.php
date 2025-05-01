@@ -51,7 +51,7 @@ class SnbpController extends Controller
 			// ->select('siswa.*', 'k.kelas')
 			->orderBy('k.kelas')
 			->orderBy('siswa.nama_siswa')
-			->limit(10)
+			// ->limit(10)
 			->get();
 		// dd($data);
 
