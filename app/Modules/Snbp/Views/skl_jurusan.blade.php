@@ -12,6 +12,7 @@
         <tr>
             <th rowspan="2">No</th>
             <th rowspan="2">Nama</th>
+            <th rowspan="2">NISN</th>
             <th rowspan="2">Kelas</th>
             @foreach ($mapel as $item_mapel)
                 <th colspan="6">{{ $item_mapel->mapel }}</th>
@@ -32,6 +33,7 @@
             <tr>
                 <td>{{ $no++ }}</td>
                 <td>{{ $item->nama_siswa }}</td>
+                <td>{{ $item->nisn }}</td>
                 <td>{{ $item->kelas }}</td>
                 @foreach ($mapel as $item_mapel)
                     @foreach ($semester->sortBy('urutan') as $item_semester)
