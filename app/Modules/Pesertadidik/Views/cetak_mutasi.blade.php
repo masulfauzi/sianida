@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Cetak Halaman Mutasi</title>
     <style>
-        body{
+        body {
             font-family: Calibri;
         }
-        .center{
+
+        .center {
             text-align: center;
         }
-        .bold{
+
+        .bold {
             font-weight: bold;
         }
-        .border{
+
+        .border {
             border-left: 0.01em solid #000000;
             border-right: 0;
             border-top: 0.01em solid #000000;
             border-bottom: 0;
             border-collapse: collapse;
-            
+
         }
-        .border td{
+
+        .border td {
             border-left: 0;
             border-right: 0.01em solid #000000;
             border-top: 0;
             border-bottom: 0.01em solid #000000;
             padding: 5px;
         }
-        .page_break { 
-                page-break-before: always; 
-            }
-        .underline{
+
+        .page_break {
+            page-break-before: always;
+        }
+
+        .underline {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     @foreach ($data as $item)
         <p class="center bold">KETERANGAN PINDAH SEKOLAH</p>
@@ -50,7 +58,7 @@
                 <td>{{ strtoupper($item->nama_siswa) }}</td>
             </tr>
         </table>
-            
+
         <table class="border" width="100%">
             <tr>
                 <td colspan="4" class="center bold">KELUAR</td>
@@ -62,11 +70,11 @@
                 <td class="bold">Tanda Tangan Kepala Sekolah, Stempel Sekolah, dan Tanda Tangan Orang Tua/Wali</td>
             </tr>
             <tr>
-                <td class="center">7 Mei 2024</td>
+                <td class="center">6 Mei 2025</td>
                 <td class="center">{{ $item->kelas }}</td>
                 <td class="center">LULUS</td>
                 <td>
-                    Semarang, 7 Mei 2024
+                    Semarang, 6 Mei 2025
                     <br>
                     Kepala Sekolah
                     <br>
@@ -85,7 +93,7 @@
             </tr>
             <tr>
                 <td>
-                    
+
                 </td>
                 <td></td>
                 <td></td>
@@ -96,9 +104,9 @@
                     <br>
                     <br>
                     <br>
-                    
+
                     <br>
-                    NIP. 
+                    NIP.
                     <br>
                     <br>
                     Orang Tua/Wali
@@ -109,7 +117,7 @@
             </tr>
             <tr>
                 <td>
-                   
+
                 </td>
                 <td></td>
                 <td></td>
@@ -120,9 +128,9 @@
                     <br>
                     <br>
                     <br>
-                    
+
                     <br>
-                    NIP. 
+                    NIP.
                     <br>
                     <br>
                     Orang Tua/Wali
@@ -133,7 +141,7 @@
             </tr>
             <tr>
                 <td>
-                    
+
                 </td>
                 <td></td>
                 <td></td>
@@ -144,9 +152,9 @@
                     <br>
                     <br>
                     <br>
-                    
+
                     <br>
-                    NIP. 
+                    NIP.
                     <br>
                     <br>
                     Orang Tua/Wali
@@ -159,4 +167,5 @@
         <div class="page_break"></div>
     @endforeach
 </body>
+
 </html>

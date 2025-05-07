@@ -33,7 +33,7 @@ class KirimPesan implements ShouldQueue
      */
     public function handle()
     {
-        $pesan = Pesan::whereStatus(0)->orderBy('created_at', 'asc')->limit(10)->get();
+        $pesan = Pesan::whereStatus(0)->orderBy('created_at', 'asc')->limit(1)->get();
 
         foreach ($pesan as $kirim) {
             $device = Device::orderBy('last_used', 'asc')->first();
@@ -59,7 +59,7 @@ class KirimPesan implements ShouldQueue
                         'authkey' => $device->auth_key,
                         'to' => $kirim->nomor,
                         'message' => $kirim->isi_pesan,
-                        'file' => 'https://apps.smkn2semarang.sch.id/file_pesan/'.$file->nama_file,
+                        'file' => 'https://apps.smkn2semarang.sch.id/file_pesan/' . $file->nama_file,
                         'sandbox' => 'false'
                     ),
                 ));
@@ -68,8 +68,7 @@ class KirimPesan implements ShouldQueue
 
                 curl_close($curl);
                 // echo $response;
-            }
-            else{
+            } else {
                 $curl = curl_init();
 
                 curl_setopt_array($curl, array(
@@ -82,12 +81,12 @@ class KirimPesan implements ShouldQueue
                     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                     CURLOPT_CUSTOMREQUEST => 'POST',
                     CURLOPT_POSTFIELDS => array(
-                        'appkey' => $device->app_key,
-                        'authkey' => $device->auth_key,
-                        'to' => $kirim->nomor,
-                        'message' => $kirim->isi_pesan,
-                        'sandbox' => 'false'
-                    ),
+                            'appkey' => $device->app_key,
+                            'authkey' => $device->auth_key,
+                            'to' => $kirim->nomor,
+                            'message' => $kirim->isi_pesan,
+                            'sandbox' => 'false'
+                        ),
                 ));
 
                 $response = json_decode(curl_exec($curl));
