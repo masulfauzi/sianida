@@ -45,7 +45,7 @@ class UjianSemesterController extends Controller
 			return redirect()->route('ujiansemester.admin.index');
 		}
 
-		$query = UjianSemester::query()->whereIdGuru(session('id_guru'));
+		$query = UjianSemester::query()->whereIdGuru(session('id_guru'))->where('id_semester', get_semester('active_semester_id'));
 		if ($request->has('search')) {
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
