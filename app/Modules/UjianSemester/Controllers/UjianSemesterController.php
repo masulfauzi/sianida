@@ -147,7 +147,7 @@ class UjianSemesterController extends Controller
 	public function aksi_upload(Request $request)
 	{
 		$request->validate([
-			'file' => 'required|mimes:pdf,doc,docx|max:10240'
+			'file' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:10240'
 		]);
 
 		$fileName = time() . '.' . $request->file->extension();
