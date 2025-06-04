@@ -28,7 +28,7 @@ class Snbp extends Model
 		return $this->belongsTo(Siswa::class, "id_siswa", "id");
 	}
 
-	public static function get_nilai_snbp_jurusan($id_jurusan, $id_semester, $id_kelas)
+	public static function get_nilai_snbp_jurusan($id_jurusan, $id_semester, $id_kelas = null)
 	{
 		if ($id_kelas) {
 			return DB::table('snbp')
