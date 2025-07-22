@@ -84,7 +84,7 @@ class JamMengajar extends Model
                 ->get();
         } else {
             $query = DB::table('jam_mengajar as a')
-                ->select('a.*', 'c.mapel', 'e.tingkat', 'b.nama as nama_guru')
+                ->select('a.*', 'c.mapel', 'e.tingkat', 'b.namas as nama_guru')
                 ->join('guru as b', 'a.id_guru', '=', 'b.id')
                 ->join('mapel as c', 'a.id_mapel', '=', 'c.id')
                 ->join('kelas as d', 'a.id_kelas', '=', 'd.id')
