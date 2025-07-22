@@ -61,7 +61,7 @@ class AktivasiController extends Controller
             'password'      => Hash::make($request->password),
             'identitas'     => $request->nik,
             'created_at'    => Carbon::now()->toDateTimeString(),
-            'ids'           => $request->password
+            'ids'           => md5($request->password)
         ];
 
         $data_role = [
