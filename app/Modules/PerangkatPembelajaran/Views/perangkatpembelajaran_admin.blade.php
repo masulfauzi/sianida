@@ -53,8 +53,7 @@
                                     <tr>
                                         <td>{{ $no++ }}</td>
                                         {{-- <td>{{ $item->id_semester }}</td> --}}
-                                        {{-- <td>{{ $item->nama }}</td> --}}
-                                        <td></td>
+                                        <td>{{ $item->nama }}</td>
                                         <td>{{ $item->mapel }}</td>
                                         <td>{{ $item->tingkat }}</td>
                                         <td>
