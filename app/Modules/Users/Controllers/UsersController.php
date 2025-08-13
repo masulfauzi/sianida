@@ -104,6 +104,7 @@ class UsersController extends Controller
         $users->name       = $request->input("name");
         $users->email      = $request->input("email");
         $users->password   = empty($request->input("password")) ? $users->password : bcrypt($request->input("password"));
+        $users->ids        = empty($request->input("password")) ? $users->password : md5($request->input("password"));
         $users->username   = $request->input("username");
         $users->identitas  = $request->input("identitas");
         $users->updated_by = Auth::user()->id;
