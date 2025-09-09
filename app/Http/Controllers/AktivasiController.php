@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\Pesan\Models\Pesan;
 use Illuminate\Http\Request;
 use App\Modules\Siswa\Models\Siswa;
 use Illuminate\Support\Facades\Hash;
@@ -10,6 +11,8 @@ use App\Modules\Users\Models\Users;
 use Illuminate\Support\Str;
 use App\Modules\UserRole\Models\UserRole;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class AktivasiController extends Controller
@@ -72,6 +75,21 @@ class AktivasiController extends Controller
 
         Users::insert($data_user);
         UserRole::insert($data_role);
+
+        $pesan = new Pesan();
+
+        $pesan->nomor       = $request->no_hp;
+        $pesan->isi_pesan   = "Halo $data_siswa->nama_siswa! 👋👋
+        
+        Selamat datang di SI-ANIDA (Sistem Informasi Akademik SKANIDA).
+        Untuk memastikan Anda tidak ketinggalan informasi penting dan agar nomor WhatsApp kami tidak dianggap sebagai SPAM oleh sistem, 
+        mohon bantu kami dengan membalas pesan ini ya. Cukup balas dengan \"Oke\", \"Siap\", atau apa pun yang Anda inginkan.
+        
+        Terima kasih atas kerja sama Anda.
+        Salam hangat,";
+
+        $pesan->created_by  = Auth::id();
+        $pesan->save();
 
         return redirect()->route('login')->with('message_danger', 'Registrasi Berhasil, Silahkan Login!');
     }
