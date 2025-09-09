@@ -76,17 +76,19 @@ class AktivasiController extends Controller
         Users::insert($data_user);
         UserRole::insert($data_role);
 
+        $isi_pesan = "Halo $data_siswa->nama_siswa! 👋👋 \n
+        \n
+        Selamat datang di SI-ANIDA (Sistem Informasi Akademik SKANIDA).
+        Untuk memastikan Anda tidak ketinggalan informasi penting dan agar nomor WhatsApp kami tidak dianggap sebagai SPAM oleh sistem,  \n
+        mohon bantu kami dengan membalas pesan ini ya. Cukup balas dengan \"Oke\", \"Siap\", atau apa pun yang Anda inginkan. \n
+        \n
+        Terima kasih atas kerja sama Anda. \n
+        Salam hangat,";
+
         $pesan = new Pesan();
 
         $pesan->nomor       = $request->no_hp;
-        $pesan->isi_pesan   = "Halo $data_siswa->nama_siswa! 👋👋 %0A
-        %0A
-        Selamat datang di SI-ANIDA (Sistem Informasi Akademik SKANIDA).
-        Untuk memastikan Anda tidak ketinggalan informasi penting dan agar nomor WhatsApp kami tidak dianggap sebagai SPAM oleh sistem,  %0A
-        mohon bantu kami dengan membalas pesan ini ya. Cukup balas dengan \"Oke\", \"Siap\", atau apa pun yang Anda inginkan. %0A
-        %0A
-        Terima kasih atas kerja sama Anda. %0A
-        Salam hangat,";
+        $pesan->isi_pesan   = urlencode($isi_pesan);
 
         $pesan->created_by  = Auth::id();
         $pesan->save();
