@@ -13,6 +13,8 @@ Route::controller(SiswaController::class)->middleware(['web','auth'])->name('sis
 	Route::post('/biodata', 'store_biodata')->name('biodata.store.index');
 	Route::get('/hasil_abm', 'hasil_abm')->name('abm.index');
 	Route::get('/detail/{siswa}', 'detail_siswa')->name('detail.index');
+	Route::get('/import_siswa', 'import_siswa')->name('import.create');
+	Route::post('/import_siswa', 'aksi_import_siswa')->name('import.store');
 
 
 	//custom route untuk download

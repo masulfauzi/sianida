@@ -28,7 +28,7 @@
             </h6>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-9">
+                    <div class="col-8">
                         <form action="{{ route('siswa.index') }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
                                 <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
@@ -36,8 +36,9 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-3">  
+                    <div class="col-4">  
 						{!! button('siswa.create', $title) !!}  
+                        <a href="{{ route('siswa.import.create') }}" class="btn btn-secondary">Import Siswa</a>
                     </div>
                 </div>
                 @include('include.flash')
