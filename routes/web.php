@@ -31,6 +31,8 @@ Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemai
 Route::middleware(['auth'])->group(function(){
     Route::get('/', [DashboardController::class, 'index'])->name('frontend.index');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [DashboardController::class, 'profile'])->name('profile');
+    Route::post('/profile/change-password', [DashboardController::class, 'changePassword'])->name('profile.change-password');
 
     Route::get('/role/set/{id_role}', [DashboardController::class,'changeRole'])->name('dashboard.change.role');
     Route::get('/role/semester/{id_semester}', [DashboardController::class,'changeSemester'])->name('dashboard.change.semester');

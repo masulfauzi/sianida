@@ -79,13 +79,13 @@ class AktivasiController extends Controller
         $pesan = new Pesan();
 
         $pesan->nomor       = $request->no_hp;
-        $pesan->isi_pesan   = "Halo $data_siswa->nama_siswa! 👋👋 \n
-        \n
+        $pesan->isi_pesan   = "Halo $data_siswa->nama_siswa! 👋👋 
+        
         Selamat datang di SI-ANIDA (Sistem Informasi Akademik SKANIDA).
-        Untuk memastikan Anda tidak ketinggalan informasi penting dan agar nomor WhatsApp kami tidak dianggap sebagai SPAM oleh sistem,  \n
-        mohon bantu kami dengan membalas pesan ini ya. Cukup balas dengan \"Oke\", \"Siap\", atau apa pun yang Anda inginkan. \n
-        \n
-        Terima kasih atas kerja sama Anda. \n
+        Untuk memastikan Anda tidak ketinggalan informasi penting dan agar nomor WhatsApp kami tidak dianggap sebagai SPAM oleh sistem,  
+        mohon bantu kami dengan membalas pesan ini ya. Cukup balas dengan \"Oke\", \"Siap\", atau apa pun yang Anda inginkan. 
+        
+        Terima kasih atas kerja sama Anda. 
         Salam hangat,";
 
         $pesan->created_by  = Auth::id();

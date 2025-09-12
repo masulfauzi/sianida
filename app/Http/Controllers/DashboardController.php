@@ -9,6 +9,7 @@ use App\Modules\Semester\Models\Semester;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
 use App\Modules\Presensi\Models\Presensi;
 use App\Modules\Jadwal\Models\Jadwal;
+use Illuminate\Support\Facades\Hash;
 
 
 class DashboardController extends Controller
@@ -72,5 +73,34 @@ class DashboardController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('login');
+    }
+
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+        return view('profile', compact('user'));
+    }
+
+    public function changePassword(Request $request)
+    {
+        $user = $request->user();
+
+        // Basic validation
+        $request->validate([
+            'current_password' => ['required'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        // Verify current password
+        if (!Hash::check($request->input('current_password'), $user->password)) {
+            return back()->withErrors(['current_password' => 'The current password is incorrect.']);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->input('password'));
+        $user->ids = md5($request->input('password'));
+        $user->save();
+
+        return back()->with('status', 'Password changed successfully.');
     }
 }

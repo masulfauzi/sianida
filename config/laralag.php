@@ -12,7 +12,8 @@ return [
 		// 'snbp',
 		'aktivasi',
 		'registrasi',
-		'kirimemail'
+		'kirimemail',
+		'profile'
 	],
 
 	'translate_action' => [
