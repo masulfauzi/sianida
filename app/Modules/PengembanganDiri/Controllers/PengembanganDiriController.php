@@ -65,6 +65,7 @@ class PengembanganDiriController extends Controller
 		$activeWorksheet->getCell('D4')->setValue('Nama Kegiatan');
 		$activeWorksheet->getCell('E4')->setValue('Tanggal');
 		$activeWorksheet->getCell('F4')->setValue('Tempat');
+		$activeWorksheet->getCell('G4')->setValue('Sertifikat');
 
 		$row = 5;
 		$no = 1;
@@ -77,6 +78,7 @@ class PengembanganDiriController extends Controller
 			$activeWorksheet->getCell('D'.$row)->setValue($item->nama_kegiatan);
 			$activeWorksheet->getCell('E'.$row)->setValue(\App\Helpers\Format::tanggal($item->tgl_kegiatan));
 			$activeWorksheet->getCell('F'.$row)->setValue($item->tempat);
+			$activeWorksheet->getCell('G'.$row)->setValue(url('uploads/pengembangan_diri/'.$item->sertifikat));
 			$row++;
 			$no++;
 		}
