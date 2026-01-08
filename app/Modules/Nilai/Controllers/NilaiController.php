@@ -61,6 +61,8 @@ class NilaiController extends Controller
             ->orderBy('n.rata_rata', 'DESC')
             ->get();
 
+        dd($siswa);
+
         $id_siswa = Siswa::select('siswa.id')
             ->join('pesertadidik as p', 'siswa.id', '=', 'p.id_siswa')
             ->join('kelas as k', 'p.id_kelas', '=', 'k.id')
