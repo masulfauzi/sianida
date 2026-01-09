@@ -93,7 +93,7 @@
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>NISN</th>
-                                <th>Peringkat</th>
+                                {{-- <th>Peringkat</th> --}}
                                 @foreach ($mapel as $item)
                                     <th>{{ $item->mapel }}</th>
                                 @endforeach
@@ -114,7 +114,7 @@
                                         <td>{{ $no++ }}</td>
                                         <td>{{ $item_siswa->nama_siswa }}</td>
                                         <td>{{ $item_siswa->nisn }}</td>
-                                        <td>{{ $item_siswa->peringkat_final }}</td>
+                                        {{-- <td>{{ $item_siswa->peringkat_final }}</td> --}}
 
                                         @foreach ($mapel as $item_mapel)
                                             @php
