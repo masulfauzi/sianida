@@ -78,13 +78,12 @@ class NilaiController extends Controller
             ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
             ->where('nilai.id_semester', $request->input('id_semester'));
 
-        dd($mapel);
-
         $nilai = clone $mapel;
 
         $nilai = $nilai->get();
 
         $mapel = $mapel->groupBy('m.id')->get();
+        dd($mapel);
 
         $data['mapel'] = $mapel;
         $data['siswa'] = $siswa;
