@@ -201,7 +201,7 @@ class NilaiController extends Controller
 
         }
 
-        dd($id_mapel);
+        // dd($id_mapel);
 
         // echo "<pre>";
 
