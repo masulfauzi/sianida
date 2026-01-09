@@ -83,7 +83,7 @@ class NilaiController extends Controller
         $nilai = $nilai->get();
 
         $mapel = $mapel->groupBy('m.id')->get();
-        dd($mapel);
+        //dd($mapel);
 
         $data['mapel'] = $mapel;
         $data['siswa'] = $siswa;
