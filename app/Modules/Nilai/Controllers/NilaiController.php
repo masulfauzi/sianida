@@ -186,7 +186,7 @@ class NilaiController extends Controller
 
         // dd($jml_baris);
 
-        dd(count($mapel));
+        dd($mapel[3]);
 
         // echo "<pre>";
 
