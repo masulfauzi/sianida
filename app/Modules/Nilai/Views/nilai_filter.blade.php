@@ -118,10 +118,7 @@
 
                                         @foreach ($mapel as $item_mapel)
                                             @php
-                                                $tampil_nilai = \App\Modules\Nilai\Models\Nilai::where(
-                                                    'id_siswa',
-                                                    $item_siswa->id,
-                                                )
+                                                $tampil_nilai = \App\Modules\Nilai\Models\Nilai::where('id_siswas',$item_siswa->id)
                                                     ->where('id_semester', $selected['id_semester'])
                                                     ->where('id_mapel', $item_mapel->id)
                                                     ->first()->nilai;
