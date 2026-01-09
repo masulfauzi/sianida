@@ -183,7 +183,7 @@ class NilaiController extends Controller
 
         $jml_baris = count($data);
         $mapel     = Mapel::where('mapel', $data);
-        $id_mapel  = $data[1];
+        $id_mapel  = $data[0];
 
         // dd($jml_baris);
 
