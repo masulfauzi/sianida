@@ -72,11 +72,13 @@ class NilaiController extends Controller
             ->where('t.tingkat', 'XII')
             ->get();
 
-        dd($id_siswa);
+        //dd($id_siswa);
 
         $mapel = Nilai::whereIn('id_siswa', $id_siswa)
             ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
             ->where('nilai.id_semester', $request->input('id_semester'));
+
+        dd($mapel);
 
         $nilai = clone $mapel;
 
