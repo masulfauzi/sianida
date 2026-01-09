@@ -205,7 +205,7 @@ class NilaiController extends Controller
 
         // echo "<pre>";
 
-        for ($i = 2; $i < $jml_baris; $i++) {
+        for ($i = 1; $i < $jml_baris; $i++) {
             $jml_kolom = count($data[$i]);
 
             $siswa = Siswa::whereNisn($data[$i][2])->first();
