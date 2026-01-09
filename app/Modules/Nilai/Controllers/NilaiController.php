@@ -182,12 +182,11 @@ class NilaiController extends Controller
         $data      = $worksheet->toArray();
 
         $jml_baris = count($data);
-        $mapel     = Mapel::where('mapel', $data);
-        $id_mapel  = $data[0];
+        $mapel     = $data[0];
 
         // dd($jml_baris);
 
-        dd($id_mapel);
+        dd(count($mapel););
 
         // echo "<pre>";
 
