@@ -128,7 +128,7 @@
 
                                             @if ($tampil_nilai == '')
                                                 @php
-                                                    die($tampil_nilai);
+                                                    //die($tampil_nilai);
                                                 @endphp
                                             @endif
 
