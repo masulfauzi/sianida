@@ -183,10 +183,15 @@ class NilaiController extends Controller
 
         $jml_baris = count($data);
         $mapel     = $data[0];
+        $id_mapel  = [];
 
         // dd($jml_baris);
 
-        dd($mapel[3]);
+        for ($i = 3; $i < count($mapel); $i++) {
+            $id_mapel[$i] = Mapel::whereMapel($mapel[$i])->first()->id;
+        }
+
+        dd($id_mapel);
 
         // echo "<pre>";
 
