@@ -188,8 +188,17 @@ class NilaiController extends Controller
         // dd($jml_baris);
 
         for ($i = 3; $i < count($mapel); $i++) {
-            echo "$mapel[$i]";
-            $id_mapel[$i] = Mapel::whereMapel($mapel[$i])->first()->id;
+
+            $cek_mapel = Mapel::whereMapel($mapel[$i])->first();
+
+            if ($cek_mapel) {
+                $id_mapel[$i] = $cek_mapel->id;
+            } else {
+                // Handle the case where the subject is not found
+                // For example, you might want to log an error or skip this subject
+                dd("Mapel not found: " . $mapel[$i]);
+            }
+
         }
 
         dd($id_mapel);
