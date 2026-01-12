@@ -116,7 +116,7 @@ class NilaiController extends Controller
         }
 
         $data['id_semester']     = $semester;
-        $data['batas_pengisian'] = "2026-01-12 09:59:59";
+        $data['batas_pengisian'] = "2026-01-12 23:59:59";
         $data['batas_waktu']     = strtotime($data['batas_pengisian']);
         $data['waktu_sekarang']  = time();
 
