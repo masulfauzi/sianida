@@ -32,7 +32,7 @@
 
                     @include('include.flash')
 
-                    @if ($data->is_eligible_final == 1)
+                    @if ($data->is_eligible == 1)
                         <div class="table-responsive-md col-12">
                             <p class="text-center text-xl"><strong>SELAMAT!</strong> Anda termasuk dalam siswa
                                 <strong>ELIGIBLE</strong>.
