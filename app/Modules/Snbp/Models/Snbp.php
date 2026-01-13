@@ -37,7 +37,7 @@ class Snbp extends Model
                 ->where('snbp.id_semester', $id_semester)
                 ->where('p.id_semester', $id_semester)
                 ->where('k.id', $id_kelas)
-                ->orderBy('snbp.rata_rata', 'DESC')
+                ->orderBy('snbp.total', 'DESC')
                 ->orderBy('s.nama_siswa')
                 ->get();
         } else {
@@ -49,7 +49,7 @@ class Snbp extends Model
                 ->where('k.id_jurusan', $id_jurusan)
                 ->where('snbp.id_semester', $id_semester)
                 ->where('p.id_semester', $id_semester)
-                ->orderBy('snbp.rata_rata', 'DESC')
+                ->orderBy('snbp.total', 'DESC')
                 ->orderBy('s.nama_siswa')
                 ->get();
         }
