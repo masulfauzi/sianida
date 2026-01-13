@@ -87,10 +87,12 @@
                                     @if ($item->is_eligible == 1)
                                         @php
                                             $eligible = 'Eligible';
+                                            $class = '';
                                         @endphp
                                     @else
                                         @php
                                             $eligible = 'Tidak Eligible';
+                                            $class = 'table-danger';
                                         @endphp
                                     @endif
 
@@ -104,7 +106,7 @@
                                         @endphp
                                     @endif
 
-                                    @if ($no <= $kuota)
+                                    {{-- @if ($no <= $kuota)
                                         @php
                                             $class = '';
                                         @endphp
@@ -112,7 +114,7 @@
                                         @php
                                             $class = 'table-danger';
                                         @endphp
-                                    @endif
+                                    @endif --}}
 
                                     <tr class="{{ $class }}">
                                         <td>{{ $no++ }}</td>
