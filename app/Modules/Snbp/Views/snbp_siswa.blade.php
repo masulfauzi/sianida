@@ -143,8 +143,7 @@
 
             @if ($data->is_eligible === 0 and $data->is_berminat === 0)
             @else
-                @if ($data->is_eligible === 1 and $data->is_berminat === 1)
-                @else
+                
                     <section class="section">
                         <div class="card">
                             <h6 class="card-header">
@@ -190,8 +189,8 @@
                                 </form>
                                 @if ($data->is_eligible === 1)
                                     @if ($data->is_berminat === 1)
-                                        {{-- <div><a href="{{ url('download/form/super_eligible_berminat.docx') }}">Download Surat
-                                            Pernyataan Eligible dan Berminat.</a></div> --}}
+                                        <div><a href="{{ url('download/form/super_eligible_berminat.docx') }}">Download Surat
+                                            Pernyataan Eligible dan Berminat.</a></div>
                                     @else
                                         <div><a href="{{ url('download/form/super_eligible_tidak_berminat.docx') }}">Download
                                                 Surat Pernyataan Eligible Tidak Berminat.</a></div>
@@ -208,7 +207,7 @@
                         </div>
 
                     </section>
-                @endif
+                
 
             @endif
 
