@@ -117,7 +117,7 @@
                                         <td>{{ $item->total }}</td>
                                         <td>{{ $berminat }}</td>
                                         <td>
-                                            @if ($data->super)
+                                            @if ($item->super)
                                                 <a href="{{ url('uploads/super/' . $item->super) }}" target="_blank">
                                                     <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
                                                 </a>
