@@ -55,6 +55,7 @@
                                     <td>Nilai Tambah</td>
                                     <td>Total</td>
                                     <td>Berminat</td>
+                                    <td>Surat Keterangan</td>
                                     <td>Eligible</td>
                                     <td>Peringkat</td>
                                     <td>Eligible Final</td>
@@ -106,17 +107,8 @@
                                         @endphp
                                     @endif
 
-                                    {{-- @if ($no <= $kuota)
-                                        @php
-                                            $class = '';
-                                        @endphp
-                                    @else
-                                        @php
-                                            $class = 'table-danger';
-                                        @endphp
-                                    @endif --}}
-
-                                    <tr class="{{ $class }}">
+                                    {{-- @if ($no <= $kuota) @php $class='' ; @endphp @else @php $class='table-danger' ; @endphp
+                                        @endif --}} <tr class="{{ $class }}">
                                         <td>{{ $no++ }}</td>
                                         <td>{{ $item->nama_siswa }}</td>
                                         <td>{{ $item->nisn }}</td>
@@ -124,17 +116,26 @@
                                         <td>{{ $item->nilai_tambah }}</td>
                                         <td>{{ $item->total }}</td>
                                         <td>{{ $berminat }}</td>
+                                        <td>
+                                            @if ($data->super)
+                                                <a href="{{ url('uploads/super/' . $item->super) }}" target="_blank">
+                                                    <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                                </a>
+                                            @else
+                                                <div class="form-control">Belum ada data</div>
+                                            @endif
+                                        </td>
                                         <td>{{ $eligible }}</td>
                                         <td>{{ $item->peringkat }}</td>
                                         <td>{{ $eligible_final }}</td>
                                         <td>{{ $item->peringkat_final }}</td>
 
-                                    </tr>
+                                        </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center"><i>No data.</i></td>
-                                    </tr>
-                                @endforelse
+                                        <tr>
+                                            <td colspan="6" class="text-center"><i>No data.</i></td>
+                                        </tr>
+                                    @endforelse
                             </tbody>
                         </table>
                     </div>
