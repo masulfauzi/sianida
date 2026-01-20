@@ -68,7 +68,7 @@ class Snbp extends Model
         // ->whereNotNull('snbp.super')
             ->orderBy('snbp.super', 'DESC')
             ->orderBy('snbp.total', 'DESC')
-            ->orderBy('snbp.is_berminat', 'DESC')
+            ->orderBy('snbp.is_berminat', 'ASC')
             ->get();
     }
 }
