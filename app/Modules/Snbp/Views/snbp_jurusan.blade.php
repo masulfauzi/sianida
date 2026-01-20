@@ -100,10 +100,12 @@
                                     @if ($item->is_eligible_final == 1)
                                         @php
                                             $eligible_final = 'Eligible';
+                                            $class = '';
                                         @endphp
                                     @else
                                         @php
                                             $eligible_final = 'Tidak Eligible';
+                                            $class = 'table-danger';
                                         @endphp
                                     @endif
 
