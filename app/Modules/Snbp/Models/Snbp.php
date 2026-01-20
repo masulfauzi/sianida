@@ -67,8 +67,8 @@ class Snbp extends Model
             ->where('p.id_semester', $id_semester)
         // ->whereNotNull('snbp.super')
             ->orderBy('snbp.is_berminat', 'DESC')
-            ->orderBy('snbp.super', 'DESC')
             ->orderBy('snbp.total', 'DESC')
+            ->orderBy('snbp.super', 'DESC')
             ->get();
     }
 }
