@@ -49,8 +49,8 @@ class Snbp extends Model
                 ->where('k.id_jurusan', $id_jurusan)
                 ->where('snbp.id_semester', $id_semester)
                 ->where('p.id_semester', $id_semester)
-                ->orderBy('snbp.total', 'DESC')
-                ->orderBy('s.nama_siswa')
+                ->orderBy('snbp.peringkat_final', 'DESC')
+            // ->orderBy('s.nama_siswa')
                 ->get();
         }
     }
