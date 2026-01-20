@@ -66,7 +66,7 @@ class Snbp extends Model
             ->where('snbp.id_semester', $id_semester)
             ->where('p.id_semester', $id_semester)
             ->whereNotNull('snbp.super')
-            ->orderBy('snbp.peringkat_final', 'DESC')
+            ->orderBy('snbp.peringkat_final', 'ASC')
         // ->orderBy('snbp.total', 'DESC')
             ->get();
     }
