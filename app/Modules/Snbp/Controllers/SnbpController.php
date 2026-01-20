@@ -196,7 +196,7 @@ class SnbpController extends Controller
             }
 
             if ($urutan->is_eligible == 0 and $urutan->super == null) {
-                $no_urut = null;
+                $no_urut = 999;
             } else {
                 $no_urut = $no;
             }
