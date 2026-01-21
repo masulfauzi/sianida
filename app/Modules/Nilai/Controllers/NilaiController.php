@@ -53,11 +53,11 @@ class NilaiController extends Controller
             ->join('pesertadidik as p', 'siswa.id', '=', 'p.id_siswa')
             ->join('kelas as k', 'p.id_kelas', '=', 'k.id')
             ->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
-        //->join('snbp as n', 'n.id_siswa', '=', 'siswa.id')
+            ->join('snbp as n', 'n.id_siswa', '=', 'siswa.id')
             ->where('p.id_semester', session('active_semester')['id'])
             ->where('k.id_jurusan', $request->input('id_jurusan'))
             ->where('t.tingkat', 'XII')
-        // ->orderBy('n.peringkat_final')
+            ->orderBy('n.peringkat_final')
         //->orderBy('n.rata_rata', 'DESC')
             ->get();
 
