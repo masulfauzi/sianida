@@ -21,129 +21,124 @@
             </div>
         </div>
 
-        
+        @if ($data->is_eligible_final != NULL)
+            <section class="section">
+                <div class="card">
+                    <h6 class="card-header">
+                        Info Data Eligible Final
+                    </h6>
+                    <div class="card-body">
 
-        <section class="section">
-            <div class="card">
-                <h6 class="card-header">
-                    Info Data Eligible Tahap 1
-                </h6>
-                <div class="card-body">
+                        @include('include.flash')
 
-                    @include('include.flash')
+                        @if ($data->is_eligible_final == 1)
+                            <div class="table-responsive-md col-12">
+                                <p class="text-center text-xl"><strong>SELAMAT!</strong> Anda termasuk dalam siswa
+                                    <strong>ELIGIBLE</strong>.
+                                </p>
+                                <p class="text-center text-xl">Jangan lupa untuk membuat akun di SNPMB.</p>
+                            </div>
+                        @else
+                            <div class="table-responsive-md col-12">
+                                <p class="text-center text-xl"><strong>MAAF! ANDA TIDAK TERMASUK SISWA ELIGIBLE</strong>.</p>
+                                <p class="text-center text-xl">Tetap Semangat!</p>
+                            </div>
+                        @endif
 
-                    @if ($data->is_eligible == 1)
-                        <div class="table-responsive-md col-12">
-                            <p class="text-center text-xl"><strong>SELAMAT!</strong> Anda termasuk dalam siswa
-                                <strong>ELIGIBLE</strong>.
-                            </p>
-                            <p class="text-center text-xl">Jangan lupa untuk membuat akun di SNPMB.</p>
-                        </div>
-                    @else
-                        <div class="table-responsive-md col-12">
-                            <p class="text-center text-xl"><strong>MAAF! ANDA TIDAK TERMASUK SISWA ELIGIBLE</strong>.</p>
-                            <p class="text-center text-xl">Tetap Semangat!</p>
-                        </div>
-                    @endif
-
+                    </div>
                 </div>
-            </div>
 
-        </section>
+            </section>
+        @else
+            <section class="section">
+                <div class="card">
+                    <h6 class="card-header">
+                        Kesediaan Mengikuti Proses SNBP
+                    </h6>
+                    <div class="card-body">
 
-        <section class="section">
-            <div class="card">
-                <h6 class="card-header">
-                    Kesediaan Mengikuti Proses SNBP
-                </h6>
-                <div class="card-body">
+                        @if ($data->is_eligible == 1)
+                            <div class="table-responsive-md col-12">
+                                <p>Saya masuk dalam kategori siswa <strong>ELIGIBLE.</strong></p>
 
-                    @if ($data->is_eligible == 1)
-                        <div class="table-responsive-md col-12">
-                            <p>Saya masuk dalam kategori siswa <strong>ELIGIBLE.</strong></p>
-
-                            @if ($data->is_berminat === 1)
-                                @php
-                                    $disable = 'disabled';
-                                    $button = '';
-                                @endphp
-                            @else
-                                @if ($data->is_berminat === 0)
+                                @if ($data->is_berminat === 1)
                                     @php
                                         $disable = 'disabled';
                                         $button = '';
                                     @endphp
                                 @else
-                                    @php
-                                        $disable = '';
-                                        $button = '<button type="submit" class="btn btn-secondary">Simpan</button>';
-                                    @endphp
+                                    @if ($data->is_berminat === 0)
+                                        @php
+                                            $disable = 'disabled';
+                                            $button = '';
+                                        @endphp
+                                    @else
+                                        @php
+                                            $disable = '';
+                                            $button = '<button type="submit" class="btn btn-secondary">Simpan</button>';
+                                        @endphp
+                                    @endif
                                 @endif
-                            @endif
 
-                            <form method="POST" action="{{ route('snbp.berminat.update', $data->id) }}">
-                                @csrf
-                                <input {{ $disable }} type="radio"
-                                    @if ($data->is_berminat === 1) @checked(true) @endif name="berminat"
-                                    id="" value="1"> Saya bersedia mengikuti proses SNBP hingga selesai.
-                                <br>
-                                <input {{ $disable }} type="radio"
-                                    @if ($data->is_berminat === 0) @checked(true) @endif name="berminat"
-                                    id="" value="0"> Saya tidak bersedia mengikuti proses SNBP.
-                                <br>
-                                <br>
-                                {!! $button !!}
-                            </form>
+                                <form method="POST" action="{{ route('snbp.berminat.update', $data->id) }}">
+                                    @csrf
+                                    <input {{ $disable }} type="radio" @if ($data->is_berminat === 1) @checked(true) @endif
+                                        name="berminat" id="" value="1"> Saya bersedia mengikuti proses SNBP hingga selesai.
+                                    <br>
+                                    <input {{ $disable }} type="radio" @if ($data->is_berminat === 0) @checked(true) @endif
+                                        name="berminat" id="" value="0"> Saya tidak bersedia mengikuti proses SNBP.
+                                    <br>
+                                    <br>
+                                    {!! $button !!}
+                                </form>
 
-                        </div>
-                    @else
-                        <div class="table-responsive-md col-12">
-                            <p>Saya masuk dalam kategori siswa <strong>TIDAK ELIGIBLE.</strong></p>
-                            @if ($data->is_berminat === 1)
-                                @php
-                                    $disable = 'disabled';
-                                    $button = '';
-                                @endphp
-                            @else
-                                @if ($data->is_berminat === 0)
+                            </div>
+                        @else
+                            <div class="table-responsive-md col-12">
+                                <p>Saya masuk dalam kategori siswa <strong>TIDAK ELIGIBLE.</strong></p>
+                                @if ($data->is_berminat === 1)
                                     @php
                                         $disable = 'disabled';
                                         $button = '';
                                     @endphp
                                 @else
-                                    @php
-                                        $disable = '';
-                                        $button = '<button type="submit" class="btn btn-secondary">Simpan</button>';
-                                    @endphp
+                                    @if ($data->is_berminat === 0)
+                                        @php
+                                            $disable = 'disabled';
+                                            $button = '';
+                                        @endphp
+                                    @else
+                                        @php
+                                            $disable = '';
+                                            $button = '<button type="submit" class="btn btn-secondary">Simpan</button>';
+                                        @endphp
+                                    @endif
                                 @endif
-                            @endif
-                            <form method="POST" action="{{ route('snbp.berminat.update', $data->id) }}">
-                                @csrf
-                                <input {{ $disable }} type="radio"
-                                    @if ($data->is_berminat === 1) @checked(true) @endif name="berminat"
-                                    id="" value="1"> Saya berminat mengikuti proses SNBP jika ada siswa
-                                ELIGIBLE yang mengundurkan diri.
-                                <br>
-                                <input {{ $disable }} type="radio"
-                                    @if ($data->is_berminat === 0) @checked(true) @endif name="berminat"
-                                    id="" value="0"> Saya tidak berminat mengikuti proses SNBP.
-                                <br>
-                                <br>
-                                {!! $button !!}
-                            </form>
-                        </div>
-                    @endif
+                                <form method="POST" action="{{ route('snbp.berminat.update', $data->id) }}">
+                                    @csrf
+                                    <input {{ $disable }} type="radio" @if ($data->is_berminat === 1) @checked(true) @endif
+                                        name="berminat" id="" value="1"> Saya berminat mengikuti proses SNBP jika ada siswa
+                                    ELIGIBLE yang mengundurkan diri.
+                                    <br>
+                                    <input {{ $disable }} type="radio" @if ($data->is_berminat === 0) @checked(true) @endif
+                                        name="berminat" id="" value="0"> Saya tidak berminat mengikuti proses SNBP.
+                                    <br>
+                                    <br>
+                                    {!! $button !!}
+                                </form>
+                            </div>
+                        @endif
 
+                    </div>
                 </div>
-            </div>
 
-        </section>
+            </section>
 
-        @if ($data->is_berminat === 1 or $data->is_berminat === 0)
+            @if ($data->is_berminat === 1 or $data->is_berminat === 0)
 
-            @if ($data->is_eligible === 0 and $data->is_berminat === 0)
-            @else
-                
+                @if ($data->is_eligible === 0 and $data->is_berminat === 0)
+                @else
+
                     <section class="section">
                         <div class="card">
                             <h6 class="card-header">
@@ -153,8 +148,8 @@
 
 
 
-                                <form class="form form-horizontal" action="{{ route('snbp.super.store', $data->id) }}"
-                                    method="POST" enctype="multipart/form-data">
+                                <form class="form form-horizontal" action="{{ route('snbp.super.store', $data->id) }}" method="POST"
+                                    enctype="multipart/form-data">
                                     @csrf
                                     <div class="form-body">
                                         @csrf
@@ -165,8 +160,7 @@
                                             <div class="col-md-9 form-group">
                                                 @if ($data->super)
                                                     <a href="{{ url('uploads/super/' . $data->super) }}" target="_blank">
-                                                        <img src="{{ asset('assets/images/icon/check.png') }}"
-                                                            alt="">
+                                                        <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
                                                     </a>
                                                 @else
                                                     <div class="form-control">Belum ada data</div>
@@ -190,7 +184,7 @@
                                 @if ($data->is_eligible === 1)
                                     @if ($data->is_berminat === 1)
                                         <div><a href="{{ url('download/form/super_eligible_berminat.docx') }}">Download Surat
-                                            Pernyataan Eligible dan Berminat.</a></div>
+                                                Pernyataan Eligible dan Berminat.</a></div>
                                     @else
                                         <div><a href="{{ url('download/form/super_eligible_tidak_berminat.docx') }}">Download
                                                 Surat Pernyataan Eligible Tidak Berminat.</a></div>
@@ -207,11 +201,13 @@
                         </div>
 
                     </section>
-                
+
+
+                @endif
+
+
 
             @endif
-
-
 
         @endif
 
