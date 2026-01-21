@@ -76,7 +76,8 @@ class NilaiController extends Controller
 
         $mapel = Nilai::whereIn('id_siswa', $id_siswa)
             ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
-            ->where('nilai.id_semester', $request->input('id_semester'));
+            ->where('nilai.id_semester', $request->input('id_semester'))
+            ->orderBy('m.urutan');
 
         $nilai = clone $mapel;
 
