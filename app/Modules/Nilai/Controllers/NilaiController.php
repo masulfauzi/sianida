@@ -50,7 +50,7 @@ class NilaiController extends Controller
         $data['jurusan']->prepend('-PILIH SALAH SATU-', '');
 
         $siswa = Siswa::select('siswa.*')
-            ->join('pesertadidik as p', 'siswa.id', '=', 'p.id_siswa')
+            ->join('pesertadidik as p', 'siswa.id', '=', 'p.id_siswa', 'n.peringkat_final')
             ->join('kelas as k', 'p.id_kelas', '=', 'k.id')
             ->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
             ->join('snbp as n', 'n.id_siswa', '=', 'siswa.id')
