@@ -21,7 +21,7 @@
             </div>
         </div>
 
-        @if ($data->is_eligible_final)
+        @if (isset($data->is_eligible_final))
             <section class="section">
                 <div class="card">
                     <h6 class="card-header">
