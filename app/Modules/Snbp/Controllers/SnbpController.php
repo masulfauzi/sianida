@@ -189,15 +189,21 @@ class SnbpController extends Controller
 
         $no = 1;
         foreach ($urutkan as $urutan) {
-            if ($no <= $kuota) {
-                $eligible = 1;
-            } else {
-                $eligible = 0;
-            }
 
             if ($urutan->is_eligible == 0 and $urutan->super == null) {
+                if ($no <= $kuota) {
+                    $eligible = 1;
+                } else {
+                    $eligible = 0;
+                }
                 $no_urut = 999;
             } else {
+                if ($no <= $kuota) {
+                    $eligible = 1;
+                } else {
+                    $eligible = 0;
+                }
+
                 $no_urut = $no;
                 $no++;
             }
