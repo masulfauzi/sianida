@@ -29,16 +29,16 @@
                     <form class="form form-horizontal" action="{{ route('nilai.index') }}" method="GET"
                         enctype="multipart/form-data">
                         <div class="form-body">
-                            {{-- @csrf  --}}
+                            {{-- @csrf --}}
                             <div class="row">
                                 <div class="col-md-3 text-sm-start text-md-end pt-2">
                                     <label>Semester</label>
                                 </div>
                                 <div class="col-md-9 form-group">
                                     {!! Form::select('id_semester', $semester, $selected['id_semester'], [
-                                        'class' => 'form-control select2',
-                                        'required',
-                                    ]) !!}
+        'class' => 'form-control select2',
+        'required',
+    ]) !!}
                                     @error('id_semester')
                                         <div class="text-danger">
                                             {{ $message }}
@@ -52,9 +52,9 @@
                                 </div>
                                 <div class="col-md-9 form-group">
                                     {!! Form::select('id_jurusan', $jurusan, $selected['id_jurusan'], [
-                                        'class' => 'form-control select2',
-                                        'required',
-                                    ]) !!}
+        'class' => 'form-control select2',
+        'required',
+    ]) !!}
                                     @error('id_jurusan')
                                         <div class="text-danger">
                                             {{ $message }}
@@ -93,7 +93,7 @@
                                 <th>No</th>
                                 <th>Nama</th>
                                 <th>NISN</th>
-                                {{-- <th>Peringkat</th> --}}
+                                <th>Peringkat</th>
                                 @foreach ($mapel as $item)
                                     <th>{{ $item->mapel }}</th>
                                 @endforeach
@@ -114,15 +114,15 @@
                                         <td>{{ $no++ }}</td>
                                         <td>{{ $item_siswa->nama_siswa }}</td>
                                         <td>{{ $item_siswa->nisn }}</td>
-                                        {{-- <td>{{ $item_siswa->peringkat_final }}</td> --}}
+                                        <td>{{ $item_siswa->peringkat_final }}</td>
 
                                         @foreach ($mapel as $item_mapel)
                                             @php
-                                                $cek_nilai = \App\Modules\Nilai\Models\Nilai::where('id_siswa',$item_siswa->id)
+                                                $cek_nilai = \App\Modules\Nilai\Models\Nilai::where('id_siswa', $item_siswa->id)
                                                     ->where('id_semester', $selected['id_semester'])
                                                     ->where('id_mapel', $item_mapel->id)
                                                     ->first();
-                                                    
+
                                                 $tampil_nilai = $cek_nilai ? $cek_nilai->nilai : '';
                                             @endphp
 
@@ -141,7 +141,7 @@
 
                                 {{-- @if ($no == 11)
                                 {{ die(); }}
-                            @endif --}}
+                                @endif --}}
                             @endforeach
 
                         </table>
