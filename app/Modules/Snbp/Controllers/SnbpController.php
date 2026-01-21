@@ -199,6 +199,7 @@ class SnbpController extends Controller
                 $no_urut = 999;
             } else {
                 $no_urut = $no;
+                $no++;
             }
 
             $snbp                    = Snbp::find($urutan->id);
@@ -208,7 +209,6 @@ class SnbpController extends Controller
             $snbp->updated_by = Auth::id();
             $snbp->save();
 
-            $no++;
         }
 
         $text = 'membuat ' . $this->title; //' baru '.$snbp->what;
