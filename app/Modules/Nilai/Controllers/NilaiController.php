@@ -57,8 +57,10 @@ class NilaiController extends Controller
             ->where('p.id_semester', session('active_semester')['id'])
             ->where('k.id_jurusan', $request->input('id_jurusan'))
             ->where('t.tingkat', 'XII')
-            ->orderBy('n.peringkat_final')
+        // ->orderBy('n.peringkat_final')
         //->orderBy('n.rata_rata', 'DESC')
+        // order by nama_siswa
+            ->orderBy('siswa.nama_siswa')
             ->get();
 
         //dd($siswa);
