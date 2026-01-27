@@ -26,5 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/revoke-all-tokens', [AuthController::class, 'revokeAllTokens']);
 
     // Siswa API endpoints
-    Route::get('/siswa/{userId}', [SiswaController::class, 'siswa']);
 });
+
+Route::get('/siswa/{userId}', [SiswaController::class, 'siswa']);
