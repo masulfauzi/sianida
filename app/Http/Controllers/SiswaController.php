@@ -9,13 +9,12 @@ class SiswaController extends Controller
      * Get siswa data by user ID with user information
      *
      * @param Request $request
+     * @param $userId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function siswa(Request $request)
+    public function siswa(Request $request, $userId)
     {
         try {
-            $userId = $request->input('id');
-
             if (! $userId) {
                 return response()->json([
                     'success' => false,
