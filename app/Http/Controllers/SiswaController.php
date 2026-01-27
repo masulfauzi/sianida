@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Modules\Siswa\Models\Siswa;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Request;
 
 class SiswaController extends Controller
 {
