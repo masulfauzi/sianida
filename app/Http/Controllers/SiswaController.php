@@ -6,7 +6,7 @@ use App\Modules\Siswa\Models\Siswa;
 class SiswaController extends Controller
 {
     /**
-     * Get siswa data by ID
+     * Get siswa data by user ID with user information
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -14,21 +14,25 @@ class SiswaController extends Controller
     public function siswa(Request $request)
     {
         try {
-            $id = $request->input('id');
+            $userId = $request->input('id');
 
-            if (! $id) {
+            if (! $userId) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'ID is required',
+                    'message' => 'User ID is required',
                 ], 400);
             }
 
-            $siswa = Siswa::find($id);
+            $siswa = DB::table('siswa')
+                ->join('users', 'siswa.nik', '=', 'users.identitas')
+                ->where('users.id', $userId)
+                ->select('siswa.*', 'users.name', 'users.email', 'users.username')
+                ->first();
 
             if (! $siswa) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Siswa not found',
+                    'message' => 'Siswa not found for this user',
                 ], 404);
             }
 
