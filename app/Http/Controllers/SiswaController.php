@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Modules\Siswa\Models\Siswa;
+use Illuminate\Support\Facades\DB;
 
 class SiswaController extends Controller
 {
