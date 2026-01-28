@@ -3,8 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Modules\PresensiHarian\Models\PresensiHarian;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class PresensiController extends Controller
 {
@@ -39,7 +39,7 @@ class PresensiController extends Controller
                 ->select('siswa.id')
                 ->first();
 
-            if (!$siswa) {
+            if (! $siswa) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Siswa not found for this user',
@@ -55,7 +55,7 @@ class PresensiController extends Controller
                 ->where('status_kehadiran_pendek', 'H')
                 ->first();
 
-            if (!$statusKehadiran) {
+            if (! $statusKehadiran) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Status kehadiran H not found',
@@ -65,10 +65,11 @@ class PresensiController extends Controller
             $data['id_status_kehadiran'] = $statusKehadiran->id;
 
             if ($request->hasFile('image')) {
-                $image         = $request->file('image');
-                $imageName     = time() . '_' . $image->getClientOriginalName();
-                $imagePath     = $image->storeAs('presensi_harian', $imageName, 'public');
-                $data['gambar'] = $imagePath;
+                $image           = $request->file('image');
+                $imageName       = time() . '_' . $image->getClientOriginalName();
+                $destinationPath = public_path('presensi_harian');
+                $image->move($destinationPath, $imageName);
+                $data['gambar'] = $imageName;
             }
 
             $presensi = PresensiHarian::create($data);
