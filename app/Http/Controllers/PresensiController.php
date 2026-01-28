@@ -73,6 +73,18 @@ class PresensiController extends Controller
                 $data['gambar'] = $imageName;
             }
 
+            // Check if student already has presensi today
+            $existingPresensi = PresensiHarian::where('id_siswa', $data['id_siswa'])
+                ->where('tgl', $data['tgl'])
+                ->first();
+
+            if ($existingPresensi) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sudah melakukan presensi',
+                ], 422);
+            }
+
             $presensi = PresensiHarian::create($data);
 
             return response()->json([
