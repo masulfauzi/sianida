@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Siswa API endpoints
     Route::get('/siswa/{userId}', [SiswaController::class, 'siswa']);
+
+    // Presensi API endpoints
+    Route::post('/presensi', [PresensiController::class, 'store']);
 });
