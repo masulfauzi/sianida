@@ -78,7 +78,7 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi harian saved successfully',
-                'data'    => $data,
+                'data'    => $presensi,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
