@@ -48,6 +48,7 @@ class PresensiController extends Controller
 
             $data = [
                 'id_siswa' => $siswa->id,
+                'tgl'      => date('Y-m-d'),
             ];
 
             // Get status kehadiran ID where status_kehadiran_pendek is 'H'
