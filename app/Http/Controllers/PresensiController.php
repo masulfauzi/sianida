@@ -18,8 +18,8 @@ class PresensiController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_siswa' => 'required',
-                'image'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'userId' => 'required',
+                'image'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             if ($validator->fails()) {
@@ -30,7 +30,25 @@ class PresensiController extends Controller
                 ], 422);
             }
 
-            $data = $request->only(['id_siswa']);
+            $userId = $request->input('userId');
+
+            // Get siswa data from siswa table based on userId
+            $siswa = DB::table('siswa')
+                ->join('users', 'siswa.nik', '=', 'users.identitas')
+                ->where('users.id', $userId)
+                ->select('siswa.id')
+                ->first();
+
+            if (!$siswa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Siswa not found for this user',
+                ], 404);
+            }
+
+            $data = [
+                'id_siswa' => $siswa->id,
+            ];
 
             // Get status kehadiran ID where status_kehadiran_pendek is 'H'
             $statusKehadiran = DB::table('statuskehadiran')
