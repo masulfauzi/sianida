@@ -68,7 +68,7 @@ class PresensiController extends Controller
                 $image         = $request->file('image');
                 $imageName     = time() . '_' . $image->getClientOriginalName();
                 $imagePath     = $image->storeAs('presensi_harian', $imageName, 'public');
-                $data['image'] = $imagePath;
+                $data['gambar'] = $imagePath;
             }
 
             $presensi = PresensiHarian::create($data);
