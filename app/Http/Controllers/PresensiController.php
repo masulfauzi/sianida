@@ -118,19 +118,40 @@ class PresensiController extends Controller
                 ], 404);
             }
 
-            $presensiHarian = PresensiHarian::where('id_siswa', $siswa->id)
+            // Get presensi records for the month
+            $presensiRecords = PresensiHarian::where('id_siswa', $siswa->id)
                 ->whereMonth('tgl', $currentmonth)
+                ->whereYear('tgl', date('Y'))
                 ->get(['tgl', 'created_at'])
-                ->map(function ($item) {
-                    $createdAtTime = \Carbon\Carbon::parse($item->created_at)->format('H:i:s');
+                ->keyBy('tgl');
+
+            // Get the number of days in the current month
+            $year = date('Y');
+            $daysInMonth = \Carbon\Carbon::create($year, $currentmonth, 1)->daysInMonth;
+
+            // Create response for all days in the month
+            $presensiHarian = collect();
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = \Carbon\Carbon::create($year, $currentmonth, $day)->format('Y-m-d');
+
+                if (isset($presensiRecords[$date])) {
+                    $record = $presensiRecords[$date];
+                    $createdAtTime = \Carbon\Carbon::parse($record->created_at)->format('H:i:s');
                     $status = $createdAtTime < '07:00:00' ? 'Hadir' : 'Terlambat';
 
-                    return [
-                        'tgl' => $item->tgl,
-                        'created_at' => $item->created_at,
+                    $presensiHarian->push([
+                        'tgl' => $date,
+                        'created_at' => $record->created_at,
                         'status' => $status,
-                    ];
-                });
+                    ]);
+                } else {
+                    $presensiHarian->push([
+                        'tgl' => $date,
+                        'created_at' => null,
+                        'status' => 'Tidak Hadir',
+                    ]);
+                }
+            }
 
             return response()->json([
                 'success' => true,
