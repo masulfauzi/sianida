@@ -100,4 +100,37 @@ class PresensiController extends Controller
             ], 500);
         }
     }
+
+    public function index(Request $request, $userId)
+    {
+        try {
+            // Get siswa data from siswa table based on userId
+            $siswa = DB::table('siswa')
+                ->join('users', 'siswa.nik', '=', 'users.identitas')
+                ->where('users.id', $userId)
+                ->select('siswa.id')
+                ->first();
+
+            if (!$siswa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Siswa not found for this user',
+                ], 404);
+            }
+
+            $presensiHarian = PresensiHarian::where('id_siswa', $siswa->id)->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Presensi harian retrieved successfully',
+                'data'    => $presensiHarian,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve presensi harian',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
