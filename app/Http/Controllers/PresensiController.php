@@ -118,7 +118,19 @@ class PresensiController extends Controller
                 ], 404);
             }
 
-            $presensiHarian = PresensiHarian::where('id_siswa', $siswa->id)->whereMonth('tgl', $currentmonth)->get();
+            $presensiHarian = PresensiHarian::where('id_siswa', $siswa->id)
+                ->whereMonth('tgl', $currentmonth)
+                ->get(['tgl', 'created_at'])
+                ->map(function ($item) {
+                    $createdAtTime = \Carbon\Carbon::parse($item->created_at)->format('H:i:s');
+                    $status = $createdAtTime < '07:00:00' ? 'Hadir' : 'Terlambat';
+
+                    return [
+                        'tgl' => $item->tgl,
+                        'created_at' => $item->created_at,
+                        'status' => $status,
+                    ];
+                });
 
             return response()->json([
                 'success' => true,
