@@ -101,7 +101,7 @@ class PresensiController extends Controller
         }
     }
 
-    public function index(Request $request, $userId, $currentmonth)
+    public function index(Request $request, $userId, $currentmonth, $currentyear)
     {
         try {
             // Get siswa data from siswa table based on userId
@@ -121,18 +121,17 @@ class PresensiController extends Controller
             // Get presensi records for the month
             $presensiRecords = PresensiHarian::where('id_siswa', $siswa->id)
                 ->whereMonth('tgl', $currentmonth)
-                ->whereYear('tgl', date('Y'))
+                ->whereYear('tgl', $currentyear)
                 ->get(['tgl', 'created_at'])
                 ->keyBy('tgl');
 
             // Get the number of days in the current month
-            $year = date('Y');
-            $daysInMonth = \Carbon\Carbon::create($year, $currentmonth, 1)->daysInMonth;
+            $daysInMonth = \Carbon\Carbon::create($currentyear, $currentmonth, 1)->daysInMonth;
 
             // Create response for all days in the month
             $presensiHarian = collect();
             for ($day = 1; $day <= $daysInMonth; $day++) {
-                $date = \Carbon\Carbon::create($year, $currentmonth, $day)->format('Y-m-d');
+                $date = \Carbon\Carbon::create($currentyear, $currentmonth, $day)->format('Y-m-d');
 
                 if (isset($presensiRecords[$date])) {
                     $record = $presensiRecords[$date];
