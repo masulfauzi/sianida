@@ -101,7 +101,7 @@ class PresensiController extends Controller
         }
     }
 
-    public function index(Request $request, $userId)
+    public function index(Request $request, $userId, $currentmonth)
     {
         try {
             // Get siswa data from siswa table based on userId
@@ -118,7 +118,7 @@ class PresensiController extends Controller
                 ], 404);
             }
 
-            $presensiHarian = PresensiHarian::where('id_siswa', $siswa->id)->get();
+            $presensiHarian = PresensiHarian::where('id_siswa', $siswa->id)->whereMonth('tgl', $currentmonth)->get();
 
             return response()->json([
                 'success' => true,
