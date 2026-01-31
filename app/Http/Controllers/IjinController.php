@@ -62,10 +62,10 @@ class IjinController extends Controller
 
         // Handle file upload
         if ($request->hasFile('surat')) {
-            $file        = $request->file('surat');
-            $fileName    = time() . '_' . $file->getClientOriginalName();
-            $filePath    = $file->storeAs('ijin_files', $fileName, 'public');
-            $ijin->surat = $filePath;
+            $file     = $request->file('surat');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('surat_ijin'), $fileName);
+            $ijin->surat = $fileName;
         }
 
         $ijin->created_by = Auth::id();
