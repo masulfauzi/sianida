@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\IjinController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
@@ -32,4 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Presensi API endpoints
     Route::post('/presensi', [PresensiController::class, 'store']);
     Route::get('/presensi/{userId}/{currentmonth}/{currentyear}', [PresensiController::class, 'index']);
+
+    // Ijin API endpoints
+    Route::post('/ijin', [IjinController::class, 'store']);
 });
