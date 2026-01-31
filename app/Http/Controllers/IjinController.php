@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Modules\Ijin\Models\Ijin;
+use App\Modules\JenisIjin\Models\JenisIjin;
 use App\Modules\Siswa\Models\Siswa;
 use App\Modules\StatusIjin\Models\StatusIjin;
 use Illuminate\Http\Request;
@@ -39,10 +40,20 @@ class IjinController extends Controller
             ], 404);
         }
 
+        // Get id_jenis_ijin where jenis_ijin = type from request
+        $jenisIjin = JenisIjin::where('jenis_ijin', $request->input('type'))->first();
+
+        if (! $jenisIjin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jenis ijin tidak ditemukan!',
+            ], 404);
+        }
+
         $id_siswa = $siswaData[0]->id_siswa;
 
         $ijin                 = new Ijin();
-        $ijin->type           = $request->input("type");
+        $ijin->id_jenis_ijin  = $jenisIjin->id;
         $ijin->tgl_mulai      = $request->input("start_date");
         $ijin->tgl_selesai    = $request->input("end_date");
         $ijin->id_siswa       = $id_siswa;
