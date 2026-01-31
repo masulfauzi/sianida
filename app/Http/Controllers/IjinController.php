@@ -43,10 +43,11 @@ class IjinController extends Controller
 
         $ijin                 = new Ijin();
         $ijin->type           = $request->input("type");
-        $ijin->start_date     = $request->input("start_date");
-        $ijin->end_date       = $request->input("end_date");
+        $ijin->tgl_mulai      = $request->input("start_date");
+        $ijin->tgl_selesai    = $request->input("end_date");
         $ijin->id_siswa       = $id_siswa;
         $ijin->id_status_ijin = $statusIjin->id;
+        $ijin->lama_ijin      = (strtotime($request->input("end_date")) - strtotime($request->input("start_date"))) / (60 * 60 * 24) + 1;
 
         // Handle file upload
         if ($request->hasFile('surat')) {
