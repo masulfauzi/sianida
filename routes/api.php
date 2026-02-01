@@ -35,5 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/presensi/{userId}/{currentmonth}/{currentyear}', [PresensiController::class, 'index']);
 
     // Ijin API endpoints
+    Route::get('/ijin', [IjinController::class, 'index']);
     Route::post('/ijin', [IjinController::class, 'store']);
 });
