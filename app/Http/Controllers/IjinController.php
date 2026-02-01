@@ -10,6 +10,48 @@ use Illuminate\Support\Facades\Auth;
 
 class IjinController extends Controller
 {
+    public function index(Request $request)
+    {
+        $id_user = $request->input('user_id');
+
+        if (! $id_user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'id_user parameter diperlukan!',
+            ], 400);
+        }
+
+        // Get id_siswa from user_id
+        $siswaData = Siswa::get_siswa_by_id_user($id_user);
+
+        if (! $siswaData || $siswaData->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Siswa tidak ditemukan!',
+            ], 404);
+        }
+
+        $id_siswa = $siswaData[0]->id_siswa;
+
+        $ijin = Ijin::where('id_siswa', $id_siswa)
+            ->join('jenis_ijin', 'ijin.id_jenis_ijin', '=', 'jenis_ijin.id')
+            ->join('status_ijin', 'ijin.id_status_ijin', '=', 'status_ijin.id')
+            ->select(
+                'jenis_ijin.jenis_ijin',
+                'ijin.tgl_mulai as start_date',
+                'ijin.tgl_selesai as end_date',
+                'ijin.lama_ijin',
+                'status_ijin.status_ijin',
+                'ijin.created_at'
+            )
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $ijin,
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         $this->validate($request, [
