@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Modules\Ijin\Models\Ijin;
 use App\Modules\JenisIjin\Models\JenisIjin;
-use App\Modules\Siswa\Models\Siswa;
 use App\Modules\StatusIjin\Models\StatusIjin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
