@@ -11,12 +11,13 @@ class SiswaController extends Controller
      * Get siswa data by user ID with user information
      *
      * @param Request $request
-     * @param $userId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function siswa(Request $request, $userId)
+    public function siswa(Request $request)
     {
         try {
+            $userId = $request->input('userId');
+
             if (! $userId) {
                 return response()->json([
                     'success' => false,
@@ -25,9 +26,7 @@ class SiswaController extends Controller
             }
 
             $siswa = DB::table('siswa')
-                ->join('users', 'siswa.nik', '=', 'users.identitas')
-                ->where('users.id', $userId)
-                ->select('siswa.*', 'users.name', 'users.email', 'users.username')
+                ->where('siswa.user_id', $userId)
                 ->first();
 
             if (! $siswa) {
