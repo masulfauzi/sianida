@@ -50,7 +50,10 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('username', $validated['username'])->first();
+        $user = User::leftJoin('siswa', 'users.identitas', '=', 'siswa.nik')
+            ->where('username', $validated['username'])
+            ->select('users.*', 'siswa.id as siswaId')
+            ->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             throw ValidationException::withMessages([
@@ -63,6 +66,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login successful',
             'user'    => $user,
+            'siswaId' => $user->siswaId,
             'token'   => $token,
         ]);
     }
