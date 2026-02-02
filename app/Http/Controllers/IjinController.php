@@ -12,26 +12,14 @@ class IjinController extends Controller
 {
     public function index(Request $request)
     {
-        $id_user = $request->input('user_id');
+        $id_siswa = $request->input('siswa_id');
 
-        if (! $id_user) {
+        if (! $id_siswa) {
             return response()->json([
                 'success' => false,
-                'message' => 'id_user parameter diperlukan!',
+                'message' => 'siswa_id parameter diperlukan!',
             ], 400);
         }
-
-        // Get id_siswa from user_id
-        $siswaData = Siswa::get_siswa_by_id_user($id_user);
-
-        if (! $siswaData || $siswaData->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Siswa tidak ditemukan!',
-            ], 404);
-        }
-
-        $id_siswa = $siswaData[0]->id_siswa;
 
         $ijin = Ijin::where('id_siswa', $id_siswa)
             ->join('jenis_ijin', 'ijin.id_jenis_ijin', '=', 'jenis_ijin.id')
@@ -59,18 +47,11 @@ class IjinController extends Controller
             'start_date' => 'required|date',
             'end_date'   => 'required|date',
             'surat'      => 'required|file|mimes:pdf,doc,docx,jpg,jpeg,png',
-            'user_id'    => 'required',
+            'siswa_id'   => 'required',
         ]);
 
-        // Get id_siswa from user_id
-        $siswaData = Siswa::get_siswa_by_id_user($request->input('user_id'));
-
-        if (! $siswaData || $siswaData->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Siswa tidak ditemukan!',
-            ], 404);
-        }
+        // Get id_siswa from request
+        $id_siswa = $request->input('siswa_id');
 
         // Get default id_status_ijin where status_ijin = 'Menunggu'
         $statusIjin = StatusIjin::where('status_ijin', 'Menunggu')->first();
@@ -91,8 +72,6 @@ class IjinController extends Controller
                 'message' => 'Jenis ijin tidak ditemukan!',
             ], 404);
         }
-
-        $id_siswa = $siswaData[0]->id_siswa;
 
         $ijin                 = new Ijin();
         $ijin->id_jenis_ijin  = $jenisIjin->id;
