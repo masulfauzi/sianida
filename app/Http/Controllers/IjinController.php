@@ -32,6 +32,7 @@ class IjinController extends Controller
                 'status_ijin.status_ijin',
                 'ijin.created_at'
             )
+            ->orderBy('ijin.created_at', 'desc')
             ->get();
 
         return response()->json([
