@@ -18,7 +18,7 @@ class PresensiController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'userId' => 'required',
+                'siswaId' => 'required',
                 'image'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
@@ -30,13 +30,11 @@ class PresensiController extends Controller
                 ], 422);
             }
 
-            $userId = $request->input('userId');
+            $siswaId = $request->input('siswaId');
 
-            // Get siswa data from siswa table based on userId
+            // Verify siswa exists
             $siswa = DB::table('siswa')
-                ->join('users', 'siswa.nik', '=', 'users.identitas')
-                ->where('users.id', $userId)
-                ->select('siswa.id')
+                ->where('id', $siswaId)
                 ->first();
 
             if (! $siswa) {
@@ -47,7 +45,7 @@ class PresensiController extends Controller
             }
 
             $data = [
-                'id_siswa' => $siswa->id,
+                'id_siswa' => $siswaId,
                 'tgl'      => date('Y-m-d'),
             ];
 
@@ -101,14 +99,12 @@ class PresensiController extends Controller
         }
     }
 
-    public function index(Request $request, $userId, $currentmonth, $currentyear)
+    public function index(Request $request, $siswaId, $currentmonth, $currentyear)
     {
         try {
-            // Get siswa data from siswa table based on userId
+            // Verify siswa exists
             $siswa = DB::table('siswa')
-                ->join('users', 'siswa.nik', '=', 'users.identitas')
-                ->where('users.id', $userId)
-                ->select('siswa.id')
+                ->where('id', $siswaId)
                 ->first();
 
             if (!$siswa) {
@@ -119,7 +115,7 @@ class PresensiController extends Controller
             }
 
             // Get presensi records for the month
-            $presensiRecords = PresensiHarian::where('id_siswa', $siswa->id)
+            $presensiRecords = PresensiHarian::where('id_siswa', $siswaId)
                 ->whereMonth('tgl', $currentmonth)
                 ->whereYear('tgl', $currentyear)
                 ->get(['tgl', 'created_at'])
