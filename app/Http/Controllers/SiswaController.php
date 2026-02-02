@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SiswaController extends Controller
 {
     /**
-     * Get siswa data by user ID with user information
+     * Get siswa data by siswa ID
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -16,17 +16,17 @@ class SiswaController extends Controller
     public function siswa(Request $request)
     {
         try {
-            $userId = $request->input('userId');
+            $siswaId = $request->input('siswaId');
 
-            if (! $userId) {
+            if (! $siswaId) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'User ID is required',
+                    'message' => 'Siswa ID is required',
                 ], 400);
             }
 
             $siswa = DB::table('siswa')
-                ->where('siswa.user_id', $userId)
+                ->where('siswa.id', $siswaId)
                 ->first();
 
             if (! $siswa) {
