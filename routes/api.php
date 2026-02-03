@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/siswa', [SiswaController::class, 'siswa']);
 
     // Guru API endpoints
-    Route::get('/guru', [GuruController::class, 'index']);
+    Route::get('/get_guru', [GuruController::class, 'index']);
 
     // Presensi API endpoints
     Route::post('/presensi', [PresensiController::class, 'store']);
