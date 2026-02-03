@@ -15,7 +15,9 @@ class GuruController extends Controller
     public function index(Request $request)
     {
         try {
-            $guru = Guru::all();
+            $guru = Guru::select('nama')
+                ->orderBy('nama')
+                ->get();
 
             return response()->json([
                 'success' => true,
