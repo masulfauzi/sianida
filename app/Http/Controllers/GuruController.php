@@ -15,7 +15,7 @@ class GuruController extends Controller
     public function index(Request $request)
     {
         try {
-            $guru = Guru::select('nama')
+            $guru = Guru::select('nama', 'id as id_guru')
                 ->where('is_aktif', '1')
                 ->orderBy('nama')
                 ->get();
