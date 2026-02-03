@@ -16,7 +16,7 @@ class GuruController extends Controller
     {
         try {
             $guru = Guru::select('nama')
-                ->where('is_aktif', 1)
+                ->where('is_aktif', '1')
                 ->orderBy('nama')
                 ->get();
 
