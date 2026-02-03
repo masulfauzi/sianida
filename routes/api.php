@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GuruController;
 use App\Http\Controllers\IjinController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\SiswaController;
@@ -29,6 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Siswa API endpoints
     Route::get('/siswa', [SiswaController::class, 'siswa']);
+
+    // Guru API endpoints
+    Route::get('/guru', [GuruController::class, 'index']);
 
     // Presensi API endpoints
     Route::post('/presensi', [PresensiController::class, 'store']);
