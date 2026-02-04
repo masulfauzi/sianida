@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\IjinController;
+use App\Http\Controllers\JenisIjinKelasController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
@@ -41,4 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Ijin API endpoints
     Route::get('/ijin', [IjinController::class, 'index']);
     Route::post('/ijin', [IjinController::class, 'store']);
+
+    // Jenis Ijin Kelas API endpoints
+    Route::get('/jenis-ijin-kelas', [JenisIjinKelasController::class, 'index']);
 });
