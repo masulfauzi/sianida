@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Modules\IjinKeluarKelas\Models\IjinKeluarKelas;
+use App\Modules\Jampelajaran\Models\Jampelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -33,13 +34,31 @@ class IjinKeluarKelasController extends Controller
                 ], 422);
             }
 
+            // Get id from jampelajaran table for jam_keluar
+            $jamKeluar = Jampelajaran::where('jam_pelajaran', $request->input('jam_keluar'))->first();
+            if (!$jamKeluar) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jam pelajaran jam_keluar not found',
+                ], 404);
+            }
+
+            // Get id from jampelajaran table for jam_masuk
+            $jamMasuk = Jampelajaran::where('jam_pelajaran', $request->input('jam_masuk'))->first();
+            if (!$jamMasuk) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jam pelajaran jam_masuk not found',
+                ], 404);
+            }
+
             $ijinKeluarKelas = IjinKeluarKelas::create([
                 'id_siswa'            => $request->input('id_siswa'),
                 'id_guru'             => $request->input('id_guru'),
                 'id_jenis_ijin_kelas' => $request->input('id_jenis_ijin_kelas'),
                 'tanggal'             => date('Y-m-d'),
-                'jam_keluar'          => $request->input('jam_keluar'),
-                'jam_masuk'           => $request->input('jam_masuk'),
+                'jam_keluar'          => $jamKeluar->id,
+                'jam_masuk'           => $jamMasuk->id,
             ]);
 
             return response()->json([
