@@ -27,6 +27,8 @@ class IjinKeluarKelasController extends Controller
             }
 
             $ijinKeluarKelas = IjinKeluarKelas::where('id_siswa', $id_siswa)
+                ->join('guru', 'ijin_keluar_kelas.id_guru', '=', 'guru.id')
+                ->select('ijin_keluar_kelas.*', 'guru.nama')
                 ->get();
 
             return response()->json([
