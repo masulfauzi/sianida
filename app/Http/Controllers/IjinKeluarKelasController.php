@@ -19,7 +19,6 @@ class IjinKeluarKelasController extends Controller
             $validator = Validator::make($request->all(), [
                 'siswa_id'         => 'required',
                 'jenis_ijin_kelas' => 'required',
-                'tanggal'          => 'required|date',
                 'jam_mulai'        => 'required',
                 'jam_selesai'      => 'required',
             ]);
