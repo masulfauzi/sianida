@@ -17,10 +17,10 @@ class IjinKeluarKelasController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'siswa_id'         => 'required',
-                'jenis_ijin_kelas' => 'required',
-                'jam_mulai'        => 'required',
-                'jam_selesai'      => 'required',
+                'siswa_id'   => 'required',
+                'jenis_izin' => 'required',
+                'jam_keluar' => 'required',
+                'jam_masuk'  => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -34,7 +34,7 @@ class IjinKeluarKelasController extends Controller
             $ijinKeluarKelas = IjinKeluarKelas::create([
                 'id_siswa'            => $request->input('siswa_id'),
                 'id_jenis_ijin_kelas' => $request->input('jenis_ijin_kelas'),
-                'tanggal'             => $request->input('tanggal'),
+                'tanggal'             => date('Y-m-d'),
                 'jam_mulai'           => $request->input('jam_mulai'),
                 'jam_selesai'         => $request->input('jam_selesai'),
             ]);
