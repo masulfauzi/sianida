@@ -9,6 +9,41 @@ use Illuminate\Support\Facades\Validator;
 class IjinKeluarKelasController extends Controller
 {
     /**
+     * Display a listing of ijin keluar kelas by siswa
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
+    {
+        try {
+            $id_siswa = $request->input('id_siswa');
+
+            if (! $id_siswa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'id_siswa parameter is required',
+                ], 400);
+            }
+
+            $ijinKeluarKelas = IjinKeluarKelas::where('id_siswa', $id_siswa)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ijin keluar kelas retrieved successfully',
+                'data'    => $ijinKeluarKelas,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve ijin keluar kelas',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Store ijin keluar kelas data
      *
      * @param Request $request
