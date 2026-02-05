@@ -17,10 +17,12 @@ class IjinKeluarKelasController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'siswa_id'   => 'required',
-                'jenis_izin' => 'required',
-                'jam_keluar' => 'required',
-                'jam_masuk'  => 'required',
+                'id_siswa'            => 'required',
+                'id_guru'             => 'required',
+                'id_jenis_ijin_kelas' => 'required',
+                'keperluan'           => 'required|string',
+                'jam_keluar'          => 'required',
+                'jam_masuk'           => 'required',
             ]);
 
             if ($validator->fails()) {
@@ -32,22 +34,23 @@ class IjinKeluarKelasController extends Controller
             }
 
             $ijinKeluarKelas = IjinKeluarKelas::create([
-                'id_siswa'            => $request->input('siswa_id'),
-                'id_jenis_ijin_kelas' => $request->input('jenis_ijin_kelas'),
+                'id_siswa'            => $request->input('id_siswa'),
+                'id_guru'             => $request->input('id_guru'),
+                'id_jenis_ijin_kelas' => $request->input('id_jenis_ijin_kelas'),
                 'tanggal'             => date('Y-m-d'),
-                'jam_mulai'           => $request->input('jam_mulai'),
-                'jam_selesai'         => $request->input('jam_selesai'),
+                'jam_keluar'          => $request->input('jam_keluar'),
+                'jam_masuk'           => $request->input('jam_masuk'),
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Ijin keluar kelas saved successfully',
+                'message' => 'Ijin keluarkelassavedsuccessfully',
                 'data'    => $ijinKeluarKelas,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to save ijin keluar kelas',
+                'message' => 'Failed tosaveijinkeluarkelas',
                 'error'   => $e->getMessage(),
             ], 500);
         }
