@@ -28,7 +28,9 @@ class IjinKeluarKelasController extends Controller
 
             $ijinKeluarKelas = IjinKeluarKelas::where('id_siswa', $id_siswa)
                 ->join('guru', 'ijin_keluar_kelas.id_guru', '=', 'guru.id')
-                ->select('ijin_keluar_kelas.*', 'guru.nama')
+                ->join('jampelajaran as jam_keluar_table', 'ijin_keluar_kelas.jam_keluar', '=', 'jam_keluar_table.id')
+                ->join('jampelajaran as jam_kembali_table', 'ijin_keluar_kelas.jam_kembali', '=', 'jam_kembali_table.id')
+                ->select('ijin_keluar_kelas.*', 'guru.nama', 'jam_keluar_table.jam_pelajaran as jam_keluar_pelajaran', 'jam_kembali_table.jam_pelajaran as jam_kembali_pelajaran')
                 ->get();
 
             return response()->json([
