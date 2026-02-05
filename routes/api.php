@@ -48,6 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/jenis-ijin-kelas', [JenisIjinKelasController::class, 'index']);
 
     // Ijin Keluar Kelas API endpoints
-    Route::get('/keluar-kelas', [IjinKeluarKelasController::class, 'index']);
+    Route::get('/riwayat-izin', [IjinKeluarKelasController::class, 'index']);
     Route::post('/keluar-kelas', [IjinKeluarKelasController::class, 'store']);
 });
