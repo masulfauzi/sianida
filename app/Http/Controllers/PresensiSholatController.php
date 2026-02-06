@@ -22,7 +22,7 @@ class PresensiSholatController extends Controller
             $presensiRecords = PresensiSholat::where('nisn', $nisn)
                 ->whereMonth('Waktu_Presensi', $bulan)
                 ->whereYear('Waktu_Presensi', $tahun)
-                ->get(['Waktu_Presensi', 'created_at'])
+                ->get(['Waktu_Presensi'])
                 ->keyBy('Waktu_Presensi');
 
             // Get the number of days in the selected month
