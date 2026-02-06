@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PresensiSholat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PresensiSholatController extends Controller
 {
@@ -21,12 +22,16 @@ class PresensiSholatController extends Controller
                 return ['day' => $day, 'count' => 0];
             })->keyBy('day');
 
-            // Get actual presensi data
+            // Get actual presensi data grouped by day
             $presensiData = PresensiSholat::where('nisn', $request->nisn)
                 ->where('jenis_presensi', 'Sholat Dzuhur')
                 ->whereMonth('Waktu_Presensi', $request->bulan)
-                ->get();
-            // Merge data
+                ->selectRaw('DAY(Waktu_Presensi) as day, COUNT(*) as count')
+                ->groupBy(DB::raw('DAY(Waktu_Presensi)'))
+                ->get()
+                ->keyBy('day');
+            
+            // Merge data - show all days with presensi count or 0 if not present
             $data = $allDays->map(function ($item, $day) use ($presensiData) {
                 return $presensiData->has($day) ? $presensiData[$day] : $item;
             })->values();
