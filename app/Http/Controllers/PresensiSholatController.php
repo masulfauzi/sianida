@@ -25,7 +25,7 @@ class PresensiSholatController extends Controller
             // Get presensi data grouped by day
             $presensiData = PresensiSholat::where('nisn', $request->nisn)
                 ->whereMonth('Waktu_Presensi', $request->bulan)
-                ->selectRaw('DAY(Waktu_Presensi) as day, COUNT(*) as count')
+                ->selectRaw('DAY(Waktu_Presensi) as day, DATE(Waktu_Presensi) as date, COUNT(*) as count')
                 ->groupBy(DB::raw('DAY(Waktu_Presensi)'))
                 ->get()
                 ->keyBy('day');
