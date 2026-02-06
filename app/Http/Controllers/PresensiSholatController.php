@@ -2,7 +2,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\PresensiSholat;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PresensiSholatController extends Controller
@@ -15,44 +14,7 @@ class PresensiSholatController extends Controller
     public function index(Request $request)
     {
         try {
-            $nisn  = $request->nisn;
-            $bulan = $request->bulan;
-            $tahun = $request->tahun ?? now()->year;
-
-            $presensiRecords = PresensiSholat::where('nisn', $nisn)
-                ->whereMonth('Waktu_Presensi', $bulan)
-                ->get(['Waktu_Presensi'])
-                ->map(function ($record) {
-                    $record->date = Carbon::parse($record->Waktu_Presensi)->format('Y-m-d');
-                    return $record;
-                })
-                ->keyBy('date');
-
-            // Get the number of days in the selected month
-            $daysInMonth = Carbon::create($tahun, $bulan, 1)->daysInMonth;
-
-            // Create response for all days in the month
-            $data = collect();
-            for ($day = 1; $day <= $daysInMonth; $day++) {
-                $date = Carbon::create($tahun, $bulan, $day)->format('Y-m-d');
-
-                if (isset($presensiRecords[$date])) {
-                    $record = $presensiRecords[$date];
-                    $status = 'Hadir';
-
-                    $data->push([
-                        'tgl'        => $date,
-                        'created_at' => $record->Waktu_Presensi,
-                        'status'     => $status,
-                    ]);
-                } else {
-                    $data->push([
-                        'tgl'        => $date,
-                        'created_at' => null,
-                        'status'     => 'Tidak Hadir',
-                    ]);
-                }
-            }
+            $data = PresensiSholat::limit(10)->get();
 
             return response()->json([
                 'success' => true,
