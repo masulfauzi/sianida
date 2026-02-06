@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\IjinController;
 use App\Http\Controllers\IjinKeluarKelasController;
+use App\Http\Controllers\IjinSholatController;
 use App\Http\Controllers\JenisIjinKelasController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PresensiSholatController;
@@ -54,4 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Presensi Sholat API endpoints
     Route::get('/presensi-sholat', [PresensiSholatController::class, 'index']);
+
+    // Ijin Sholat API endpoints
+    Route::get('/ijin-sholat', [IjinSholatController::class, 'index']);
+    Route::post('/ijin-sholat', [IjinSholatController::class, 'store']);
 });
