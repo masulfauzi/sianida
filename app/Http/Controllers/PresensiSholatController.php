@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\IjinSholat;
 use App\Models\PresensiSholat;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,12 +22,15 @@ class PresensiSholatController extends Controller
 
             $presensiRecords = PresensiSholat::where('nisn', $nisn)
                 ->whereMonth('Waktu_Presensi', $bulan)
-                ->get(['Waktu_Presensi'])
+                ->get(['Waktu_Presensi', 'nisn'])
                 ->map(function ($record) {
                     $record->date = Carbon::parse($record->Waktu_Presensi)->format('Y-m-d');
                     return $record;
                 })
                 ->keyBy('date');
+
+            // Get ijin sholat records for the same nisn
+            $ijinRecords = IjinSholat::where('nisn', $nisn)->get()->keyBy('tanggal_ijin');
 
             // Get the number of days in the selected month
             $daysInMonth = Carbon::create($tahun, $bulan, 1)->daysInMonth;
@@ -39,17 +43,23 @@ class PresensiSholatController extends Controller
                 if (isset($presensiRecords[$date])) {
                     $record = $presensiRecords[$date];
                     $status = 'Hadir';
+                    $ijin = isset($ijinRecords[$date]) ? $ijinRecords[$date] : null;
 
                     $data->push([
                         'tgl'        => $date,
                         'created_at' => $record->Waktu_Presensi,
                         'status'     => $status,
+                        'ijin'       => $ijin,
                     ]);
                 } else {
+                    $ijin = isset($ijinRecords[$date]) ? $ijinRecords[$date] : null;
+                    $status = $ijin ? $ijin->alasan : 'Tidak Hadir';
+                    
                     $data->push([
                         'tgl'        => $date,
                         'created_at' => null,
-                        'status'     => 'Tidak Hadir',
+                        'status'     => $status,
+                        'ijin'       => $ijin,
                     ]);
                 }
             }
