@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PresensiSholat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PresensiSholatController extends Controller
 {
@@ -17,6 +18,8 @@ class PresensiSholatController extends Controller
             $data = PresensiSholat::where('nisn', $request->nisn)
                 ->where('jenis_presensi', 'Sholat Dzuhur')
                 ->whereMonth('Waktu_Presensi', $request->bulan)
+                ->selectRaw('DAY(Waktu_Presensi) as day, COUNT(*) as count')
+                ->groupBy(DB::raw('DAY(Waktu_Presensi)'))
                 ->get();
 
             return response()->json([
