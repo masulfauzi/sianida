@@ -6,6 +6,7 @@ use App\Http\Controllers\IjinController;
 use App\Http\Controllers\IjinKeluarKelasController;
 use App\Http\Controllers\JenisIjinKelasController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\PresensiSholatController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,4 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Ijin Keluar Kelas API endpoints
     Route::get('/riwayat-izin', [IjinKeluarKelasController::class, 'index']);
     Route::post('/keluar-kelas', [IjinKeluarKelasController::class, 'store']);
+
+    // Presensi Sholat API endpoints
+    Route::get('/presensi-sholat', [PresensiSholatController::class, 'index']);
 });
