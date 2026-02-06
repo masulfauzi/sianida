@@ -2,9 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\PresensiSholat;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class PresensiSholatController extends Controller
 {
@@ -16,7 +15,7 @@ class PresensiSholatController extends Controller
     public function index(Request $request)
     {
         try {
-            $nisn = $request->nisn;
+            $nisn  = $request->nisn;
             $bulan = $request->bulan;
             $tahun = $request->tahun ?? now()->year;
 
@@ -35,20 +34,20 @@ class PresensiSholatController extends Controller
                 $date = Carbon::create($tahun, $bulan, $day)->format('Y-m-d');
 
                 if (isset($presensiRecords[$date])) {
-                    $record = $presensiRecords[$date];
-                    $createdAtTime = Carbon::parse($record->created_at)->format('H:i:s');
-                    $status = $createdAtTime < '07:00:00' ? 'Hadir' : 'Terlambat';
+                    $record        = $presensiRecords[$date];
+                    $createdAtTime = Carbon::parse($record->Waktu_Presensi)->format('H:i:s');
+                    $status        = $createdAtTime < '07:00:00' ? 'Hadir' : 'Terlambat';
 
                     $data->push([
-                        'tgl' => $date,
+                        'tgl'        => $date,
                         'created_at' => $record->created_at,
-                        'status' => $status,
+                        'status'     => $status,
                     ]);
                 } else {
                     $data->push([
-                        'tgl' => $date,
+                        'tgl'        => $date,
                         'created_at' => null,
-                        'status' => 'Tidak Hadir',
+                        'status'     => 'Tidak Hadir',
                     ]);
                 }
             }
