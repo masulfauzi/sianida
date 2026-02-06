@@ -9,6 +9,13 @@ class IjinSholat extends Model
     use HasFactory;
 
     /**
+     * The attributes that are not mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $guarded = ['id'];
+
+    /**
      * The connection name for the model.
      *
      * @var string|null
