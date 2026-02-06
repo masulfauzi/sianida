@@ -69,7 +69,7 @@ return [
             'host'           => '217.21.73.18',
             'port'           => '3306',
             'database'       => 'u1483317_absensi',
-            'username'       => 'u1483317_sianida ',
+            'username'       => 'u1483317_sianida',
             'password'       => 'sianidaganteng',
             'unix_socket'    => '',
             'charset'        => 'utf8mb4',
