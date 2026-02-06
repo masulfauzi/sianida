@@ -19,7 +19,7 @@ class PresensiSholatController extends Controller
             $bulan = $request->bulan;
             $tahun = $request->tahun ?? now()->year;
 
-            $presensiRecords = PresensiSholat::where('nisn', $nisn)
+            $presensiRecords = PresensiSholat::where('nisns', $nisn)
                 ->whereMonth('Waktu_Presensi', $bulan)
             // ->whereYear('Waktu_Presensi', $tahun)
                 ->get(['Waktu_Presensi'])
