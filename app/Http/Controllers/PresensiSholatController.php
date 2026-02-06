@@ -21,9 +21,12 @@ class PresensiSholatController extends Controller
 
             $presensiRecords = PresensiSholat::where('nisn', $nisn)
                 ->whereMonth('Waktu_Presensi', $bulan)
-            // ->whereYear('Waktu_Presensi', $tahun)
                 ->get(['Waktu_Presensi'])
-                ->keyBy('Waktu_Presensi');
+                ->map(function ($record) {
+                    $record->date = Carbon::parse($record->Waktu_Presensi)->format('Y-m-d');
+                    return $record;
+                })
+                ->keyBy('date');
 
             // Get the number of days in the selected month
             $daysInMonth = Carbon::create($tahun, $bulan, 1)->daysInMonth;
