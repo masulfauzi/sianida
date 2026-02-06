@@ -15,9 +15,25 @@ class PresensiSholatController extends Controller
     public function index(Request $request)
     {
         try {
-            $data = PresensiSholat::where('nisn', $request->nisn)
+            $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $request->bulan, now()->year);
+
+            // Create array of all days in the selected month
+            $allDays = collect(range(1, $daysInMonth))->map(function ($day) {
+                return ['day' => $day, 'count' => 0];
+            })->keyBy('day');
+
+            // Get presensi data grouped by day
+            $presensiData = PresensiSholat::where('nisn', $request->nisn)
                 ->whereMonth('Waktu_Presensi', $request->bulan)
-                ->get();
+                ->selectRaw('DAY(Waktu_Presensi) as day, COUNT(*) as count')
+                ->groupBy(DB::raw('DAY(Waktu_Presensi)'))
+                ->get()
+                ->keyBy('day');
+
+            // Merge: show all days with presensi count or 0 if not present
+            $data = $allDays->map(function ($item, $day) use ($presensiData) {
+                return $presensiData->has($day) ? $presensiData[$day] : $item;
+            })->values();
 
             return response()->json([
                 'success' => true,
