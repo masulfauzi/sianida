@@ -34,13 +34,12 @@ class PresensiSholatController extends Controller
                 $date = Carbon::create($tahun, $bulan, $day)->format('Y-m-d');
 
                 if (isset($presensiRecords[$date])) {
-                    $record        = $presensiRecords[$date];
-                    $createdAtTime = Carbon::parse($record->Waktu_Presensi)->format('H:i:s');
-                    $status        = $createdAtTime < '07:00:00' ? 'Hadir' : 'Terlambat';
+                    $record = $presensiRecords[$date];
+                    $status = 'Hadir';
 
                     $data->push([
                         'tgl'        => $date,
-                        'created_at' => $record->created_at,
+                        'created_at' => $record->Waktu_Presensi,
                         'status'     => $status,
                     ]);
                 } else {
