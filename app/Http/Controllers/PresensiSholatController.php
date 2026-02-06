@@ -12,10 +12,13 @@ class PresensiSholatController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $data = PresensiSholat::limit(10)->get();
+            $data = PresensiSholat::where('nisn', $request->nisn)
+                                   ->where('jenis_presensi', 'Sholat Dzuhur')
+                                   ->whereMonth('Waktu_Presensi', now()->month)
+                                   ->get();
 
             return response()->json([
                 'success' => true,
