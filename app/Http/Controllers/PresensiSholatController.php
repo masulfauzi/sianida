@@ -43,7 +43,7 @@ class PresensiSholatController extends Controller
                 if (isset($presensiRecords[$date])) {
                     $record = $presensiRecords[$date];
                     $status = 'Hadir';
-                    $ijin = isset($ijinRecords[$date]) ? $ijinRecords[$date] : null;
+                    $ijin   = isset($ijinRecords[$date]) ? $ijinRecords[$date] : null;
 
                     $data->push([
                         'tgl'        => $date,
@@ -52,13 +52,13 @@ class PresensiSholatController extends Controller
                         'ijin'       => $ijin,
                     ]);
                 } else {
-                    $ijin = isset($ijinRecords[$date]) ? $ijinRecords[$date] : null;
-                    $status = $ijin ? $ijin->alasan : 'Tidak Hadir';
-                    
+                    $ijin   = isset($ijinRecords[$date]) ? $ijinRecords[$date] : null;
+                    $status = $ijin ? 'Ijin' : 'Tidak Hadir';
+
                     $data->push([
                         'tgl'        => $date,
                         'created_at' => null,
-                        'status'     => $status,
+                        'status'     => $ijin,
                         'ijin'       => $ijin,
                     ]);
                 }
