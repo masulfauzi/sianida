@@ -57,7 +57,7 @@ class IjinSholatController extends Controller
 
             // Check if data already exists for this nisn and date
             $existingData = IjinSholat::where('nisn', $request->nisn)
-                ->where('tanggal_ijin', $request->tanggal)
+                ->where('tanggal', $request->tanggal)
                 ->first();
 
             if ($existingData) {
