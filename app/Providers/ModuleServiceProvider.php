@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Providers;
 
 use Illuminate\Support\Facades\File;
@@ -25,7 +24,7 @@ class ModuleServiceProvider extends ServiceProvider
     public function boot()
     {
         $modulepath = app_path('Modules');
-        $modules = File::directories($modulepath);
+        $modules    = File::directories($modulepath);
 
         foreach ($modules as $module) {
             $routefile = $module . '/routes.php';
@@ -37,7 +36,7 @@ class ModuleServiceProvider extends ServiceProvider
             // load views
             $viewdir = $module . '/Views';
             if (is_dir($viewdir)) {
-                if (env('OS') == 'windows') {
+                if (env('OS') == 'linux') {
                     $modulename = @end(explode("/", $module));
                 } else {
                     $modulename = @end(explode("\\", $module));
