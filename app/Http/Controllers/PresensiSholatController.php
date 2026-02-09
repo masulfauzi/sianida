@@ -52,7 +52,8 @@ class PresensiSholatController extends Controller
                         // 'ijin'       => $ijin,
                     ]);
                 } else {
-                    $ijin   = isset($ijinRecords[$date]) ? $ijinRecords[$date] : null;
+                    $ijin = isset($ijinRecords[$date]) ? 'ijin' : null;
+
                     $status = $ijin ? 'Ijin' : 'Tidak Hadir';
 
                     $data->push([
