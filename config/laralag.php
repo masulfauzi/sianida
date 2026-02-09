@@ -15,6 +15,7 @@ return [
         'kirimemail',
         'profile',
         'skanida-mobile',
+        'kebijakan-privasi',
     ],
 
     'translate_action' => [
