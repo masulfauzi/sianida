@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SnbpController;
 use App\Http\Controllers\AktivasiController;
 use App\Http\Controllers\ApiController;
-
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SnbpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,16 +26,17 @@ Route::get('/aktivasi/inputdata/{id}', [AktivasiController::class, 'input_data']
 Route::get('/aktivasi/radius', [AktivasiController::class, 'radius'])->name('aktivasi.radius')->middleware(['guest']);
 Route::post('/registrasi', [AktivasiController::class, 'registrasi'])->name('registrasi')->middleware(['guest']);
 Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemail')->middleware(['guest']);
+Route::get('/skanida-mobile/kebijakan-privasi', [DashboardController::class, 'kebijakanPrivasi'])->name('kebijakan.privasi')->middleware(['guest']);
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('frontend.index');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [DashboardController::class, 'profile'])->name('profile');
     Route::post('/profile/change-password', [DashboardController::class, 'changePassword'])->name('profile.change-password');
 
-    Route::get('/role/set/{id_role}', [DashboardController::class,'changeRole'])->name('dashboard.change.role');
-    Route::get('/role/semester/{id_semester}', [DashboardController::class,'changeSemester'])->name('dashboard.change.semester');
-    Route::get('/forcelogout', [DashboardController::class,'forceLogout'])->name('dashboard.force.logout');
+    Route::get('/role/set/{id_role}', [DashboardController::class, 'changeRole'])->name('dashboard.change.role');
+    Route::get('/role/semester/{id_semester}', [DashboardController::class, 'changeSemester'])->name('dashboard.change.semester');
+    Route::get('/forcelogout', [DashboardController::class, 'forceLogout'])->name('dashboard.force.logout');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
