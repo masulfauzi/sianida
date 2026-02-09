@@ -55,6 +55,19 @@ class IjinSholatController extends Controller
                 ], 422);
             }
 
+            // Check if data already exists for this nisn and date
+            $existingData = IjinSholat::where('nisn', $request->nisn)
+                ->where('tanggal_ijin', $request->tanggal)
+                ->first();
+
+            if ($existingData) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data ijin sholat untuk tanggal ini sudah ada',
+                    'data'    => $existingData,
+                ], 409);
+            }
+
             $data = IjinSholat::create($request->all());
 
             return response()->json([
