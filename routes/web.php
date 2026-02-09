@@ -26,7 +26,7 @@ Route::get('/aktivasi/inputdata/{id}', [AktivasiController::class, 'input_data']
 Route::get('/aktivasi/radius', [AktivasiController::class, 'radius'])->name('aktivasi.radius')->middleware(['guest']);
 Route::post('/registrasi', [AktivasiController::class, 'registrasi'])->name('registrasi')->middleware(['guest']);
 Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemail')->middleware(['guest']);
-Route::get('/skanida-mobile/kebijakan-privasi', [DashboardController::class, 'kebijakanPrivasi'])->name('kebijakan.privasi')->middleware(['guest']);
+Route::get('/skanida-mobile/kebijakan-privasi', [AktivasiController::class, 'kebijakanPrivasi'])->name('kebijakan.privasi')->middleware(['guest']);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('frontend.index');
