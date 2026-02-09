@@ -31,7 +31,7 @@ class PresensiSholatController extends Controller
 
             // Get ijin sholat records for the same nisn
             $ijinRecords = IjinSholat::where('nisn', $nisn)->get()->keyBy('tanggal_ijin');
-
+            dd($ijinRecords);
             // Get the number of days in the selected month
             $daysInMonth = Carbon::create($tahun, $bulan, 1)->daysInMonth;
 
