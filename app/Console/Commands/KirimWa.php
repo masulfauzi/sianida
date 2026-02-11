@@ -2,6 +2,7 @@
 namespace App\Console\Commands;
 
 use App\Modules\Device\Models\Device;
+use App\Modules\FilePesan\Models\FilePesan;
 use App\Modules\Pesan\Models\Pesan;
 use Illuminate\Console\Command;
 
@@ -35,7 +36,7 @@ class KirimWa extends Command
 
             if ($kirim->id_file != null) {
 
-                // $file = FilePesan::find($kirim->id_file);
+                $file = FilePesan::find($kirim->id_file);
 
                 // $curl = curl_init();
 
@@ -62,11 +63,36 @@ class KirimWa extends Command
 
                 // curl_close($curl);
                 // echo $response;
+
+                $url  = "http://112.78.37.70:3000/api/sendFile";
+                $data = [
+                    "session" => "default",
+                    "chatId"  => $kirim->nomor . "@c.us",
+                    "caption" => $kirim->isi_pesan,
+                    "file"    => [
+                        "mimetype" => "application/pdf",
+                        "filename" => "document.pdf",
+                        "url"      => 'https://apps.smkn2semarang.sch.id/file_pesan/' . $file->nama_file,
+                    ],
+                ];
+
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'X-Api-Key: ' . $device->auth_key,
+                    'Content-Type: application/json',
+                ]);
+                $response = curl_exec($ch);
+                curl_close($ch);
+
+                echo $response;
             } else {
                 $url  = "http://112.78.37.70:3000/api/sendText";
                 $data = [
                     "session" => "default",
-                    "chatId"  => "6285727230168@c.us",
+                    "chatId"  => $kirim->nomor . "@c.us",
                     "text"    => $kirim->isi_pesan,
                 ];
 
@@ -109,22 +135,21 @@ class KirimWa extends Command
                 // dd($response);
             }
 
-            // if (isset($response->message_status) && ($response->message_status == 'Success')) {
-            //     $update         = Pesan::find($kirim->id);
-            //     $update->status = 1;
-            //     $update->save();
-            // }
+            $response = json_decode($response);
 
-            // if (isset($response->error) && ($response->error == 'Request Failed')) {
-            //     $update             = Pesan::find($kirim->id);
-            //     $update->created_at = date('Y-m-d H:i:s');
-            //     $update->save();
-            //     // dd($update);
-            // }
+            if (isset($response->id)) {
+                $update         = Pesan::find($kirim->id);
+                $update->status = 1;
+                $update->save();
+            } else {
+                $update             = Pesan::find($kirim->id);
+                $update->created_at = date('Y-m-d H:i:s');
+                $update->save();
+            }
 
-            // $update_device            = Device::find($device->id);
-            // $update_device->last_used = date('Y-m-d H:i:s');
-            // $update_device->save();
+            $update_device            = Device::find($device->id);
+            $update_device->last_used = date('Y-m-d H:i:s');
+            $update_device->save();
         }
 
         // $this->info('Hellyeah! ' . $module . ' module was successfully created.');
