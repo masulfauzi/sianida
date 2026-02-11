@@ -29,8 +29,19 @@ class SiswaController extends Controller
             }
 
             $siswa = DB::table('siswa')
+                ->select(
+                    'siswa.id as id_siswa',
+                    'siswa.nama_siswa',
+                    'siswa.nis',
+                    'siswa.nisn',
+                    'siswa.nik',
+                    'siswa.no_hp',
+                    'kelas.kelas',
+                    'users.email'
+                )
                 ->join('pesertadidik', 'siswa.id', '=', 'pesertadidik.id_siswa')
                 ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
+                ->join('users', 'siswa.nik', '=', 'users.identitas')
                 ->where('siswa.id', $siswaId)
                 ->where('pesertadidik.id_semester', $semesterAktif->id)
                 ->first();
