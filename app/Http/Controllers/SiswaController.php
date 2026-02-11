@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Modules\Semester\Models\Semester;
 use App\Modules\Siswa\Models\Siswa;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,8 @@ class SiswaController extends Controller
         try {
             $siswaId = $request->input('siswaId');
 
+            $semesterAktif = Semester::get_semester_aktif();
+
             if (! $siswaId) {
                 return response()->json([
                     'success' => false,
@@ -26,7 +29,10 @@ class SiswaController extends Controller
             }
 
             $siswa = DB::table('siswa')
+                ->join('pesertadidik', 'siswa.id', '=', 'pesertadidik.id_siswa')
+                ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
                 ->where('siswa.id', $siswaId)
+                ->where('pesertadidik.id_semester', $semesterAktif->id)
                 ->first();
 
             if (! $siswa) {
