@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/pesan-harian', function () {
-    return 'Testing Pesan Harian';
+    return response()->json(['status' => 200, 'message' => 'Testing Pesan Harian'], 200);
 });
 
 // Public authentication routes
