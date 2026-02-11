@@ -1,523 +1,656 @@
 <?php
 namespace App\Modules\Siswa\Controllers;
 
-use App\Modules\Kelas\Models\Kelas;
-use App\Modules\Pesertadidik\Models\Pesertadidik;
-use Form;
 use App\Helpers\Logger;
-use Illuminate\Http\Request;
-use App\Modules\Log\Models\Log;
-use App\Modules\Siswa\Models\Siswa;
-use App\Modules\Jeniskelamin\Models\Jeniskelamin;
-use App\Modules\Agama\Models\Agama;
-
 use App\Http\Controllers\Controller;
+use App\Modules\Agama\Models\Agama;
+use App\Modules\Jeniskelamin\Models\Jeniskelamin;
+use App\Modules\Kelas\Models\Kelas;
+use App\Modules\Log\Models\Log;
 use App\Modules\Nilai\Models\Nilai;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
 use App\Modules\Semester\Models\Semester;
+use App\Modules\Siswa\Models\Siswa;
 use Carbon\Carbon;
+use Form;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class SiswaController extends Controller
 {
-	use Logger;
-	protected $log;
-	protected $title = "Siswa";
+    use Logger;
+    protected $log;
+    protected $title = "Siswa";
 
-	public function __construct(Log $log)
-	{
-		$this->log = $log;
-	}
+    public function __construct(Log $log)
+    {
+        $this->log = $log;
+    }
 
-	public function index(Request $request)
-	{
+    public function index(Request $request)
+    {
 
-		if (session('active_role')['id'] == 'ce70ee2f-b43b-432b-b71c-30d073a4ba23') {
-			return redirect(route('siswa.biodata.index'));
-		}
+        if (session('active_role')['id'] == 'ce70ee2f-b43b-432b-b71c-30d073a4ba23') {
+            return redirect(route('siswa.biodata.index'));
+        }
 
-		$query = Siswa::query();
-		if ($request->has('search')) {
-			$search = $request->get('search');
-			$query->where('nama_siswa', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+        $query = Siswa::query();
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where('nama_siswa', 'like', "%$search%");
+        }
+        $data['data'] = $query->paginate(10)->withQueryString();
 
-		$this->log($request, 'melihat halaman manajemen data ' . $this->title);
-		return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
-	}
+        $this->log($request, 'melihat halaman manajemen data ' . $this->title);
+        return view('Siswa::siswa', array_merge($data, ['title' => $this->title]));
+    }
 
-	public function import_siswa(Request $request)
-	{
-		return view('Siswa::import_siswa', ['title' => $this->title]);
-	}
+    public function import_siswa(Request $request)
+    {
+        return view('Siswa::import_siswa', ['title' => $this->title]);
+    }
 
-	public function aksi_import_siswa(Request $request)
-	{
-		$validate = $this->validate($request, [
-			'file' => 'required|mimes:xlsx|max:10240',
-		]);
-
-		$jenis_kelamin = Jeniskelamin::all()->pluck('id', 'jeniskelamin');
-		$agama = Agama::all()->pluck('id', 'agama');
-		$id_semester_aktif = session()->get('active_semester')['id'];
-		$kelas = Kelas::all()->pluck('id', 'nama_pendek');
-
-		$file = $request->file('file');
-		$reader = IOFactory::createReader('Xlsx');
-		$spreadsheet = $reader->load($file);
-
-		$worksheet = $spreadsheet->getActiveSheet();
-		$data = $worksheet->toArray();
-
-		unset($data[0]);
-
-		// dd($data);
-
-		foreach ($data as $siswa) {
-			$cek_siswa = Siswa::where('nisn', $siswa[3])->first();
-
-			if ($cek_siswa) {
-				// jika ada siswa cek di tabel peserta didik dengan id_semester aktif
-
-				$cek_pd = Pesertadidik::where('id_siswa', $cek_siswa->id)->where('id_semester', $id_semester_aktif)->first();
-
-				if ($cek_pd) {
-					// dd("ada peserta didik");
-				} else {
-					$pd = new Pesertadidik();
-
-					$pd->id_semester = $id_semester_aktif;
-					$pd->id_siswa = $cek_siswa->id;
-					$pd->id_kelas = $kelas[$siswa[8]];
-
-					$pd->created_by = Auth::id();
-					$pd->save();
-				}
-			} else {
-				// jika tidak ada siswa maka insert ke tabel siswa
-
-				$data_new = new Siswa();
-
-				$data_new->nama_siswa = $siswa[1];
-				$data_new->nis = $siswa[2];
-				$data_new->nisn = $siswa[3];
-				$data_new->nik = $siswa[4];
-				$data_new->id_jeniskelamin = $jenis_kelamin[$siswa[5]];
-				$data_new->id_agama = $agama[$siswa[6]];
-				$data_new->tahun_masuk = $siswa[7];
-
-				$data_new->created_by = Auth::id();
-				$data_new->save();
-
-				// SETELAH INSERT KE TABEL SISWA, INSERT KE TABEL PESERTA DIDIK
-
-				$pd = new Pesertadidik();
-
-				$pd->id_semester = $id_semester_aktif;
-				$pd->id_siswa = $data_new->id;
-				$pd->id_kelas = $kelas[$siswa[8]];
-
-				$pd->created_by = Auth::id();
-				$pd->save();
-
-			}
-		}
-
-		$this->log($request, 'melakukan import siswa');
-		return redirect()->back()->with('message_success', 'Siswa berhasil diimport!');
-	}
-
-	public function biodata_admin(Request $request)
-	{
-		$data['biodata'] = Siswa::get_biodata(session()->get('active_semester')['id']);
-
-		return view('Siswa::biodata_admin', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function biodata(Request $request)
-	{
-
-		if (session()->get('active_role')['id'] == '1fe8326c-22c4-4732-9c12-f7b83a16b842' or session()->get('active_role')['id'] == 'bf1548f3-295c-4d73-809d-66ab7c240091') {
-			return redirect()->route('siswa.biodata.admin.index');
-		}
-
-		$data['data'] = Siswa::find(session('id_siswa'));
-
-		$this->log($request, 'melihat halaman biodata');
-		return view('Siswa::biodata', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function store_biodata(Request $request)
-	{
-		$validate = $this->validate($request, [
-			'id' => 'required',
-			'nama_siswa' => 'required',
-			'tempat_lahir' => 'required',
-			'tgl_lahir' => 'required|date',
-			'nama_ayah' => 'required',
-			'nama_ibu' => 'required',
-			'alamat' => 'required',
-			'sekolah_asal' => 'required',
-			'no_ijazah_smp' => 'required',
-			'no_hp' => 'required',
-		]);
-
-		$siswa = Siswa::find($validate['id']);
-		$siswa->nama_siswa = $validate['nama_siswa'];
-		$siswa->tempat_lahir = $validate['tempat_lahir'];
-		$siswa->tgl_lahir = $validate['tgl_lahir'];
-		$siswa->nama_ayah = $validate['nama_ayah'];
-		$siswa->nama_ibu = $validate['nama_ibu'];
-		$siswa->alamat = $validate['alamat'];
-		$siswa->sekolah_asal = $validate['sekolah_asal'];
-		$siswa->no_ijazah_smp = $validate['no_ijazah_smp'];
-		$siswa->no_skhun = $request->input('no_skhun');
-		$siswa->no_hp = $request->input('no_hp');
-
-		$siswa->updated_by = Auth::id();
-		$siswa->save();
-
-
-		$text = 'Mengedit biodata';
-		$this->log($request, $text, ['siswa.id' => $validate['id']]);
-		return redirect()->back()->with('message_success', 'Biodata berhasil disimpan!');
-	}
-
-	public function upload_file(Request $request)
-	{
-		$data['data'] = Siswa::find(session('id_siswa'));
-
-		return view('Siswa::upload_file', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function aksi_upload(Request $request)
-	{
-		$request->validate([
-			'file' => 'required|mimes:pdf,jpg,jpeg,png|max:10240'
-		]);
-
-		$file = time() . '.' . $request->file->extension();
-
-		$request->file->move(public_path('uploads/' . $request->get('jenis')), $file);
-
-		$siswa = Siswa::find($request->get('id'));
-		if ($request->get('jenis') == 'ijazah') {
-			$siswa->file_ijazah_smp = $file;
-		} else if ($request->get('jenis') == 'skhun') {
-			$siswa->file_skhun = $file;
-		} else if ($request->get('jenis') == 'kk') {
-			$siswa->file_kk = $file;
-		} else if ($request->get('jenis') == 'akta') {
-			$siswa->file_akta_lahir = $file;
-		}
-		$siswa->save();
-
-
-		$text = 'mengupload ' . $request->get('jenis'); //' baru '.$gurumapel->what;
-		$this->log($request, $text);
-		return redirect()->back()->with('message_success', 'Berkas berhasil diupload!');
-	}
-
-	public function lihat_file(Request $request, $file, $jenis)
-	{
-		$data['file'] = $file;
-		$data['jenis'] = $jenis;
-
-		return view('Siswa::lihat_file', $data);
-	}
-
-	public function downloads(Request $request)
-	{
-		$data['data'] = '';
-		return view('Siswa::download', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function download_biodata(Request $request, $id_siswa = NULL)
-	{
-		if ($id_siswa == NULL) {
-			$id_siswa = session('id_siswa');
-		}
-
-		$data['data'] = Siswa::find($id_siswa);
-
-		if (!$data['data']->file_ijazah_smp) {
-			// return redirect()->back()->with('message_error', 'File Ijazah SMP belum di upload');
-			return "File Ijazah SMP belum di upload";
-		}
-		if (!$data['data']->file_kk) {
-			// return redirect()->back()->with('message_error', 'File Kartu Keluarga belum di upload');
-			return "File Kartu Keluarga belum di upload";
-		}
-		if (!$data['data']->file_akta_lahir) {
-			// return redirect()->back()->with('message_error', 'File Akta Kelahiran belum di upload');
-			return "File Akta Kelahiran belum di upload";
-		}
-
-		// return view("Siswa::download_biodata", array_merge($data, ['title' => $this->title]));
-		$pdf = PDF::loadview('Siswa::download_biodata', $data);
-		return $pdf->download('BiodataPesertaUjian');
-	}
-
-	public function kelulusan(Request $request)
-	{
-		$data['siswa'] = Siswa::detail_siswa(session('id_siswa'));
-		$data['semester'] = Semester::find(get_semester('active_semester_id'));
-
-		$sekarang = Carbon::createFromTimeString(date('Y-m-d H:i:s'));
-		$pengumuman = Carbon::createFromTimeString($data['semester']->wkt_kelulusan);
-
-		// dd($sekarang);
-
-		if ($sekarang->gt($pengumuman)) {
-			// die("Tampil");
-			return view('Siswa::siswa_kelulusan', array_merge($data, ['title' => $this->title]));
-		} else {
-			// die("Belum");
-			return view('Siswa::timer_kelulusan', array_merge($data, ['title' => $this->title]));
-		}
-
-
-	}
-
-	public function detail_siswa(Request $request, Siswa $siswa)
-	{
-		// $url = url()->current();
-		// dd($url);
-
-		$tab = $request->tab;
-
-		if (!$tab) {
-			$tab = 'biodata';
-		}
-
-		$data['tab'] = $tab;
-		$data['siswa'] = $siswa;
-		$data['nilai'] = Nilai::query()->whereIdSiswa($siswa->id)->get();
-
-		$this->log($request, 'melihat halaman detail siswa ' . $this->title);
-		return view('Siswa::siswa_detail', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function hasil_abm(Request $request)
-	{
-		$id_siswa = session()->get('id_siswa');
-
-		$siswa = Siswa::find($id_siswa);
-
-		$data['hasil'] = $siswa->nisn . ".pdf";
-
-		$this->log($request, 'melihat halaman hasil ABM');
-		return view('Siswa::siswa_abm', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function create(Request $request)
-	{
-		$ref_jeniskelamin = Jeniskelamin::all()->pluck('jeniskelamin', 'id');
-		$ref_agama = Agama::all()->pluck('agama', 'id');
-
-		$data['forms'] = array(
-			'nama_siswa' => ['Nama Siswa', Form::text("nama_siswa", old("nama_siswa"), ["class" => "form-control", "placeholder" => ""])],
-			'nis' => ['Nis', Form::text("nis", old("nis"), ["class" => "form-control", "placeholder" => ""])],
-			'nisn' => ['Nisn', Form::text("nisn", old("nisn"), ["class" => "form-control", "placeholder" => ""])],
-			'nik' => ['Nik', Form::text("nik", old("nik"), ["class" => "form-control", "placeholder" => ""])],
-			'id_jeniskelamin' => ['Jeniskelamin', Form::select("id_jeniskelamin", $ref_jeniskelamin, null, ["class" => "form-control select2"])],
-			'id_agama' => ['Agama', Form::select("id_agama", $ref_agama, null, ["class" => "form-control select2"])],
-			'tahun_masuk' => ['Tahun Masuk', Form::text("tahun_masuk", old("tahun_masuk"), ["class" => "form-control", "placeholder" => ""])],
-			'tempat_lahir' => ['Tempat Lahir', Form::text("tempat_lahir", old("tempat_lahir"), ["class" => "form-control", "placeholder" => ""])],
-			'tgl_lahir' => ['Tgl Lahir', Form::text("tgl_lahir", old("tgl_lahir"), ["class" => "form-control datepicker"])],
-			'nama_ayah' => ['Nama Ayah', Form::text("nama_ayah", old("nama_ayah"), ["class" => "form-control", "placeholder" => ""])],
-			'nama_ibu' => ['Nama Ibu', Form::text("nama_ibu", old("nama_ibu"), ["class" => "form-control", "placeholder" => ""])],
-			'alamat' => ['Alamat', Form::textarea("alamat", old("alamat"), ["class" => "form-control rich-editor"])],
-			'sekolah_asal' => ['Sekolah Asal', Form::text("sekolah_asal", old("sekolah_asal"), ["class" => "form-control", "placeholder" => ""])],
-			'no_ijazah_smp' => ['No Ijazah Smp', Form::text("no_ijazah_smp", old("no_ijazah_smp"), ["class" => "form-control", "placeholder" => ""])],
-			'no_skhun' => ['No Skhun', Form::text("no_skhun", old("no_skhun"), ["class" => "form-control", "placeholder" => ""])],
-			'file_ijazah_smp' => ['File Ijazah Smp', Form::text("file_ijazah_smp", old("file_ijazah_smp"), ["class" => "form-control", "placeholder" => ""])],
-			'file_skhun' => ['File Skhun', Form::text("file_skhun", old("file_skhun"), ["class" => "form-control", "placeholder" => ""])],
-			'file_kk' => ['File Kk', Form::text("file_kk", old("file_kk"), ["class" => "form-control", "placeholder" => ""])],
-			'file_akta_lahir' => ['File Akta Lahir', Form::text("file_akta_lahir", old("file_akta_lahir"), ["class" => "form-control", "placeholder" => ""])],
-			'tgl_lulus' => ['Tgl Lulus', Form::text("tgl_lulus", old("tgl_lulus"), ["class" => "form-control datepicker"])],
-			'is_lulus' => ['Is Lulus', Form::text("is_lulus", old("is_lulus"), ["class" => "form-control", "placeholder" => ""])],
-
-		);
-
-		$this->log($request, 'membuka form tambah ' . $this->title);
-		return view('Siswa::siswa_create', array_merge($data, ['title' => $this->title]));
-	}
-
-	function store(Request $request)
-	{
-		$this->validate($request, [
-			'nama_siswa' => 'required',
-			'nis' => 'required',
-			'nisn' => 'required',
-			'nik' => 'required',
-			'id_jeniskelamin' => 'required',
-			'id_agama' => 'required',
-			'tahun_masuk' => 'required',
-			'tempat_lahir' => 'required',
-			'tgl_lahir' => 'required',
-			'nama_ayah' => 'required',
-			'nama_ibu' => 'required',
-			'alamat' => 'required',
-			'sekolah_asal' => 'required',
-			'no_ijazah_smp' => 'required',
-			'no_skhun' => 'required',
-			'file_ijazah_smp' => 'required',
-			'file_skhun' => 'required',
-			'file_kk' => 'required',
-			'file_akta_lahir' => 'required',
-			'tgl_lulus' => 'required',
-			'is_lulus' => 'required',
-
-		]);
-
-		$siswa = new Siswa();
-		$siswa->nama_siswa = $request->input("nama_siswa");
-		$siswa->nis = $request->input("nis");
-		$siswa->nisn = $request->input("nisn");
-		$siswa->nik = $request->input("nik");
-		$siswa->id_jeniskelamin = $request->input("id_jeniskelamin");
-		$siswa->id_agama = $request->input("id_agama");
-		$siswa->tahun_masuk = $request->input("tahun_masuk");
-		$siswa->tempat_lahir = $request->input("tempat_lahir");
-		$siswa->tgl_lahir = $request->input("tgl_lahir");
-		$siswa->nama_ayah = $request->input("nama_ayah");
-		$siswa->nama_ibu = $request->input("nama_ibu");
-		$siswa->alamat = $request->input("alamat");
-		$siswa->sekolah_asal = $request->input("sekolah_asal");
-		$siswa->no_ijazah_smp = $request->input("no_ijazah_smp");
-		$siswa->no_skhun = $request->input("no_skhun");
-		$siswa->file_ijazah_smp = $request->input("file_ijazah_smp");
-		$siswa->file_skhun = $request->input("file_skhun");
-		$siswa->file_kk = $request->input("file_kk");
-		$siswa->file_akta_lahir = $request->input("file_akta_lahir");
-		$siswa->tgl_lulus = $request->input("tgl_lulus");
-		$siswa->is_lulus = $request->input("is_lulus");
-
-		$siswa->created_by = Auth::id();
-		$siswa->save();
-
-		$text = 'membuat ' . $this->title; //' baru '.$siswa->what;
-		$this->log($request, $text, ['siswa.id' => $siswa->id]);
-		return redirect()->route('siswa.index')->with('message_success', 'Siswa berhasil ditambahkan!');
-	}
-
-	public function show(Request $request, Siswa $siswa)
-	{
-		$data['siswa'] = $siswa;
-
-		$text = 'melihat detail ' . $this->title;//.' '.$siswa->what;
-		$this->log($request, $text, ['siswa.id' => $siswa->id]);
-		return view('Siswa::siswa_detail', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function edit(Request $request, Siswa $siswa)
-	{
-		$data['siswa'] = $siswa;
-
-		$ref_jeniskelamin = Jeniskelamin::all()->pluck('jeniskelamin', 'id');
-		$ref_agama = Agama::all()->pluck('agama', 'id');
-
-		$data['forms'] = array(
-			'nama_siswa' => ['Nama Siswa', Form::text("nama_siswa", $siswa->nama_siswa, ["class" => "form-control", "placeholder" => "", "id" => "nama_siswa"])],
-			'nis' => ['Nis', Form::text("nis", $siswa->nis, ["class" => "form-control", "placeholder" => "", "id" => "nis"])],
-			'nisn' => ['Nisn', Form::text("nisn", $siswa->nisn, ["class" => "form-control", "placeholder" => "", "id" => "nisn"])],
-			'nik' => ['Nik', Form::text("nik", $siswa->nik, ["class" => "form-control", "placeholder" => "", "id" => "nik"])],
-			'id_jeniskelamin' => ['Jeniskelamin', Form::select("id_jeniskelamin", $ref_jeniskelamin, null, ["class" => "form-control select2"])],
-			'id_agama' => ['Agama', Form::select("id_agama", $ref_agama, null, ["class" => "form-control select2"])],
-			'tahun_masuk' => ['Tahun Masuk', Form::text("tahun_masuk", $siswa->tahun_masuk, ["class" => "form-control", "placeholder" => "", "id" => "tahun_masuk"])],
-			'tempat_lahir' => ['Tempat Lahir', Form::text("tempat_lahir", $siswa->tempat_lahir, ["class" => "form-control", "placeholder" => "", "id" => "tempat_lahir"])],
-			'tgl_lahir' => ['Tgl Lahir', Form::text("tgl_lahir", $siswa->tgl_lahir, ["class" => "form-control datepicker", "id" => "tgl_lahir"])],
-			'nama_ayah' => ['Nama Ayah', Form::text("nama_ayah", $siswa->nama_ayah, ["class" => "form-control", "placeholder" => "", "id" => "nama_ayah"])],
-			'nama_ibu' => ['Nama Ibu', Form::text("nama_ibu", $siswa->nama_ibu, ["class" => "form-control", "placeholder" => "", "id" => "nama_ibu"])],
-			'alamat' => ['Alamat', Form::textarea("alamat", $siswa->alamat, ["class" => "form-control rich-editor"])],
-			'sekolah_asal' => ['Sekolah Asal', Form::text("sekolah_asal", $siswa->sekolah_asal, ["class" => "form-control", "placeholder" => "", "id" => "sekolah_asal"])],
-			'no_ijazah_smp' => ['No Ijazah Smp', Form::text("no_ijazah_smp", $siswa->no_ijazah_smp, ["class" => "form-control", "placeholder" => "", "id" => "no_ijazah_smp"])],
-			'no_skhun' => ['No Skhun', Form::text("no_skhun", $siswa->no_skhun, ["class" => "form-control", "placeholder" => "", "id" => "no_skhun"])],
-			'file_ijazah_smp' => ['File Ijazah Smp', Form::text("file_ijazah_smp", $siswa->file_ijazah_smp, ["class" => "form-control", "placeholder" => "", "id" => "file_ijazah_smp"])],
-			'file_skhun' => ['File Skhun', Form::text("file_skhun", $siswa->file_skhun, ["class" => "form-control", "placeholder" => "", "id" => "file_skhun"])],
-			'file_kk' => ['File Kk', Form::text("file_kk", $siswa->file_kk, ["class" => "form-control", "placeholder" => "", "id" => "file_kk"])],
-			'file_akta_lahir' => ['File Akta Lahir', Form::text("file_akta_lahir", $siswa->file_akta_lahir, ["class" => "form-control", "placeholder" => "", "id" => "file_akta_lahir"])],
-			'tgl_lulus' => ['Tgl Lulus', Form::text("tgl_lulus", $siswa->tgl_lulus, ["class" => "form-control datepicker", "id" => "tgl_lulus"])],
-			'is_lulus' => ['Is Lulus', Form::text("is_lulus", $siswa->is_lulus, ["class" => "form-control", "placeholder" => "", "id" => "is_lulus"])],
-
-		);
-
-		$text = 'membuka form edit ' . $this->title;//.' '.$siswa->what;
-		$this->log($request, $text, ['siswa.id' => $siswa->id]);
-		return view('Siswa::siswa_update', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function update(Request $request, $id)
-	{
-		$this->validate($request, [
-			'nama_siswa' => 'required',
-			'nis' => 'required',
-			'nisn' => 'required',
-			'nik' => 'required',
-			'id_jeniskelamin' => 'required',
-			'id_agama' => 'required',
-			'tahun_masuk' => 'required',
-			'tempat_lahir' => 'required',
-			'tgl_lahir' => 'required',
-			'nama_ayah' => 'required',
-			'nama_ibu' => 'required',
-			'alamat' => 'required',
-			'sekolah_asal' => 'required',
-			'no_ijazah_smp' => 'required',
-			'no_skhun' => 'required',
-			'file_ijazah_smp' => 'required',
-			'file_skhun' => 'required',
-			'file_kk' => 'required',
-			'file_akta_lahir' => 'required',
-			'tgl_lulus' => 'required',
-			'is_lulus' => 'required',
-
-		]);
-
-		$siswa = Siswa::find($id);
-		$siswa->nama_siswa = $request->input("nama_siswa");
-		$siswa->nis = $request->input("nis");
-		$siswa->nisn = $request->input("nisn");
-		$siswa->nik = $request->input("nik");
-		$siswa->id_jeniskelamin = $request->input("id_jeniskelamin");
-		$siswa->id_agama = $request->input("id_agama");
-		$siswa->tahun_masuk = $request->input("tahun_masuk");
-		$siswa->tempat_lahir = $request->input("tempat_lahir");
-		$siswa->tgl_lahir = $request->input("tgl_lahir");
-		$siswa->nama_ayah = $request->input("nama_ayah");
-		$siswa->nama_ibu = $request->input("nama_ibu");
-		$siswa->alamat = $request->input("alamat");
-		$siswa->sekolah_asal = $request->input("sekolah_asal");
-		$siswa->no_ijazah_smp = $request->input("no_ijazah_smp");
-		$siswa->no_skhun = $request->input("no_skhun");
-		$siswa->file_ijazah_smp = $request->input("file_ijazah_smp");
-		$siswa->file_skhun = $request->input("file_skhun");
-		$siswa->file_kk = $request->input("file_kk");
-		$siswa->file_akta_lahir = $request->input("file_akta_lahir");
-		$siswa->tgl_lulus = $request->input("tgl_lulus");
-		$siswa->is_lulus = $request->input("is_lulus");
-
-		$siswa->updated_by = Auth::id();
-		$siswa->save();
-
-
-		$text = 'mengedit ' . $this->title;//.' '.$siswa->what;
-		$this->log($request, $text, ['siswa.id' => $siswa->id]);
-		return redirect()->route('siswa.index')->with('message_success', 'Siswa berhasil diubah!');
-	}
-
-	public function destroy(Request $request, $id)
-	{
-		$siswa = Siswa::find($id);
-		$siswa->deleted_by = Auth::id();
-		$siswa->save();
-		$siswa->delete();
-
-		$text = 'menghapus ' . $this->title;//.' '.$siswa->what;
-		$this->log($request, $text, ['siswa.id' => $siswa->id]);
-		return back()->with('message_success', 'Siswa berhasil dihapus!');
-	}
+    public function aksi_import_siswa(Request $request)
+    {
+        $validate = $this->validate($request, [
+            'file' => 'required|mimes:xlsx|max:10240',
+        ]);
+
+        $jenis_kelamin     = Jeniskelamin::all()->pluck('id', 'jeniskelamin');
+        $agama             = Agama::all()->pluck('id', 'agama');
+        $id_semester_aktif = session()->get('active_semester')['id'];
+        $kelas             = Kelas::all()->pluck('id', 'nama_pendek');
+
+        $file        = $request->file('file');
+        $reader      = IOFactory::createReader('Xlsx');
+        $spreadsheet = $reader->load($file);
+
+        $worksheet = $spreadsheet->getActiveSheet();
+        $data      = $worksheet->toArray();
+
+        unset($data[0]);
+
+        // dd($data);
+
+        foreach ($data as $siswa) {
+            $cek_siswa = Siswa::where('nisn', $siswa[3])->first();
+
+            if ($cek_siswa) {
+                // jika ada siswa cek di tabel peserta didik dengan id_semester aktif
+
+                $cek_pd = Pesertadidik::where('id_siswa', $cek_siswa->id)->where('id_semester', $id_semester_aktif)->first();
+
+                if ($cek_pd) {
+                    // dd("ada peserta didik");
+                } else {
+                    $pd = new Pesertadidik();
+
+                    $pd->id_semester = $id_semester_aktif;
+                    $pd->id_siswa    = $cek_siswa->id;
+                    $pd->id_kelas    = $kelas[$siswa[8]];
+
+                    $pd->created_by = Auth::id();
+                    $pd->save();
+                }
+            } else {
+                // jika tidak ada siswa maka insert ke tabel siswa
+
+                $data_new = new Siswa();
+
+                $data_new->nama_siswa      = $siswa[1];
+                $data_new->nis             = $siswa[2];
+                $data_new->nisn            = $siswa[3];
+                $data_new->nik             = $siswa[4];
+                $data_new->id_jeniskelamin = $jenis_kelamin[$siswa[5]];
+                $data_new->id_agama        = $agama[$siswa[6]];
+                $data_new->tahun_masuk     = $siswa[7];
+
+                $data_new->created_by = Auth::id();
+                $data_new->save();
+
+                // SETELAH INSERT KE TABEL SISWA, INSERT KE TABEL PESERTA DIDIK
+
+                $pd = new Pesertadidik();
+
+                $pd->id_semester = $id_semester_aktif;
+                $pd->id_siswa    = $data_new->id;
+                $pd->id_kelas    = $kelas[$siswa[8]];
+
+                $pd->created_by = Auth::id();
+                $pd->save();
+
+            }
+        }
+
+        $this->log($request, 'melakukan import siswa');
+        return redirect()->back()->with('message_success', 'Siswa berhasil diimport!');
+    }
+
+    public function biodata_admin(Request $request)
+    {
+        $data['biodata'] = Siswa::get_biodata(session()->get('active_semester')['id']);
+
+        return view('Siswa::biodata_admin', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function biodata(Request $request)
+    {
+
+        if (session()->get('active_role')['id'] == '1fe8326c-22c4-4732-9c12-f7b83a16b842' or session()->get('active_role')['id'] == 'bf1548f3-295c-4d73-809d-66ab7c240091') {
+            return redirect()->route('siswa.biodata.admin.index');
+        }
+
+        $data['data'] = Siswa::find(session('id_siswa'));
+
+        $this->log($request, 'melihat halaman biodata');
+        return view('Siswa::biodata', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function store_biodata(Request $request)
+    {
+        $validate = $this->validate($request, [
+            'id'            => 'required',
+            'nama_siswa'    => 'required',
+            'tempat_lahir'  => 'required',
+            'tgl_lahir'     => 'required|date',
+            'nama_ayah'     => 'required',
+            'nama_ibu'      => 'required',
+            'alamat'        => 'required',
+            'sekolah_asal'  => 'required',
+            'no_ijazah_smp' => 'required',
+            'no_hp'         => 'required',
+        ]);
+
+        $siswa                = Siswa::find($validate['id']);
+        $siswa->nama_siswa    = $validate['nama_siswa'];
+        $siswa->tempat_lahir  = $validate['tempat_lahir'];
+        $siswa->tgl_lahir     = $validate['tgl_lahir'];
+        $siswa->nama_ayah     = $validate['nama_ayah'];
+        $siswa->nama_ibu      = $validate['nama_ibu'];
+        $siswa->alamat        = $validate['alamat'];
+        $siswa->sekolah_asal  = $validate['sekolah_asal'];
+        $siswa->no_ijazah_smp = $validate['no_ijazah_smp'];
+        $siswa->no_skhun      = $request->input('no_skhun');
+        $siswa->no_hp         = $request->input('no_hp');
+
+        $siswa->updated_by = Auth::id();
+        $siswa->save();
+
+        $text = 'Mengedit biodata';
+        $this->log($request, $text, ['siswa.id' => $validate['id']]);
+        return redirect()->back()->with('message_success', 'Biodata berhasil disimpan!');
+    }
+
+    public function upload_file(Request $request)
+    {
+        $data['data'] = Siswa::find(session('id_siswa'));
+
+        return view('Siswa::upload_file', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function aksi_upload(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:pdf,jpg,jpeg,png|max:10240',
+        ]);
+
+        $file = time() . '.' . $request->file->extension();
+
+        $request->file->move(public_path('uploads/' . $request->get('jenis')), $file);
+
+        $siswa = Siswa::find($request->get('id'));
+        if ($request->get('jenis') == 'ijazah') {
+            $siswa->file_ijazah_smp = $file;
+        } else if ($request->get('jenis') == 'skhun') {
+            $siswa->file_skhun = $file;
+        } else if ($request->get('jenis') == 'kk') {
+            $siswa->file_kk = $file;
+        } else if ($request->get('jenis') == 'akta') {
+            $siswa->file_akta_lahir = $file;
+        }
+        $siswa->save();
+
+        $text = 'mengupload ' . $request->get('jenis'); //' baru '.$gurumapel->what;
+        $this->log($request, $text);
+        return redirect()->back()->with('message_success', 'Berkas berhasil diupload!');
+    }
+
+    public function lihat_file(Request $request, $file, $jenis)
+    {
+        $data['file']  = $file;
+        $data['jenis'] = $jenis;
+
+        return view('Siswa::lihat_file', $data);
+    }
+
+    public function downloads(Request $request)
+    {
+        $data['data'] = '';
+        return view('Siswa::download', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function download_biodata(Request $request, $id_siswa = null)
+    {
+        if ($id_siswa == null) {
+            $id_siswa = session('id_siswa');
+        }
+
+        $data['data'] = Siswa::find($id_siswa);
+
+        if (! $data['data']->file_ijazah_smp) {
+            // return redirect()->back()->with('message_error', 'File Ijazah SMP belum di upload');
+            return "File Ijazah SMP belum di upload";
+        }
+        if (! $data['data']->file_kk) {
+            // return redirect()->back()->with('message_error', 'File Kartu Keluarga belum di upload');
+            return "File Kartu Keluarga belum di upload";
+        }
+        if (! $data['data']->file_akta_lahir) {
+            // return redirect()->back()->with('message_error', 'File Akta Kelahiran belum di upload');
+            return "File Akta Kelahiran belum di upload";
+        }
+
+        // return view("Siswa::download_biodata", array_merge($data, ['title' => $this->title]));
+        $pdf = PDF::loadview('Siswa::download_biodata', $data);
+        return $pdf->download('BiodataPesertaUjian');
+    }
+
+    public function kelulusan(Request $request)
+    {
+        $data['siswa']    = Siswa::detail_siswa(session('id_siswa'));
+        $data['semester'] = Semester::find(get_semester('active_semester_id'));
+
+        $sekarang   = Carbon::createFromTimeString(date('Y-m-d H:i:s'));
+        $pengumuman = Carbon::createFromTimeString($data['semester']->wkt_kelulusan);
+
+        // dd($sekarang);
+
+        if ($sekarang->gt($pengumuman)) {
+            // die("Tampil");
+            return view('Siswa::siswa_kelulusan', array_merge($data, ['title' => $this->title]));
+        } else {
+            // die("Belum");
+            return view('Siswa::timer_kelulusan', array_merge($data, ['title' => $this->title]));
+        }
+
+    }
+
+    public function detail_siswa(Request $request, Siswa $siswa)
+    {
+        // $url = url()->current();
+        // dd($url);
+
+        $tab = $request->tab;
+
+        if (! $tab) {
+            $tab = 'biodata';
+        }
+
+        $data['tab']   = $tab;
+        $data['siswa'] = $siswa;
+        $data['nilai'] = Nilai::query()->whereIdSiswa($siswa->id)->get();
+
+        $this->log($request, 'melihat halaman detail siswa ' . $this->title);
+        return view('Siswa::siswa_detail', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function hasil_abm(Request $request)
+    {
+        $id_siswa = session()->get('id_siswa');
+
+        $siswa = Siswa::find($id_siswa);
+
+        $data['hasil'] = $siswa->nisn . ".pdf";
+
+        $this->log($request, 'melihat halaman hasil ABM');
+        return view('Siswa::siswa_abm', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function create(Request $request)
+    {
+        $ref_jeniskelamin = Jeniskelamin::all()->pluck('jeniskelamin', 'id');
+        $ref_agama        = Agama::all()->pluck('agama', 'id');
+
+        $data['forms'] = [
+            'nama_siswa'      => ['Nama Siswa', Form::text("nama_siswa", old("nama_siswa"), ["class" => "form-control", "placeholder" => ""])],
+            'nis'             => ['Nis', Form::text("nis", old("nis"), ["class" => "form-control", "placeholder" => ""])],
+            'nisn'            => ['Nisn', Form::text("nisn", old("nisn"), ["class" => "form-control", "placeholder" => ""])],
+            'nik'             => ['Nik', Form::text("nik", old("nik"), ["class" => "form-control", "placeholder" => ""])],
+            'id_jeniskelamin' => ['Jeniskelamin', Form::select("id_jeniskelamin", $ref_jeniskelamin, null, ["class" => "form-control select2"])],
+            'id_agama'        => ['Agama', Form::select("id_agama", $ref_agama, null, ["class" => "form-control select2"])],
+            'tahun_masuk'     => ['Tahun Masuk', Form::text("tahun_masuk", old("tahun_masuk"), ["class" => "form-control", "placeholder" => ""])],
+            'tempat_lahir'    => ['Tempat Lahir', Form::text("tempat_lahir", old("tempat_lahir"), ["class" => "form-control", "placeholder" => ""])],
+            'tgl_lahir'       => ['Tgl Lahir', Form::text("tgl_lahir", old("tgl_lahir"), ["class" => "form-control datepicker"])],
+            'nama_ayah'       => ['Nama Ayah', Form::text("nama_ayah", old("nama_ayah"), ["class" => "form-control", "placeholder" => ""])],
+            'nama_ibu'        => ['Nama Ibu', Form::text("nama_ibu", old("nama_ibu"), ["class" => "form-control", "placeholder" => ""])],
+            'alamat'          => ['Alamat', Form::textarea("alamat", old("alamat"), ["class" => "form-control rich-editor"])],
+            'sekolah_asal'    => ['Sekolah Asal', Form::text("sekolah_asal", old("sekolah_asal"), ["class" => "form-control", "placeholder" => ""])],
+            'no_ijazah_smp'   => ['No Ijazah Smp', Form::text("no_ijazah_smp", old("no_ijazah_smp"), ["class" => "form-control", "placeholder" => ""])],
+            'no_skhun'        => ['No Skhun', Form::text("no_skhun", old("no_skhun"), ["class" => "form-control", "placeholder" => ""])],
+            'file_ijazah_smp' => ['File Ijazah Smp', Form::text("file_ijazah_smp", old("file_ijazah_smp"), ["class" => "form-control", "placeholder" => ""])],
+            'file_skhun'      => ['File Skhun', Form::text("file_skhun", old("file_skhun"), ["class" => "form-control", "placeholder" => ""])],
+            'file_kk'         => ['File Kk', Form::text("file_kk", old("file_kk"), ["class" => "form-control", "placeholder" => ""])],
+            'file_akta_lahir' => ['File Akta Lahir', Form::text("file_akta_lahir", old("file_akta_lahir"), ["class" => "form-control", "placeholder" => ""])],
+            'tgl_lulus'       => ['Tgl Lulus', Form::text("tgl_lulus", old("tgl_lulus"), ["class" => "form-control datepicker"])],
+            'is_lulus'        => ['Is Lulus', Form::text("is_lulus", old("is_lulus"), ["class" => "form-control", "placeholder" => ""])],
+
+        ];
+
+        $this->log($request, 'membuka form tambah ' . $this->title);
+        return view('Siswa::siswa_create', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            'nama_siswa'      => 'required',
+            'nis'             => 'required',
+            'nisn'            => 'required',
+            'nik'             => 'required',
+            'id_jeniskelamin' => 'required',
+            'id_agama'        => 'required',
+            'tahun_masuk'     => 'required',
+            'tempat_lahir'    => 'required',
+            'tgl_lahir'       => 'required',
+            'nama_ayah'       => 'required',
+            'nama_ibu'        => 'required',
+            'alamat'          => 'required',
+            'sekolah_asal'    => 'required',
+            'no_ijazah_smp'   => 'required',
+            'no_skhun'        => 'required',
+            'file_ijazah_smp' => 'required',
+            'file_skhun'      => 'required',
+            'file_kk'         => 'required',
+            'file_akta_lahir' => 'required',
+            'tgl_lulus'       => 'required',
+            'is_lulus'        => 'required',
+
+        ]);
+
+        $siswa                  = new Siswa();
+        $siswa->nama_siswa      = $request->input("nama_siswa");
+        $siswa->nis             = $request->input("nis");
+        $siswa->nisn            = $request->input("nisn");
+        $siswa->nik             = $request->input("nik");
+        $siswa->id_jeniskelamin = $request->input("id_jeniskelamin");
+        $siswa->id_agama        = $request->input("id_agama");
+        $siswa->tahun_masuk     = $request->input("tahun_masuk");
+        $siswa->tempat_lahir    = $request->input("tempat_lahir");
+        $siswa->tgl_lahir       = $request->input("tgl_lahir");
+        $siswa->nama_ayah       = $request->input("nama_ayah");
+        $siswa->nama_ibu        = $request->input("nama_ibu");
+        $siswa->alamat          = $request->input("alamat");
+        $siswa->sekolah_asal    = $request->input("sekolah_asal");
+        $siswa->no_ijazah_smp   = $request->input("no_ijazah_smp");
+        $siswa->no_skhun        = $request->input("no_skhun");
+        $siswa->file_ijazah_smp = $request->input("file_ijazah_smp");
+        $siswa->file_skhun      = $request->input("file_skhun");
+        $siswa->file_kk         = $request->input("file_kk");
+        $siswa->file_akta_lahir = $request->input("file_akta_lahir");
+        $siswa->tgl_lulus       = $request->input("tgl_lulus");
+        $siswa->is_lulus        = $request->input("is_lulus");
+
+        $siswa->created_by = Auth::id();
+        $siswa->save();
+
+        $text = 'membuat ' . $this->title; //' baru '.$siswa->what;
+        $this->log($request, $text, ['siswa.id' => $siswa->id]);
+        return redirect()->route('siswa.index')->with('message_success', 'Siswa berhasil ditambahkan!');
+    }
+
+    public function show(Request $request, Siswa $siswa)
+    {
+        $data['siswa'] = $siswa;
+
+        $text = 'melihat detail ' . $this->title; //.' '.$siswa->what;
+        $this->log($request, $text, ['siswa.id' => $siswa->id]);
+        return view('Siswa::siswa_detail', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function edit(Request $request, Siswa $siswa)
+    {
+        $data['siswa'] = $siswa;
+
+        $ref_jeniskelamin = Jeniskelamin::all()->pluck('jeniskelamin', 'id');
+        $ref_agama        = Agama::all()->pluck('agama', 'id');
+
+        $data['forms'] = [
+            'nama_siswa'      => ['Nama Siswa', Form::text("nama_siswa", $siswa->nama_siswa, ["class" => "form-control", "placeholder" => "", "id" => "nama_siswa"])],
+            'nis'             => ['Nis', Form::text("nis", $siswa->nis, ["class" => "form-control", "placeholder" => "", "id" => "nis"])],
+            'nisn'            => ['Nisn', Form::text("nisn", $siswa->nisn, ["class" => "form-control", "placeholder" => "", "id" => "nisn"])],
+            'nik'             => ['Nik', Form::text("nik", $siswa->nik, ["class" => "form-control", "placeholder" => "", "id" => "nik"])],
+            'id_jeniskelamin' => ['Jeniskelamin', Form::select("id_jeniskelamin", $ref_jeniskelamin, null, ["class" => "form-control select2"])],
+            'id_agama'        => ['Agama', Form::select("id_agama", $ref_agama, null, ["class" => "form-control select2"])],
+            'tahun_masuk'     => ['Tahun Masuk', Form::text("tahun_masuk", $siswa->tahun_masuk, ["class" => "form-control", "placeholder" => "", "id" => "tahun_masuk"])],
+            'tempat_lahir'    => ['Tempat Lahir', Form::text("tempat_lahir", $siswa->tempat_lahir, ["class" => "form-control", "placeholder" => "", "id" => "tempat_lahir"])],
+            'tgl_lahir'       => ['Tgl Lahir', Form::text("tgl_lahir", $siswa->tgl_lahir, ["class" => "form-control datepicker", "id" => "tgl_lahir"])],
+            'nama_ayah'       => ['Nama Ayah', Form::text("nama_ayah", $siswa->nama_ayah, ["class" => "form-control", "placeholder" => "", "id" => "nama_ayah"])],
+            'nama_ibu'        => ['Nama Ibu', Form::text("nama_ibu", $siswa->nama_ibu, ["class" => "form-control", "placeholder" => "", "id" => "nama_ibu"])],
+            'alamat'          => ['Alamat', Form::textarea("alamat", $siswa->alamat, ["class" => "form-control rich-editor"])],
+            'sekolah_asal'    => ['Sekolah Asal', Form::text("sekolah_asal", $siswa->sekolah_asal, ["class" => "form-control", "placeholder" => "", "id" => "sekolah_asal"])],
+            'no_ijazah_smp'   => ['No Ijazah Smp', Form::text("no_ijazah_smp", $siswa->no_ijazah_smp, ["class" => "form-control", "placeholder" => "", "id" => "no_ijazah_smp"])],
+            'no_skhun'        => ['No Skhun', Form::text("no_skhun", $siswa->no_skhun, ["class" => "form-control", "placeholder" => "", "id" => "no_skhun"])],
+            'file_ijazah_smp' => ['File Ijazah Smp', Form::text("file_ijazah_smp", $siswa->file_ijazah_smp, ["class" => "form-control", "placeholder" => "", "id" => "file_ijazah_smp"])],
+            'file_skhun'      => ['File Skhun', Form::text("file_skhun", $siswa->file_skhun, ["class" => "form-control", "placeholder" => "", "id" => "file_skhun"])],
+            'file_kk'         => ['File Kk', Form::text("file_kk", $siswa->file_kk, ["class" => "form-control", "placeholder" => "", "id" => "file_kk"])],
+            'file_akta_lahir' => ['File Akta Lahir', Form::text("file_akta_lahir", $siswa->file_akta_lahir, ["class" => "form-control", "placeholder" => "", "id" => "file_akta_lahir"])],
+            'tgl_lulus'       => ['Tgl Lulus', Form::text("tgl_lulus", $siswa->tgl_lulus, ["class" => "form-control datepicker", "id" => "tgl_lulus"])],
+            'is_lulus'        => ['Is Lulus', Form::text("is_lulus", $siswa->is_lulus, ["class" => "form-control", "placeholder" => "", "id" => "is_lulus"])],
+
+        ];
+
+        $text = 'membuka form edit ' . $this->title; //.' '.$siswa->what;
+        $this->log($request, $text, ['siswa.id' => $siswa->id]);
+        return view('Siswa::siswa_update', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'nama_siswa'      => 'required',
+            'nis'             => 'required',
+            'nisn'            => 'required',
+            'nik'             => 'required',
+            'id_jeniskelamin' => 'required',
+            'id_agama'        => 'required',
+            'tahun_masuk'     => 'required',
+            'tempat_lahir'    => 'required',
+            'tgl_lahir'       => 'required',
+            'nama_ayah'       => 'required',
+            'nama_ibu'        => 'required',
+            'alamat'          => 'required',
+            'sekolah_asal'    => 'required',
+            'no_ijazah_smp'   => 'required',
+            'no_skhun'        => 'required',
+            'file_ijazah_smp' => 'required',
+            'file_skhun'      => 'required',
+            'file_kk'         => 'required',
+            'file_akta_lahir' => 'required',
+            'tgl_lulus'       => 'required',
+            'is_lulus'        => 'required',
+
+        ]);
+
+        $siswa                  = Siswa::find($id);
+        $siswa->nama_siswa      = $request->input("nama_siswa");
+        $siswa->nis             = $request->input("nis");
+        $siswa->nisn            = $request->input("nisn");
+        $siswa->nik             = $request->input("nik");
+        $siswa->id_jeniskelamin = $request->input("id_jeniskelamin");
+        $siswa->id_agama        = $request->input("id_agama");
+        $siswa->tahun_masuk     = $request->input("tahun_masuk");
+        $siswa->tempat_lahir    = $request->input("tempat_lahir");
+        $siswa->tgl_lahir       = $request->input("tgl_lahir");
+        $siswa->nama_ayah       = $request->input("nama_ayah");
+        $siswa->nama_ibu        = $request->input("nama_ibu");
+        $siswa->alamat          = $request->input("alamat");
+        $siswa->sekolah_asal    = $request->input("sekolah_asal");
+        $siswa->no_ijazah_smp   = $request->input("no_ijazah_smp");
+        $siswa->no_skhun        = $request->input("no_skhun");
+        $siswa->file_ijazah_smp = $request->input("file_ijazah_smp");
+        $siswa->file_skhun      = $request->input("file_skhun");
+        $siswa->file_kk         = $request->input("file_kk");
+        $siswa->file_akta_lahir = $request->input("file_akta_lahir");
+        $siswa->tgl_lulus       = $request->input("tgl_lulus");
+        $siswa->is_lulus        = $request->input("is_lulus");
+
+        $siswa->updated_by = Auth::id();
+        $siswa->save();
+
+        $text = 'mengedit ' . $this->title; //.' '.$siswa->what;
+        $this->log($request, $text, ['siswa.id' => $siswa->id]);
+        return redirect()->route('siswa.index')->with('message_success', 'Siswa berhasil diubah!');
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $siswa             = Siswa::find($id);
+        $siswa->deleted_by = Auth::id();
+        $siswa->save();
+        $siswa->delete();
+
+        $text = 'menghapus ' . $this->title; //.' '.$siswa->what;
+        $this->log($request, $text, ['siswa.id' => $siswa->id]);
+        return back()->with('message_success', 'Siswa berhasil dihapus!');
+    }
+
+    public function download_transkrip(Request $request, Siswa $siswa)
+    {
+        $nilai = Nilai::query()->whereIdSiswa($siswa->id)->get();
+
+        // Load template
+        $templatePath = public_path('template/template-transkrip.xlsx');
+        $reader       = IOFactory::createReader('Xlsx');
+        $spreadsheet  = $reader->load($templatePath);
+        $sheet        = $spreadsheet->getActiveSheet();
+
+        // Fill siswa data
+        $sheet->setCellValue('D13', $siswa->nama_siswa);
+        $sheet->setCellValue('D14', $siswa->tempat_lahir ?? '-');
+        $sheet->setCellValue('D15', $siswa->tgl_lahir ?? '-');
+        $sheet->setCellValue('L14', $siswa->nis ?? '-');
+        $sheet->setCellValue('L15', $siswa->nisn ?? '-');
+
+        // Group nilai by mapel, each mapel has semester values
+        // Build semester ID to number map (sorted by urutan ascending, lowest = 1)
+        $semesters      = Semester::orderBy('urutan', 'DESC')->limit(6)->get()->sortBy('urutan');
+        $semesterNumMap = [];
+        $num            = 1;
+        foreach ($semesters as $sem) {
+            $semesterNumMap[$sem->id] = $num++;
+        }
+
+        // dd($semesterNumMap);
+
+        $mapelData = [];
+        foreach ($nilai as $item) {
+            $mapelName = $item->mapel->mapel ?? null;
+            if (! $mapelName) {
+                continue;
+            }
+
+            if (! isset($mapelData[$mapelName])) {
+                $mapelData[$mapelName] = [];
+            }
+
+            $semesterId  = $item->id_semester;
+            $semesterNum = $semesterNumMap[$semesterId] ?? null;
+
+            if ($semesterNum && $semesterNum >= 1 && $semesterNum <= 6) {
+                $mapelData[$mapelName][$semesterNum] = $item->nilai;
+            }
+        }
+
+        // dd($mapelData);
+        // dd($mapelData);
+
+        // Template has placeholder rows 20-23, we need to clear them and insert actual data
+        // First, clear placeholder rows
+        for ($r = 20; $r <= 23; $r++) {
+            $sheet->setCellValue('A' . $r, '');
+            $sheet->setCellValue('B' . $r, '');
+            foreach (['G', 'H', 'I', 'J', 'K', 'L'] as $c) {
+                $sheet->setCellValue($c . $r, '');
+            }
+            $sheet->setCellValue('M' . $r, '');
+        }
+
+        // Determine how many extra rows needed beyond the 4 placeholder rows
+        $totalMapel   = count($mapelData);
+        $templateRows = 4; // rows 20-23
+        $extraRows    = max(0, $totalMapel - $templateRows);
+
+        // Insert extra rows if needed (insert after row 23 to push summary rows down)
+        if ($extraRows > 0) {
+            $sheet->insertNewRowBefore(24, $extraRows);
+        }
+
+        // Map semester number to column
+        $semesterColMap = [1 => 'G', 2 => 'H', 3 => 'I', 4 => 'J', 5 => 'K', 6 => 'L'];
+
+        // Fill subject data starting from row 20
+        $row = 20;
+        $no  = 1;
+        foreach ($mapelData as $mapelName => $semesters) {
+            // dd($semesters);
+            $sheet->setCellValue('A' . $row, $no);
+            $sheet->setCellValue('B' . $row, $mapelName);
+
+            // Merge B-F for subject name (like template)
+            $sheet->mergeCells('B' . $row . ':F' . $row);
+
+            foreach ($semesterColMap as $semNum => $col) {
+                if (isset($semesters[$semNum])) {
+                    $sheet->setCellValue($col . $row, $semesters[$semNum]);
+                }
+            }
+
+            // Set AVERAGE formula for rata-rata column
+            $sheet->setCellValue('M' . $row, '=AVERAGE(G' . $row . ':L' . $row . ')');
+
+            $no++;
+            $row++;
+        }
+
+                                          // Update summary rows (shifted by extra rows)
+        $summaryStart = 20 + $totalMapel; // Rata-rata Semester row
+
+        // Rata-rata Semester
+        $sheet->setCellValue('A' . $summaryStart, 'Rata-rata Semester');
+        $sheet->mergeCells('A' . $summaryStart . ':F' . $summaryStart);
+        foreach ($semesterColMap as $semNum => $col) {
+            $sheet->setCellValue($col . $summaryStart, '=AVERAGE(' . $col . '20:' . $col . ($summaryStart - 1) . ')');
+        }
+
+        // Rata-rata Setahun
+        $rataTahun = $summaryStart + 1;
+        $sheet->setCellValue('A' . $rataTahun, 'Rata-rata Setahun');
+        $sheet->mergeCells('A' . $rataTahun . ':F' . $rataTahun);
+        $sheet->setCellValue('G' . $rataTahun, '=AVERAGE(G' . $summaryStart . ':H' . $summaryStart . ')');
+        $sheet->mergeCells('G' . $rataTahun . ':H' . $rataTahun);
+        $sheet->setCellValue('I' . $rataTahun, '=AVERAGE(I' . $summaryStart . ':J' . $summaryStart . ')');
+        $sheet->mergeCells('I' . $rataTahun . ':J' . $rataTahun);
+        $sheet->setCellValue('K' . $rataTahun, '=AVERAGE(K' . $summaryStart . ':L' . $summaryStart . ')');
+        $sheet->mergeCells('K' . $rataTahun . ':L' . $rataTahun);
+        $sheet->mergeCells('M' . $summaryStart . ':M' . $rataTahun);
+
+        // Jumlah GPA
+        $gpaRow = $rataTahun + 1;
+        $sheet->setCellValue('A' . $gpaRow, 'Jumlah GPA');
+        $sheet->mergeCells('A' . $gpaRow . ':F' . $gpaRow);
+        $sheet->setCellValue('G' . $gpaRow, '=AVERAGE(G20:L' . ($summaryStart - 1) . ')');
+        $sheet->mergeCells('G' . $gpaRow . ':M' . $gpaRow);
+
+        $fileName = 'Transkrip_' . $siswa->nama_siswa . '.xlsx';
+
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $fileName, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
 
 }

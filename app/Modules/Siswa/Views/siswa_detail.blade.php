@@ -70,6 +70,9 @@
                                 </div>
                                 <div class="tab-pane fade m-3 @if ($tab == 'transkrip') show active @endif"
                                     id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                                    <div class="mb-3">
+                                        <a href="{{ route('siswa.download_transkrip.index', $siswa->id) }}" class="btn btn-sm btn-primary"><i class="fa fa-download"></i> Download Transkrip</a>
+                                    </div>
                                     <table id="transkrip" class="cell-border compact stripe">
                                         <thead>
                                             <tr>
