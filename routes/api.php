@@ -38,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Siswa API endpoints
     Route::get('/siswa', [SiswaController::class, 'siswa']);
+    Route::post('/siswa/upload-foto', [SiswaController::class, 'uploadFotoProfil']);
 
     // Guru API endpoints
     Route::get('/get_guru', [GuruController::class, 'index']);
