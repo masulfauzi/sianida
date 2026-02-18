@@ -12,6 +12,7 @@ Route::controller(SiswaController::class)->middleware(['web', 'auth'])->name('si
     Route::post('/biodata/upload', 'aksi_upload')->name('aksi_upload.index');
     Route::post('/biodata', 'store_biodata')->name('biodata.store.index');
     Route::get('/hasil_abm', 'hasil_abm')->name('abm.index');
+    Route::get('/hasil_tka', 'hasil_tka')->name('tka.index');
     Route::get('/detail/{siswa}', 'detail_siswa')->name('detail.index');
     Route::get('/import_siswa', 'import_siswa')->name('import.create');
     Route::post('/import_siswa', 'aksi_import_siswa')->name('import.store');

@@ -307,6 +307,18 @@ class SiswaController extends Controller
         return view('Siswa::siswa_abm', array_merge($data, ['title' => $this->title]));
     }
 
+    public function hasil_tka(Request $request)
+    {
+        $id_siswa = session()->get('id_siswa');
+
+        $siswa = Siswa::find($id_siswa);
+
+        $data['hasil'] = $siswa->nisn . ".pdf";
+
+        $this->log($request, 'melihat halaman hasil TKA');
+        return view('Siswa::siswa_tka', array_merge($data, ['title' => $this->title]));
+    }
+
     public function create(Request $request)
     {
         $ref_jeniskelamin = Jeniskelamin::all()->pluck('jeniskelamin', 'id');
