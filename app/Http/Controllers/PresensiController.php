@@ -49,9 +49,10 @@ class PresensiController extends Controller
                 'tgl'      => date('Y-m-d'),
             ];
 
-            // Get status kehadiran ID where status_kehadiran_pendek is 'H'
+            // Get status kehadiran based on current time
+            $statusPendek = now()->format('H:i:s') < '07:00:00' ? 'H' : 'T';
             $statusKehadiran = DB::table('statuskehadiran')
-                ->where('status_kehadiran_pendek', 'H')
+                ->where('status_kehadiran_pendek', $statusPendek)
                 ->first();
 
             if (! $statusKehadiran) {
