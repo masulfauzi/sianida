@@ -19,7 +19,7 @@ class PresensiController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'siswaId' => 'required',
-                'image'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
             if ($validator->fails()) {
@@ -107,18 +107,19 @@ class PresensiController extends Controller
                 ->where('id', $siswaId)
                 ->first();
 
-            if (!$siswa) {
+            if (! $siswa) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Siswa not found for this user',
                 ], 404);
             }
 
-            // Get presensi records for the month
-            $presensiRecords = PresensiHarian::where('id_siswa', $siswaId)
-                ->whereMonth('tgl', $currentmonth)
-                ->whereYear('tgl', $currentyear)
-                ->get(['tgl', 'created_at'])
+            // Get presensi records for the month joined with statuskehadiran
+            $presensiRecords = PresensiHarian::where('presensi_harian.id_siswa', $siswaId)
+                ->whereMonth('presensi_harian.tgl', $currentmonth)
+                ->whereYear('presensi_harian.tgl', $currentyear)
+                ->join('statuskehadiran', 'presensi_harian.id_status_kehadiran', '=', 'statuskehadiran.id')
+                ->get(['presensi_harian.tgl', 'presensi_harian.created_at', 'statuskehadiran.status_kehadiran'])
                 ->keyBy('tgl');
 
             // Get the number of days in the current month
@@ -131,19 +132,17 @@ class PresensiController extends Controller
 
                 if (isset($presensiRecords[$date])) {
                     $record = $presensiRecords[$date];
-                    $createdAtTime = \Carbon\Carbon::parse($record->created_at)->format('H:i:s');
-                    $status = $createdAtTime < '07:00:00' ? 'Hadir' : 'Terlambat';
 
                     $presensiHarian->push([
-                        'tgl' => $date,
+                        'tgl'        => $date,
                         'created_at' => $record->created_at,
-                        'status' => $status,
+                        'status'     => $record->status_kehadiran,
                     ]);
                 } else {
                     $presensiHarian->push([
-                        'tgl' => $date,
+                        'tgl'        => $date,
                         'created_at' => null,
-                        'status' => 'Tidak Hadir',
+                        'status'     => 'Tidak Hadir',
                     ]);
                 }
             }
