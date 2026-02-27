@@ -29,6 +29,7 @@ Route::get('/pesan-harian', function () {
 // Public authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login-guru', [AuthController::class, 'login_guru']);
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {

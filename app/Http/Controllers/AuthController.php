@@ -72,6 +72,46 @@ class AuthController extends Controller
     }
 
     /**
+     * Login a guru (teacher) and return an API token.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function login_guru(Request $request)
+    {
+        $validated = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::leftJoin('guru', 'users.identitas', '=', 'guru.nik')
+            ->where('username', $validated['username'])
+            ->select('users.*', 'guru.id as id_guru')
+            ->first();
+
+        if (! $user || ! Hash::check($validated['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'username' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        if (! $user->id_guru) {
+            throw ValidationException::withMessages([
+                'username' => ['This account is not associated with a guru.'],
+            ]);
+        }
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Login successful',
+            'user'    => $user,
+            'id_guru' => $user->id_guru,
+            'token'   => $token,
+        ]);
+    }
+
+    /**
      * Get the authenticated user.
      *
      * @param  \Illuminate\Http\Request  $request
