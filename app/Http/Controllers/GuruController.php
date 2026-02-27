@@ -33,4 +33,38 @@ class GuruController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get guru profile by id_guru
+     *
+     * @param Request $request
+     * @param string $id_guru
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function profil(Request $request)
+    {
+        try {
+            $id_guru = $request->input('id_guru');
+            $guru    = Guru::where('id', $id_guru)->first();
+
+            if (! $guru) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Guru not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Guru profile retrieved successfully',
+                'data'    => $guru,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve guru profile',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
