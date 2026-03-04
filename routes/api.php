@@ -6,6 +6,7 @@ use App\Http\Controllers\IjinController;
 use App\Http\Controllers\IjinKeluarKelasController;
 use App\Http\Controllers\IjinSholatController;
 use App\Http\Controllers\JenisIjinKelasController;
+use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PresensiSholatController;
 use App\Http\Controllers\SiswaController;
@@ -66,4 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Ijin Sholat API endpoints
     Route::get('/ijin-sholat', [IjinSholatController::class, 'index']);
     Route::post('/ijin-sholat', [IjinSholatController::class, 'store']);
+
+    // Jurnal API endpoints
+    Route::get('/jurnal', [JurnalController::class, 'index']);
 });
