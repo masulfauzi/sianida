@@ -18,6 +18,8 @@ class JurnalController extends Controller
         try {
             $id_guru = $request->input('id_guru');
 
+            $perPage = $request->input('per_page', 10);
+
             $jurnal = DB::table('jurnal as a')
                 ->select('a.tgl_pembelajaran', 'c.mapel', 'd.kelas')
                 ->join('mapel as c', 'a.id_mapel', '=', 'c.id')
@@ -25,7 +27,7 @@ class JurnalController extends Controller
                 ->where('a.id_guru', $id_guru)
                 ->whereNull('a.deleted_at')
                 ->orderBy('a.tgl_pembelajaran', 'DESC')
-                ->get();
+                ->paginate($perPage);
 
             return response()->json([
                 'success' => true,
