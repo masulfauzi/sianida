@@ -7,6 +7,7 @@ use App\Http\Controllers\IjinKeluarKelasController;
 use App\Http\Controllers\IjinSholatController;
 use App\Http\Controllers\JenisIjinKelasController;
 use App\Http\Controllers\JurnalController;
+use App\Http\Controllers\KelasController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PresensiSholatController;
 use App\Http\Controllers\SiswaController;
@@ -70,4 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Jurnal API endpoints
     Route::get('/jurnal', [JurnalController::class, 'index']);
+
+    // Kelas API endpoints
+    Route::get('/kelas', [KelasController::class, 'index']);
 });
