@@ -72,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Jurnal API endpoints
     Route::get('/jurnal', [JurnalController::class, 'index']);
+    Route::post('/jurnal', [JurnalController::class, 'store']);
 
     // Kelas API endpoints
     Route::get('/kelas', [KelasController::class, 'index']);

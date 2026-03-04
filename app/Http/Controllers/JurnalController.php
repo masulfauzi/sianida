@@ -42,4 +42,33 @@ class JurnalController extends Controller
             ], 500);
         }
     }
+
+    public function store(Request $request)
+    {
+
+        dd($request->all());
+
+        try {
+            $data = $request->validate([
+                'id_guru'          => 'required',
+                'id_mapel'         => 'required',
+                'id_kelas'         => 'required',
+                'tgl_pembelajaran' => 'required|date',
+            ]);
+
+            $jurnal = Jurnal::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jurnal created successfully',
+                'data'    => $jurnal,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create jurnal',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
