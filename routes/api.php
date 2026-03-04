@@ -8,6 +8,7 @@ use App\Http\Controllers\IjinSholatController;
 use App\Http\Controllers\JenisIjinKelasController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\MapelController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PresensiSholatController;
 use App\Http\Controllers\SiswaController;
@@ -74,4 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Kelas API endpoints
     Route::get('/kelas', [KelasController::class, 'index']);
+
+    // Mapel API endpoints
+    Route::get('/mapel', [MapelController::class, 'index']);
 });
