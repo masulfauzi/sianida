@@ -4,8 +4,11 @@ namespace App\Modules\Jurnal\Controllers;
 use App\Helpers\Logger;
 use App\Http\Controllers\Controller;
 use App\Modules\Guru\Models\Guru;
+use App\Modules\Hari\Models\Hari;
 use App\Modules\Jadwal\Models\Jadwal;
+use App\Modules\Jampelajaran\Models\Jampelajaran;
 use App\Modules\Jurnal\Models\Jurnal;
+use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Log\Models\Log;
 use App\Modules\Mapel\Models\Mapel;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
@@ -87,20 +90,29 @@ class JurnalController extends Controller
 
     public function create(Request $request)
     {
-        $cek_jurnal = Jurnal::get_jurnal_by_idjadwal_and_date($request->get('id_jadwal'), date('Y-m-d'));
+        $ref_hari         = Hari::all()->sortBy('urutan')->pluck('hari', 'id');
+        $ref_kelas        = Kelas::all()->sortBy('kelas')->pluck('kelas', 'id');
+        $ref_jampelajaran = Jampelajaran::all()->sortBy('jam_pelajaran')->pluck('jam_pelajaran', 'id');
+        $ref_mapel        = Mapel::all()->sortBy('mapel')->pluck('mapel', 'id');
 
-        if ($cek_jurnal) {
-            return redirect()->route('presensi.jurnal.index', $cek_jurnal->id)->with('message_success', 'Jurnal berhasil disimpan!');
-        }
-
-        $ref_jadwal = Jadwal::find($request->get('id_jadwal'));
+        $ref_hari->prepend('-PILIH HARI-', '');
+        $ref_kelas->prepend('-PILIH KELAS-', '');
+        $ref_jampelajaran->prepend('-PILIH JAM PELAJARAN-', '');
+        $ref_mapel->prepend('-PILIH MATA PELAJARAN-', '');
 
         $data['forms'] = [
-            'id_jadwal'        => ['', Form::hidden("id_jadwal", $ref_jadwal->id, ["class" => "form-control"])],
-            'jadwal'           => ['Jadwal', Form::text("jadwal", $ref_jadwal->mapel['mapel'], ["class" => "form-control", "disabled" => "disabled"])],
-            'tgl_pembelajaran' => ['Tanggal Pembelajaran', Form::date("tgl_pembelajaran", date('Y-m-d'), ["class" => "form-control"])],
+            // 'id_jadwal' => ['', Form::hidden("id_jadwal", $ref_jadwal->id, ["class" => "form-control"])],
+            // 'jadwal'           => ['Jadwal', Form::text("jadwal", $ref_jadwal->mapel['mapel'], ["class" => "form-control", "disabled" => "disabled"])],
+            'id_hari'          => ['Hari', Form::select("id_hari", $ref_hari, null, ["class" => "form-control select2", "required" => "required"])],
+            'id_kelas'         => ['Kelas', Form::select("id_kelas", $ref_kelas, null, ["class" => "form-control select2", "required" => "required"])],
+            'jam_mulai'        => ['Jam Mulai', Form::select("jam_mulai", $ref_jampelajaran, null, ["class" => "form-control select2", "required" => "required"])],
+            'jam_selesai'      => ['Jam Selesai', Form::select("jam_selesai", $ref_jampelajaran, null, ["class" => "form-control select2", "required" => "required"])],
+            'id_mapel'         => ['Mapel', Form::select("id_mapel", $ref_mapel, null, ["class" => "form-control select2", "required" => "required"])],
+            'tgl_pembelajaran' => ['Tanggal Pembelajaran', Form::date("tgl_pembelajaran", date('Y-m-d'), ["class" => "form-control", "required" => "required"])],
             'materi'           => ['Materi', Form::textarea("materi", old("materi"), ["class" => "form-control rich-editor"])],
             'catatan'          => ['Catatan', Form::textarea("catatan", old("catatan"), ["class" => "form-control rich-editor"])],
+            'id_semester'      => ['', Form::hidden("id_semester", get_semester('active_semester_id'))],
+            'id_guru'          => ['', Form::hidden("id_guru", session('id_guru'))],
 
         ];
 
@@ -398,21 +410,33 @@ class JurnalController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'id_jadwal'        => 'required',
+            // 'id_jadwal'        => 'required',
             'materi'           => 'required',
             'tgl_pembelajaran' => 'required',
+            'id_hari'          => 'required',
+            'id_kelas'         => 'required',
+            'jam_mulai'        => 'required',
+            'jam_selesai'      => 'required',
+            'id_mapel'         => 'required',
+            'id_guru'          => 'required',
 
         ]);
 
         // dd($request);
 
-        $jurnal                   = new Jurnal();
-        $jurnal->id_jadwal        = $request->input("id_jadwal");
+        $jurnal = new Jurnal();
+        // $jurnal->id_jadwal        = $request->input("id_jadwal");
         $jurnal->materi           = $request->input("materi");
         $jurnal->tgl_pembelajaran = $request->input("tgl_pembelajaran");
         $jurnal->catatan          = $request->input("catatan");
-
-        $jurnal->created_by = Auth::id();
+        $jurnal->id_hari          = $request->input("id_hari");
+        $jurnal->id_kelas         = $request->input("id_kelas");
+        $jurnal->jam_mulai        = $request->input("jam_mulai");
+        $jurnal->jam_selesai      = $request->input("jam_selesai");
+        $jurnal->id_mapel         = $request->input("id_mapel");
+        $jurnal->id_semester      = $request->input("id_semester");
+        $jurnal->id_guru          = $request->input("id_guru");
+        $jurnal->created_by       = Auth::id();
         $jurnal->save();
 
         $text = 'membuat ' . $this->title; //' baru '.$jurnal->what;
