@@ -193,6 +193,7 @@ class PresensiController extends Controller
                 ->first();
 
             $presensi->update(['id_statuskehadiran' => $statusKehadiran->id]);
+            $presensi->save();
 
             return response()->json([
                 'success' => true,
