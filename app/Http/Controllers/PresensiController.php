@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Modules\PresensiHarian\Models\PresensiHarian;
+use App\Modules\Presensi\Models\Presensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -172,7 +173,7 @@ class PresensiController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $presensi = PresensiHarian::find($id);
+            $presensi = Presensi::find($id);
 
             if (! $presensi) {
                 return response()->json([
