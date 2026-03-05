@@ -55,7 +55,7 @@ class JurnalController extends Controller
                 'id_kelas'         => 'required',
                 'jam_mulai'        => 'required',
                 'jam_selesai'      => 'required',
-                'mapel'            => 'required',
+                'id_mapel'         => 'required',
                 'tgl_pembelajaran' => 'required|date',
                 'materi'           => 'required',
                 'catatan'          => 'required',
