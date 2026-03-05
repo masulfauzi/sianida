@@ -96,4 +96,35 @@ class JurnalController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get jurnal detail by id
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Request $request, Jurnal $jurnal)
+    {
+        try {
+
+            if (! $jurnal) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Jurnal not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jurnal detail retrieved successfully',
+                'data'    => $jurnal,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve jurnal detail',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
