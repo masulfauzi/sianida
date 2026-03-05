@@ -46,15 +46,41 @@ class JurnalController extends Controller
     public function store(Request $request)
     {
 
-        dd($request->all());
+        // dd($request->all());
 
         try {
             $data = $request->validate([
                 'id_guru'          => 'required',
-                'id_mapel'         => 'required',
-                'id_kelas'         => 'required',
+                'hari'             => 'required',
+                'kelas'            => 'required',
+                'jam_mulai'        => 'required',
+                'jam_selesai'      => 'required',
+                'mapel'            => 'required',
                 'tgl_pembelajaran' => 'required|date',
+                'materi'           => 'required',
+                'catatan'          => 'required',
             ]);
+
+            // Get hari id from urutan
+            $hari = DB::table('hari')->where('urutan', $request->input('hari'))->first();
+            if ($hari) {
+                unset($data['hari']);
+                $data['id_hari'] = $hari->id;
+            }
+
+            // Get jam_mulai id from jampelajaran
+            $jamMulai = DB::table('jampelajaran')->where('jam_pelajaran', $request->input('jam_mulai'))->first();
+            if ($jamMulai) {
+                unset($data['jam_mulai']);
+                $data['id_jam_mulai'] = $jamMulai->id;
+            }
+
+            // Get jam_selesai id from jampelajaran
+            $jamSelesai = DB::table('jampelajaran')->where('jam_pelajaran', $request->input('jam_selesai'))->first();
+            if ($jamSelesai) {
+                unset($data['jam_selesai']);
+                $data['id_jam_selesai'] = $jamSelesai->id;
+            }
 
             $jurnal = Jurnal::create($data);
 
