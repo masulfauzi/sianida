@@ -50,7 +50,7 @@ class PresensiController extends Controller
             ];
 
             // Get status kehadiran based on current time
-            $statusPendek = now()->format('H:i:s') < '07:00:00' ? 'H' : 'T';
+            $statusPendek    = now()->format('H:i:s') < '07:00:00' ? 'H' : 'T';
             $statusKehadiran = DB::table('statuskehadiran')
                 ->where('status_kehadiran_pendek', $statusPendek)
                 ->first();
@@ -157,6 +157,45 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to retrieve presensi harian',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Update presensi data
+     *
+     * @param Request $request
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+            $presensi = PresensiHarian::find($id);
+
+            if (! $presensi) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Presensi not found',
+                ], 404);
+            }
+
+            $data = $request->validate([
+                'id_status_kehadiran' => 'sometimes|required',
+            ]);
+
+            $presensi->update($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Presensi updated successfully',
+                'data'    => $presensi,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update presensi',
                 'error'   => $e->getMessage(),
             ], 500);
         }
