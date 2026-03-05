@@ -16,6 +16,7 @@ return [
         'profile',
         'skanida-mobile',
         'kebijakan-privasi',
+        'app-ads.txt',
     ],
 
     'translate_action' => [
