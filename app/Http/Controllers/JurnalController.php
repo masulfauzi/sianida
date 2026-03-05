@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Modules\Jurnal\Models\Jurnal;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
 use App\Modules\Presensi\Models\Presensi;
+use App\Modules\Semester\Models\Semester;
 use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -84,7 +85,9 @@ class JurnalController extends Controller
                 $data['jam_selesai'] = $jamSelesai->id;
             }
 
-            $pesertadidik = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->get();
+            $semesterAktif = Semester::get_semester_aktif();
+
+            $pesertadidik = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->where('id_semester', $semesterAktif->id)->get();
             dd($pesertadidik->count());
             $statuskehadiran = Statuskehadiran::where('status_kehadiran_pendek', 'H')->first();
 
