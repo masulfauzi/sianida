@@ -172,7 +172,7 @@ class PresensiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request->all(), $id);
+        // dd($request->all(), $id);
 
         try {
             $presensi = Presensi::find($id);
