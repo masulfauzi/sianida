@@ -106,7 +106,15 @@ class JurnalController extends Controller
     public function show($id)
     {
         try {
-            $jurnal = Jurnal::find($id);
+            $jurnal = DB::table('jurnal as a')
+                ->select('a.*', 'c.mapel', 'd.kelas', 'e.jam_pelajaran as jam_mulai', 'f.jam_pelajaran as jam_selesai')
+                ->join('mapel as c', 'a.id_mapel', '=', 'c.id')
+                ->join('kelas as d', 'a.id_kelas', '=', 'd.id')
+                ->join('jampelajaran as e', 'a.jam_mulai', '=', 'e.id')
+                ->join('jampelajaran as f', 'a.jam_selesai', '=', 'f.id')
+                ->where('a.id', $id)
+                ->whereNull('a.deleted_at')
+                ->first();
 
             if (! $jurnal) {
                 return response()->json([
