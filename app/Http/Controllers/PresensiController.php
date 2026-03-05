@@ -185,10 +185,14 @@ class PresensiController extends Controller
             }
 
             $data = $request->validate([
-                'id_status_kehadiran' => 'required',
+                'status' => 'required',
             ]);
 
-            $presensi->update($data);
+            $statusKehadiran = DB::table('statuskehadiran')
+                ->where('status_kehadiran_pendek', $data['status'])
+                ->first();
+
+            $presensi->update(['id_status_kehadiran' => $statusKehadiran->id]);
 
             return response()->json([
                 'success' => true,
