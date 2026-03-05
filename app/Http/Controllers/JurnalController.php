@@ -88,7 +88,7 @@ class JurnalController extends Controller
             $semesterAktif = Semester::get_semester_aktif();
 
             $pesertadidik = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->where('id_semester', $semesterAktif->id)->get();
-            dd($pesertadidik->count());
+            // dd($pesertadidik->count());
             $statuskehadiran = Statuskehadiran::where('status_kehadiran_pendek', 'H')->first();
 
             $jurnal = Jurnal::create($data);
