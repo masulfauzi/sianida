@@ -84,7 +84,8 @@ class JurnalController extends Controller
                 $data['jam_selesai'] = $jamSelesai->id;
             }
 
-            $pesertadidik    = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->get();
+            $pesertadidik = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->get();
+            dd($pesertadidik);
             $statuskehadiran = Statuskehadiran::where('status_kehadiran_pendek', 'H')->first();
 
             $jurnal = Jurnal::create($data);
