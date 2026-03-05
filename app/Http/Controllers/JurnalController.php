@@ -21,7 +21,7 @@ class JurnalController extends Controller
             $perPage = $request->input('per_page', 10);
 
             $jurnal = DB::table('jurnal as a')
-                ->select('a.tgl_pembelajaran', 'c.mapel', 'd.kelas')
+                ->select('a.tgl_pembelajaran', 'c.mapel', 'd.kelas', 'a.id')
                 ->join('mapel as c', 'a.id_mapel', '=', 'c.id')
                 ->join('kelas as d', 'a.id_kelas', '=', 'd.id')
                 ->where('a.id_guru', $id_guru)
