@@ -58,7 +58,6 @@ class JurnalController extends Controller
                 'id_mapel'         => 'required',
                 'tgl_pembelajaran' => 'required|date',
                 'materi'           => 'required',
-                'catatan'          => 'required',
             ]);
 
             // Get hari id from urutan
