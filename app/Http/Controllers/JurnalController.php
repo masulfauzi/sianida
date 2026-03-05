@@ -134,7 +134,7 @@ class JurnalController extends Controller
                 ->join('pesertadidik', 'presensi.id_pesertadidik', '=', 'pesertadidik.id')
                 ->join('siswa', 'pesertadidik.id_siswa', '=', 'siswa.id')
                 ->join('statuskehadiran', 'presensi.id_statuskehadiran', '=', 'statuskehadiran.id')
-                ->select('siswa.nama_siswa', 'statuskehadiran.status_kehadiran_pendek')
+                ->select('presensi.id as id_presensi', 'siswa.nama_siswa', 'statuskehadiran.status_kehadiran_pendek')
                 ->orderBy('siswa.nama_siswa')
                 ->get();
 
