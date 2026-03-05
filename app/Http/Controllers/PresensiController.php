@@ -172,6 +172,8 @@ class PresensiController extends Controller
      */
     public function update(Request $request, $id)
     {
+        dd($request->all(), $id);
+
         try {
             $presensi = Presensi::find($id);
 
@@ -183,7 +185,7 @@ class PresensiController extends Controller
             }
 
             $data = $request->validate([
-                'id_status_kehadiran' => 'sometimes|required',
+                'id_status_kehadiran' => 'required',
             ]);
 
             $presensi->update($data);
