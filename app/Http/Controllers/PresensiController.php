@@ -192,7 +192,7 @@ class PresensiController extends Controller
                 ->where('status_kehadiran_pendek', $data['status'])
                 ->first();
 
-            $presensi->update(['id_status_kehadiran' => $statusKehadiran->id]);
+            $presensi->update(['id_statuskehadiran' => $statusKehadiran->id]);
 
             return response()->json([
                 'success' => true,
