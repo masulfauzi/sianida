@@ -103,9 +103,10 @@ class JurnalController extends Controller
      * @param string $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Request $request, Jurnal $jurnal)
+    public function show($id)
     {
         try {
+            $jurnal = Jurnal::find($id);
 
             if (! $jurnal) {
                 return response()->json([
