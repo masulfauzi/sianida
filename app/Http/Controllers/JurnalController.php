@@ -52,7 +52,7 @@ class JurnalController extends Controller
             $data = $request->validate([
                 'id_guru'          => 'required',
                 'hari'             => 'required',
-                'kelas'            => 'required',
+                'id_kelas'         => 'required',
                 'jam_mulai'        => 'required',
                 'jam_selesai'      => 'required',
                 'mapel'            => 'required',
