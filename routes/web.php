@@ -28,6 +28,10 @@ Route::post('/registrasi', [AktivasiController::class, 'registrasi'])->name('reg
 Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemail')->middleware(['guest']);
 Route::get('/skanida-mobile/kebijakan-privasi', [AktivasiController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi')->middleware(['guest']);
 
+Route::get('/app-ads.txt', function () {
+    return response()->file(base_path('app-ads.txt'), ['Content-Type' => 'text/plain']);
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('frontend.index');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
