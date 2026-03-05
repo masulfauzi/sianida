@@ -2,6 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Modules\Jurnal\Models\Jurnal;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
+use App\Modules\Presensi\Models\Presensi;
+use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -81,7 +84,18 @@ class JurnalController extends Controller
                 $data['jam_selesai'] = $jamSelesai->id;
             }
 
+            $pesertadidik    = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->get();
+            $statuskehadiran = Statuskehadiran::where('status_kehadiran_pendekat', 'H')->first();
+
             $jurnal = Jurnal::create($data);
+
+            foreach ($pesertadidik as $pd) {
+                Presensi::create([
+                    'id_jurnal'          => $jurnal->id,
+                    'id_pesertadidik'    => $pd->id,
+                    'id_statuskehadiran' => $statuskehadiran->id,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
@@ -116,6 +130,13 @@ class JurnalController extends Controller
                 ->whereNull('a.deleted_at')
                 ->first();
 
+            $presensi = Presensi::where('id_jurnal', $id)
+                ->join('pesertadidik', 'presensi.id_pesertadidik', '=', 'pesertadidik.id')
+                ->join('siswa', 'pesertadidik.id_siswa', '=', 'siswa.id')
+                ->join('statuskehadiran', 'presensi.id_statuskehadiran', '=', 'statuskehadiran.id')
+                ->select('siswa.nama as nama_siswa', 'statuskehadiran.status_kehadiran_pendekat')
+                ->get();
+
             if (! $jurnal) {
                 return response()->json([
                     'success' => false,
@@ -124,9 +145,10 @@ class JurnalController extends Controller
             }
 
             return response()->json([
-                'success' => true,
-                'message' => 'Jurnal detail retrieved successfully',
-                'data'    => $jurnal,
+                'success'  => true,
+                'message'  => 'Jurnal detail retrieved successfully',
+                'data'     => $jurnal,
+                'presensi' => $presensi,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
