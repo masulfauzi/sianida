@@ -70,15 +70,15 @@ class JurnalController extends Controller
             // Get jam_mulai id from jampelajaran
             $jamMulai = DB::table('jampelajaran')->where('jam_pelajaran', $request->input('jam_mulai'))->first();
             if ($jamMulai) {
-                unset($data['jam_mulai']);
-                $data['id_jam_mulai'] = $jamMulai->id;
+                // unset($data['jam_mulai']);
+                $data['jam_mulai'] = $jamMulai->id;
             }
 
             // Get jam_selesai id from jampelajaran
             $jamSelesai = DB::table('jampelajaran')->where('jam_pelajaran', $request->input('jam_selesai'))->first();
             if ($jamSelesai) {
-                unset($data['jam_selesai']);
-                $data['id_jam_selesai'] = $jamSelesai->id;
+                // unset($data['jam_selesai']);
+                $data['jam_selesai'] = $jamSelesai->id;
             }
 
             $jurnal = Jurnal::create($data);
