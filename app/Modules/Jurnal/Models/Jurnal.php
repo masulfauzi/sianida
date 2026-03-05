@@ -14,9 +14,10 @@ class Jurnal extends Model
     use SoftDeletes;
     use UsesUuid;
 
-    protected $dates    = ['deleted_at'];
-    protected $table    = 'jurnal';
-    protected $fillable = ['*'];
+    protected $dates = ['deleted_at'];
+    protected $table = 'jurnal';
+    // protected $fillable = ['*'];
+    protected $guarded = [];
 
     public function jadwal()
     {
