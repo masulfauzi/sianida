@@ -139,7 +139,7 @@ class IjinKeluarKelasController extends Controller
                 ->join('jampelajaran as jam_kembali_table', 'ijin_keluar_kelas.jam_kembali', '=', 'jam_kembali_table.id')
                 ->join('jenis_ijin_keluar_kelas', 'ijin_keluar_kelas.id_jenis_ijin_keluar', '=', 'jenis_ijin_keluar_kelas.id')
                 ->join('status_ijin', 'ijin_keluar_kelas.id_status_ijin', '=', 'status_ijin.id')
-                ->select('ijin_keluar_kelas.id', 'siswa.nama_siswa', 'jam_keluar_table.jam_pelajaran as jam_keluar_pelajaran', 'jam_kembali_table.jam_pelajaran as jam_kembali_pelajaran', 'jenis_ijin_keluar_kelas.jenis_ijin_keluar', 'status_ijin.status_ijin')
+                ->select('ijin_keluar_kelas.id', 'siswa.nama_siswa', 'jam_keluar_table.jam_pelajaran as jam_keluar_pelajaran', 'jam_kembali_table.jam_pelajaran as jam_kembali_pelajaran', 'jenis_ijin_keluar_kelas.jenis_ijin_keluar_kelas', 'status_ijin.status_ijin')
                 ->get();
 
             return response()->json([
