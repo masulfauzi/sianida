@@ -124,7 +124,7 @@
                                             <a href="javascript:void(0);"
                                                 onclick="window.open('{{ route('soal.lihat_soal.index', [$item->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}', '_blank', 'width=auto,height=auto');">
                                                 <a
-                                                    href="{{ route('soal.lihat_soal.index', [$data->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}">
+                                                    href="{{ route('soal.lihat_soal.index', [$item->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}">
                                                     Lihat Soal
                                                 </a>
                                         </td>
