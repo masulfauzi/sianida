@@ -289,12 +289,20 @@ class UjiansekolahController extends Controller
             // Header
             $sheet->setCellValue('A1', 'No Soal');
             $sheet->setCellValue('B1', 'Soal');
-            $sheet->setCellValue('C1', 'Opsi A');
-            $sheet->setCellValue('D1', 'Opsi B');
-            $sheet->setCellValue('E1', 'Opsi C');
-            $sheet->setCellValue('F1', 'Opsi D');
-            $sheet->setCellValue('G1', 'Opsi E');
-            $sheet->setCellValue('H1', 'Kunci Jawaban');
+            $sheet->setCellValue('C1', 'PilA');
+            $sheet->setCellValue('D1', 'PilB');
+            $sheet->setCellValue('E1', 'PilC');
+            $sheet->setCellValue('F1', 'PilD');
+            $sheet->setCellValue('G1', 'PilE');
+            $sheet->setCellValue('H1', 'Jawaban');
+            $sheet->setCellValue('I1', 'Jenis');
+            $sheet->setCellValue('J1', 'file1');
+            $sheet->setCellValue('K1', 'file2');
+            $sheet->setCellValue('L1', 'fileA');
+            $sheet->setCellValue('M1', 'fileB');
+            $sheet->setCellValue('N1', 'fileC');
+            $sheet->setCellValue('O1', 'fileD');
+            $sheet->setCellValue('P1', 'fileE');
 
             // Style header
             $headerStyle = [
@@ -304,7 +312,7 @@ class UjiansekolahController extends Controller
                 'borders'   => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
             ];
 
-            for ($col = 'A'; $col <= 'H'; $col++) {
+            for ($col = 'A'; $col <= 'P'; $col++) {
                 $sheet->getStyle($col . '1')->applyFromArray($headerStyle);
             }
 
@@ -319,9 +327,17 @@ class UjiansekolahController extends Controller
                 $sheet->setCellValue('F' . $row, $soal->opsi_d);
                 $sheet->setCellValue('G' . $row, $soal->opsi_e);
                 $sheet->setCellValue('H' . $row, $soal->kunci);
+                $sheet->setCellValue('I' . $row, 1);
+                $sheet->setCellValue('J' . $row, '');
+                $sheet->setCellValue('K' . $row, '');
+                $sheet->setCellValue('L' . $row, '');
+                $sheet->setCellValue('M' . $row, '');
+                $sheet->setCellValue('N' . $row, '');
+                $sheet->setCellValue('O' . $row, '');
+                $sheet->setCellValue('P' . $row, '');
 
                 // Border untuk data
-                for ($col = 'A'; $col <= 'H'; $col++) {
+                for ($col = 'A'; $col <= 'P'; $col++) {
                     $sheet->getStyle($col . $row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                 }
 
@@ -331,12 +347,20 @@ class UjiansekolahController extends Controller
             // Set width kolom
             $sheet->getColumnDimension('A')->setWidth(10);
             $sheet->getColumnDimension('B')->setWidth(35);
-            $sheet->getColumnDimension('C')->setWidth(15);
-            $sheet->getColumnDimension('D')->setWidth(15);
-            $sheet->getColumnDimension('E')->setWidth(15);
-            $sheet->getColumnDimension('F')->setWidth(15);
-            $sheet->getColumnDimension('G')->setWidth(15);
-            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('C')->setWidth(12);
+            $sheet->getColumnDimension('D')->setWidth(12);
+            $sheet->getColumnDimension('E')->setWidth(12);
+            $sheet->getColumnDimension('F')->setWidth(12);
+            $sheet->getColumnDimension('G')->setWidth(12);
+            $sheet->getColumnDimension('H')->setWidth(12);
+            $sheet->getColumnDimension('I')->setWidth(10);
+            $sheet->getColumnDimension('J')->setWidth(12);
+            $sheet->getColumnDimension('K')->setWidth(12);
+            $sheet->getColumnDimension('L')->setWidth(12);
+            $sheet->getColumnDimension('M')->setWidth(12);
+            $sheet->getColumnDimension('N')->setWidth(12);
+            $sheet->getColumnDimension('O')->setWidth(12);
+            $sheet->getColumnDimension('P')->setWidth(12);
 
             // ===== SHEET SOAL SUSULAN (jika ada) =====
             if ($soalSusulan->count() > 0) {
@@ -346,15 +370,23 @@ class UjiansekolahController extends Controller
                 // Header
                 $sheetSusulan->setCellValue('A1', 'No Soal');
                 $sheetSusulan->setCellValue('B1', 'Soal');
-                $sheetSusulan->setCellValue('C1', 'Opsi A');
-                $sheetSusulan->setCellValue('D1', 'Opsi B');
-                $sheetSusulan->setCellValue('E1', 'Opsi C');
-                $sheetSusulan->setCellValue('F1', 'Opsi D');
-                $sheetSusulan->setCellValue('G1', 'Opsi E');
-                $sheetSusulan->setCellValue('H1', 'Kunci Jawaban');
+                $sheetSusulan->setCellValue('C1', 'PilA');
+                $sheetSusulan->setCellValue('D1', 'PilB');
+                $sheetSusulan->setCellValue('E1', 'PilC');
+                $sheetSusulan->setCellValue('F1', 'PilD');
+                $sheetSusulan->setCellValue('G1', 'PilE');
+                $sheetSusulan->setCellValue('H1', 'Jawaban');
+                $sheetSusulan->setCellValue('I1', 'Jenis');
+                $sheetSusulan->setCellValue('J1', 'file1');
+                $sheetSusulan->setCellValue('K1', 'file2');
+                $sheetSusulan->setCellValue('L1', 'fileA');
+                $sheetSusulan->setCellValue('M1', 'fileB');
+                $sheetSusulan->setCellValue('N1', 'fileC');
+                $sheetSusulan->setCellValue('O1', 'fileD');
+                $sheetSusulan->setCellValue('P1', 'fileE');
 
                 // Style header
-                for ($col = 'A'; $col <= 'H'; $col++) {
+                for ($col = 'A'; $col <= 'P'; $col++) {
                     $sheetSusulan->getStyle($col . '1')->applyFromArray($headerStyle);
                 }
 
@@ -369,9 +401,17 @@ class UjiansekolahController extends Controller
                     $sheetSusulan->setCellValue('F' . $row, $soal->opsi_d);
                     $sheetSusulan->setCellValue('G' . $row, $soal->opsi_e);
                     $sheetSusulan->setCellValue('H' . $row, $soal->kunci);
+                    $sheetSusulan->setCellValue('I' . $row, 1);
+                    $sheetSusulan->setCellValue('J' . $row, '');
+                    $sheetSusulan->setCellValue('K' . $row, '');
+                    $sheetSusulan->setCellValue('L' . $row, '');
+                    $sheetSusulan->setCellValue('M' . $row, '');
+                    $sheetSusulan->setCellValue('N' . $row, '');
+                    $sheetSusulan->setCellValue('O' . $row, '');
+                    $sheetSusulan->setCellValue('P' . $row, '');
 
                     // Border untuk data
-                    for ($col = 'A'; $col <= 'H'; $col++) {
+                    for ($col = 'A'; $col <= 'P'; $col++) {
                         $sheetSusulan->getStyle($col . $row)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
                     }
 
@@ -381,12 +421,20 @@ class UjiansekolahController extends Controller
                 // Set width kolom
                 $sheetSusulan->getColumnDimension('A')->setWidth(10);
                 $sheetSusulan->getColumnDimension('B')->setWidth(35);
-                $sheetSusulan->getColumnDimension('C')->setWidth(15);
-                $sheetSusulan->getColumnDimension('D')->setWidth(15);
-                $sheetSusulan->getColumnDimension('E')->setWidth(15);
-                $sheetSusulan->getColumnDimension('F')->setWidth(15);
-                $sheetSusulan->getColumnDimension('G')->setWidth(15);
-                $sheetSusulan->getColumnDimension('H')->setWidth(15);
+                $sheetSusulan->getColumnDimension('C')->setWidth(12);
+                $sheetSusulan->getColumnDimension('D')->setWidth(12);
+                $sheetSusulan->getColumnDimension('E')->setWidth(12);
+                $sheetSusulan->getColumnDimension('F')->setWidth(12);
+                $sheetSusulan->getColumnDimension('G')->setWidth(12);
+                $sheetSusulan->getColumnDimension('H')->setWidth(12);
+                $sheetSusulan->getColumnDimension('I')->setWidth(10);
+                $sheetSusulan->getColumnDimension('J')->setWidth(12);
+                $sheetSusulan->getColumnDimension('K')->setWidth(12);
+                $sheetSusulan->getColumnDimension('L')->setWidth(12);
+                $sheetSusulan->getColumnDimension('M')->setWidth(12);
+                $sheetSusulan->getColumnDimension('N')->setWidth(12);
+                $sheetSusulan->getColumnDimension('O')->setWidth(12);
+                $sheetSusulan->getColumnDimension('P')->setWidth(12);
             }
 
             // Export Excel
