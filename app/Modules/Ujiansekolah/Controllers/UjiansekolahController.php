@@ -438,9 +438,9 @@ class UjiansekolahController extends Controller
             }
 
             // Export Excel
-            $filename = 'Soal_' . $ujiansekolah->mapel['mapel'] . '_' . now()->format('Y-m-d_His') . '.xlsx';
-            $writer   = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $filename = 'Soal_' . $ujiansekolah->mapel['mapel'] . '_' . now()->format('Y-m-d_His') . '.xls';
+            $writer   = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+            header('Content-Type: application/vnd.ms-excel');
             header('Content-Disposition: attachment;filename="' . $filename . '"');
             header('Cache-Control: max-age=0');
 
