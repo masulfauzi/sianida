@@ -402,13 +402,13 @@ class UjiansekolahController extends Controller
                     $sheetSusulan->setCellValue('G' . $row, $soal->opsi_e);
                     $sheetSusulan->setCellValue('H' . $row, $soal->kunci);
                     $sheetSusulan->setCellValue('I' . $row, 1);
-                    $sheetSusulan->setCellValue('J' . $row, '');
+                    $sheetSusulan->setCellValue('J' . $row, $soal->gambar);
                     $sheetSusulan->setCellValue('K' . $row, '');
-                    $sheetSusulan->setCellValue('L' . $row, '');
-                    $sheetSusulan->setCellValue('M' . $row, '');
-                    $sheetSusulan->setCellValue('N' . $row, '');
-                    $sheetSusulan->setCellValue('O' . $row, '');
-                    $sheetSusulan->setCellValue('P' . $row, '');
+                    $sheetSusulan->setCellValue('L' . $row, $soal->gambar_a);
+                    $sheetSusulan->setCellValue('M' . $row, $soal->gambar_b);
+                    $sheetSusulan->setCellValue('N' . $row, $soal->gambar_c);
+                    $sheetSusulan->setCellValue('O' . $row, $soal->gambar_d);
+                    $sheetSusulan->setCellValue('P' . $row, $soal->gambar_e);
 
                     // Border untuk data
                     for ($col = 'A'; $col <= 'P'; $col++) {
