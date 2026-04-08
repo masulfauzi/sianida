@@ -320,6 +320,7 @@ class UjiansekolahController extends Controller
             $row = 2;
             foreach ($soalUtama as $soal) {
                 $sheet->setCellValue('A' . $row, $soal->no_soal);
+                $sheet->getStyle('A' . $row)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
                 $sheet->setCellValue('B' . $row, $soal->soal);
                 $sheet->setCellValue('C' . $row, $soal->opsi_a);
                 $sheet->setCellValue('D' . $row, $soal->opsi_b);
@@ -394,6 +395,7 @@ class UjiansekolahController extends Controller
                 $row = 2;
                 foreach ($soalSusulan as $soal) {
                     $sheetSusulan->setCellValue('A' . $row, $soal->no_soal);
+                    $sheetSusulan->getStyle('A' . $row)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
                     $sheetSusulan->setCellValue('B' . $row, $soal->soal);
                     $sheetSusulan->setCellValue('C' . $row, $soal->opsi_a);
                     $sheetSusulan->setCellValue('D' . $row, $soal->opsi_b);
