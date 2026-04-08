@@ -121,6 +121,10 @@
                                             {!! button('ujiansekolah.show', '', $item->id) !!}
                                             {!! button('ujiansekolah.edit', $title, $item->id) !!}
                                             {!! button('ujiansekolah.destroy', $title, $item->id) !!}
+                                            <a href="{{ route('ujiansekolah.export.index', $item->id) }}"
+                                                class="btn btn-sm btn-info" title="Export">
+                                                <i class="fa fa-download"></i> EXPORT
+                                            </a>
                                             <a href="javascript:void(0);"
                                                 onclick="window.open('{{ route('soal.lihat_soal.index', [$item->id, 'c365b003-7203-4e5d-b215-1f934238db2f']) }}', '_blank', 'width=auto,height=auto');">
                                                 <a
