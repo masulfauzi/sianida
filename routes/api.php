@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/pesan-harian', function () {
-    return response()->json(['status' => 200, 'message' => 'Testing Pesan Harian'], 200);
+    return response()->json(['status' => 200, 'message' => 'Pendidikan adalah kunci untuk membuka pintu masa depanmu. Setiap pelajaran adalah langkah menuju mimpi.'], 200);
 });
 
 // Public authentication routes
