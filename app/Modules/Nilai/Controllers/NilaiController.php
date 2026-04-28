@@ -566,7 +566,7 @@ class NilaiController extends Controller
     {
         $siswa = Pesertadidik::select('pesertadidik.*', 's.nama_siswa', 's.nisn')
             ->join('siswa as s', 'pesertadidik.id_siswa', '=', 's.id')
-            ->where('pesertadidik.id_semester', $id_semester)
+            ->where('pesertadidik.id_semester', session('active_semester')['id'])
             ->where('pesertadidik.id_kelas', $id_kelas)
             ->orderBy('s.nama_siswa')
             ->get();
