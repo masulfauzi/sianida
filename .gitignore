@@ -18,3 +18,6 @@ public/tmp/*
 /public/download_sertifikat/*
 /public/file_pesan/*
 .DS_Store
+
+prompt.txt
+issue.md

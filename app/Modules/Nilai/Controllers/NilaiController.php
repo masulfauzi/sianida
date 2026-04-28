@@ -390,4 +390,198 @@ class NilaiController extends Controller
         $this->log($request, $text, ['nilai.id' => $nilai->id]);
         return back()->with('message_success', 'Nilai berhasil diverifikasi!');
     }
+
+    public function leger_nilai(Request $request)
+    {
+        $data['semester'] = Semester::orderBy('urutan')->get()->pluck('semester', 'id');
+        $data['semester']->prepend('-PILIH SALAH SATU-', '');
+
+        $data['kelas'] = Kelas::orderBy('kelas')->get()->pluck('kelas', 'id');
+        $data['kelas']->prepend('-PILIH SALAH SATU-', '');
+
+        $this->log($request, 'membuka form leger ' . $this->title);
+        return view('Nilai::leger_nilai', array_merge($data, ['title' => 'Leger ' . $this->title]));
+    }
+
+    public function export_leger(Request $request)
+    {
+        $this->validate($request, [
+            'id_semester' => 'required',
+            'id_kelas'    => 'required',
+        ]);
+
+        $id_semester = $request->input('id_semester');
+        $id_kelas    = $request->input('id_kelas');
+
+        $data          = $this->buildLegerData($id_semester, $id_kelas);
+        $data['title'] = 'Export Leger ' . $this->title;
+
+        $semester      = $data['semester'];
+        $kelas         = $data['kelas'];
+        $semesterLabel = $semester ? $semester->semester : '-';
+        $kelasLabel    = $kelas ? $kelas->kelas : '-';
+        $text          = 'export leger nilai untuk semester ' . $semesterLabel . ' kelas ' . $kelasLabel;
+        $this->log($request, $text);
+
+        // MVP: return response sementara berisi data filter terpilih + jumlah data
+        return view('Nilai::export_leger', $data);
+    }
+
+    public function export_leger_excel(Request $request)
+    {
+        $this->validate($request, [
+            'id_semester' => 'required',
+            'id_kelas'    => 'required',
+        ]);
+
+        $id_semester = $request->input('id_semester');
+        $id_kelas    = $request->input('id_kelas');
+
+        $data = $this->buildLegerData($id_semester, $id_kelas);
+
+        $templatePath = public_path('template/template-leger.xlsx');
+        $spreadsheet  = IOFactory::load($templatePath);
+        $sheet        = $spreadsheet->getActiveSheet();
+
+        $sheet->setCellValue('C3', $data['kelas']->kelas ?? '');
+        $sheet->setCellValue('C4', $data['semester']->semester ?? '');
+        $sheet->setCellValue('C5', $data['semester']->semester ?? '');
+
+        $mapelGroups = $data['nilai']->groupBy('id_mapel');
+        $mapelList   = $mapelGroups->map(function ($group) {
+            return $group->first();
+        })->values();
+
+        $headerRow     = 7;
+        $dataRowStart  = 8;
+        $mapelStartCol = 4; // D
+
+        foreach ($mapelList as $index => $mapel) {
+            $colIndex = $mapelStartCol + $index;
+            $cell     = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex) . $headerRow;
+            $sheet->setCellValue($cell, $mapel->mapel);
+        }
+
+        $nilaiIndex = [];
+        foreach ($data['nilai'] as $item) {
+            $nilaiIndex[$item->id_siswa][$item->id_mapel] = $item->nilai;
+        }
+
+        foreach ($data['siswa'] as $rowIndex => $item_siswa) {
+            $row = $dataRowStart + $rowIndex;
+            $sheet->setCellValue('A' . $row, $rowIndex + 1);
+            $sheet->setCellValue('B' . $row, $item_siswa->nama_siswa);
+            $sheet->setCellValueExplicit(
+                'C' . $row,
+                $item_siswa->nisn,
+                \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
+            );
+
+            foreach ($mapelList as $mapelIndex => $mapel) {
+                $colIndex   = $mapelStartCol + $mapelIndex;
+                $cell       = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex) . $row;
+                $nilaiValue = $nilaiIndex[$item_siswa->id_siswa][$mapel->id_mapel] ?? '';
+                $sheet->setCellValue($cell, $nilaiValue);
+            }
+        }
+
+        $totalSiswa   = $data['siswa']->count();
+        $lastRow      = $totalSiswa > 0 ? ($dataRowStart + $totalSiswa - 1) : $headerRow;
+        $lastColIndex = $mapelList->count() > 0 ? ($mapelStartCol + $mapelList->count() - 1) : $mapelStartCol - 1;
+        $lastColIndex = max($lastColIndex, 3);
+        $lastCol      = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColIndex);
+
+        $tableRange = 'A' . $headerRow . ':' . $lastCol . $lastRow;
+        $sheet->getStyle($tableRange)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ]);
+
+        if ($lastColIndex >= $mapelStartCol) {
+            $mapelHeaderRange = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($mapelStartCol)
+                . $headerRow . ':' . $lastCol . $headerRow;
+            $nilaiRange = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($mapelStartCol)
+                . $dataRowStart . ':' . $lastCol . $lastRow;
+
+            $sheet->getStyle($mapelHeaderRange)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+            $sheet->getStyle($nilaiRange)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+        }
+
+        if ($lastRow >= $dataRowStart) {
+            $noRange   = 'A' . $dataRowStart . ':A' . $lastRow;
+            $nisnRange = 'C' . $dataRowStart . ':C' . $lastRow;
+            $sheet->getStyle($noRange)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+            $sheet->getStyle($nisnRange)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+        }
+
+        for ($colIndex = 1; $colIndex <= $lastColIndex; $colIndex++) {
+            $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $semesterLabel = $data['semester']->semester ?? 'semester';
+        $kelasLabel    = $data['kelas']->kelas ?? 'kelas';
+        $safeSemester  = preg_replace('/[\\\\\/]+/', '-', $semesterLabel);
+        $safeKelas     = preg_replace('/[\\\\\/]+/', '-', $kelasLabel);
+        $safeSemester  = preg_replace('/\s+/', '_', trim($safeSemester));
+        $safeKelas     = preg_replace('/\s+/', '_', trim($safeKelas));
+        $filename      = 'leger_' . $safeSemester . '_' . $safeKelas . '.xlsx';
+
+        $text = 'export leger excel untuk semester ' . $semesterLabel . ' kelas ' . $kelasLabel;
+        $this->log($request, $text);
+
+        return response()->streamDownload(function () use ($spreadsheet) {
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
+    }
+
+    private function buildLegerData($id_semester, $id_kelas)
+    {
+        $siswa = Pesertadidik::select('pesertadidik.*', 's.nama_siswa', 's.nisn')
+            ->join('siswa as s', 'pesertadidik.id_siswa', '=', 's.id')
+            ->where('pesertadidik.id_semester', $id_semester)
+            ->where('pesertadidik.id_kelas', $id_kelas)
+            ->orderBy('s.nama_siswa')
+            ->get();
+
+        $nilai = Nilai::whereIn('id_siswa', $siswa->pluck('id_siswa'))
+            ->where('id_semester', $id_semester)
+            ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
+            ->orderBy('m.urutan')
+            ->get();
+
+        return [
+            'siswa'    => $siswa,
+            'nilai'    => $nilai,
+            'semester' => Semester::find($id_semester),
+            'kelas'    => Kelas::find($id_kelas),
+        ];
+    }
 }
