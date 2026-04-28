@@ -42,7 +42,8 @@
                             <input type="hidden" name="id_kelas" value="{{ $kelas->id ?? '' }}">
                             <button type="submit" class="btn btn-success">Export Excel</button>
                         </form>
-                        <a href="{{ route('nilai.leger.index') }}" class="btn btn-secondary">Kembali ke Form</a>
+                        <a href="{{ route('nilai.leger.index', ['id_semester' => $semester->id ?? '', 'id_kelas' => $kelas->id ?? '']) }}"
+                            class="btn btn-secondary">Kembali ke Form</a>
                     </div>
 
                     <div class="table-responsive">

@@ -35,7 +35,7 @@
                                     <label>Semester</label>
                                 </div>
                                 <div class="col-md-9 form-group">
-                                    {!! Form::select('id_semester', $semester, null, [
+                                    {!! Form::select('id_semester', $semester, request('id_semester'), [
         'class' => 'form-control select2',
         'required',
     ]) !!}
@@ -51,7 +51,7 @@
                                     <label>Kelas</label>
                                 </div>
                                 <div class="col-md-9 form-group">
-                                    {!! Form::select('id_kelas', $kelas, null, [
+                                    {!! Form::select('id_kelas', $kelas, request('id_kelas'), [
         'class' => 'form-control select2',
         'required',
     ]) !!}
