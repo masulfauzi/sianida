@@ -443,9 +443,13 @@ class NilaiController extends Controller
         $spreadsheet  = IOFactory::load($templatePath);
         $sheet        = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('C3', $data['kelas']->kelas ?? '');
-        $sheet->setCellValue('C4', $data['semester']->semester ?? '');
-        $sheet->setCellValue('C5', $data['semester']->semester ?? '');
+        $semesterLabel  = $data['semester']->semester ?? '';
+        $tahunPelajaran = preg_match('/^(Ganjil|Genap)\s+(.+)$/i', $semesterLabel, $matches)
+            ? ($matches[2] . ' ' . ucfirst(strtolower($matches[1])))
+            : $semesterLabel;
+
+        $sheet->setCellValue('C3', ': ' . ($data['kelas']->kelas ?? ''));
+        $sheet->setCellValue('C4', ': ' . $tahunPelajaran);
 
         $mapelGroups = $data['nilai']->groupBy('id_mapel');
         $mapelList   = $mapelGroups->map(function ($group) {
@@ -455,6 +459,14 @@ class NilaiController extends Controller
         $headerRow     = 7;
         $dataRowStart  = 8;
         $mapelStartCol = 4; // D
+
+        $templateMapelCols = 3;
+        $missingMapelCols  = $templateMapelCols - $mapelList->count();
+        if ($missingMapelCols > 0) {
+            $removeStartIndex = $mapelStartCol + $mapelList->count();
+            $removeStartCol   = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($removeStartIndex);
+            $sheet->removeColumn($removeStartCol, $missingMapelCols);
+        }
 
         foreach ($mapelList as $index => $mapel) {
             $colIndex = $mapelStartCol + $index;
@@ -470,7 +482,7 @@ class NilaiController extends Controller
         foreach ($data['siswa'] as $rowIndex => $item_siswa) {
             $row = $dataRowStart + $rowIndex;
             $sheet->setCellValue('A' . $row, $rowIndex + 1);
-            $sheet->setCellValue('B' . $row, $item_siswa->nama_siswa);
+            $sheet->setCellValue('B' . $row, strtoupper($item_siswa->nama_siswa));
             $sheet->setCellValueExplicit(
                 'C' . $row,
                 $item_siswa->nisn,
