@@ -518,10 +518,15 @@ class NilaiController extends Controller
             $nilaiRange = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($mapelStartCol)
                 . $dataRowStart . ':' . $lastCol . $lastRow;
 
+            $firstMapelCell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($mapelStartCol)
+                . $headerRow;
+            $sheet->duplicateStyle($sheet->getStyle($firstMapelCell), $mapelHeaderRange);
+
             $sheet->getStyle($mapelHeaderRange)->applyFromArray([
                 'alignment' => [
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
                     'vertical'   => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    'wrapText'   => true,
                 ],
             ]);
 
@@ -553,6 +558,17 @@ class NilaiController extends Controller
         for ($colIndex = 1; $colIndex <= $lastColIndex; $colIndex++) {
             $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
             $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        $sheet->getColumnDimension('C')->setAutoSize(false);
+        $sheet->getColumnDimension('C')->setWidth(12);
+
+        if ($lastColIndex >= $mapelStartCol) {
+            for ($colIndex = $mapelStartCol; $colIndex <= $lastColIndex; $colIndex++) {
+                $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+                $sheet->getColumnDimension($col)->setAutoSize(false);
+                $sheet->getColumnDimension($col)->setWidth(9.8);
+            }
         }
 
         $semesterLabel = $data['semester']->semester ?? 'semester';
