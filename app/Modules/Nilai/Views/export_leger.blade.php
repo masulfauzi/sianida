@@ -35,12 +35,15 @@
                         Jumlah Siswa: <strong>{{ count($siswa) }}</strong>
                     </div>
 
-                    <form action="{{ route('nilai.leger.export.show') }}" method="POST" class="mb-3">
-                        @csrf
-                        <input type="hidden" name="id_semester" value="{{ $semester->id ?? '' }}">
-                        <input type="hidden" name="id_kelas" value="{{ $kelas->id ?? '' }}">
-                        <button type="submit" class="btn btn-success">Export Excel</button>
-                    </form>
+                    <div class="mb-3">
+                        <form action="{{ route('nilai.leger.export.show') }}" method="POST" class="d-inline">
+                            @csrf
+                            <input type="hidden" name="id_semester" value="{{ $semester->id ?? '' }}">
+                            <input type="hidden" name="id_kelas" value="{{ $kelas->id ?? '' }}">
+                            <button type="submit" class="btn btn-success">Export Excel</button>
+                        </form>
+                        <a href="{{ route('nilai.leger.index') }}" class="btn btn-secondary">Kembali ke Form</a>
+                    </div>
 
                     <div class="table-responsive">
                         <table class="table table-bordered">
@@ -81,10 +84,6 @@
                                 @endforelse
                             </tbody>
                         </table>
-                    </div>
-
-                    <div class="mt-3">
-                        <a href="{{ route('nilai.leger.index') }}" class="btn btn-secondary">Kembali ke Form</a>
                     </div>
 
                 </div>
