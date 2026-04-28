@@ -442,6 +442,9 @@ class NilaiController extends Controller
         $templatePath = public_path('template/template-leger.xlsx');
         $spreadsheet  = IOFactory::load($templatePath);
         $sheet        = $spreadsheet->getActiveSheet();
+        if (! empty($data['kelas']->kelas)) {
+            $sheet->setTitle($data['kelas']->kelas);
+        }
 
         $semesterLabel  = $data['semester']->semester ?? '';
         $tahunPelajaran = preg_match('/^(Ganjil|Genap)\s+(.+)$/i', $semesterLabel, $matches)
