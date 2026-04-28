@@ -454,10 +454,10 @@ class NilaiController extends Controller
         $sheet->setCellValue('C3', ': ' . ($data['kelas']->kelas ?? ''));
         $sheet->setCellValue('C4', ': ' . $tahunPelajaran);
 
-        $mapelGroups = $data['nilai']->groupBy('id_mapel');
-        $mapelList   = $mapelGroups->map(function ($group) {
-            return $group->first();
-        })->sortBy('urutan')->values();
+        $mapelIds  = $data['nilai']->pluck('id_mapel')->unique()->values();
+        $mapelList = Mapel::whereIn('id', $mapelIds)
+            ->orderBy('urutan')
+            ->get();
 
         $headerRow     = 7;
         $dataRowStart  = 8;
