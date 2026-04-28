@@ -457,7 +457,7 @@ class NilaiController extends Controller
         $mapelGroups = $data['nilai']->groupBy('id_mapel');
         $mapelList   = $mapelGroups->map(function ($group) {
             return $group->first();
-        })->values();
+        })->sortBy('urutan')->values();
 
         $headerRow     = 7;
         $dataRowStart  = 8;
