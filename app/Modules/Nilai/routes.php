@@ -4,6 +4,10 @@ use App\Modules\Nilai\Controllers\NilaiController;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(NilaiController::class)->middleware(['web', 'auth'])->name('nilai.')->group(function () {
+    // SKL Routes
+    Route::get('/nilai/skl', 'skl')->name('skl.index');
+    Route::get('/nilai/skl/{id}/detail', 'sklDetail')->name('skl.show');
+
     // custom role
     Route::get('/nilai/personal', 'index_siswa')->name('siswa.index');
     Route::get('/verif_nilai', 'verif_nilai')->name('verif_nilai.index');

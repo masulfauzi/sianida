@@ -1,6 +1,7 @@
 <?php
 namespace App\Modules\Nilai\Controllers;
 
+use App\Helpers\Format;
 use App\Helpers\Logger;
 use App\Http\Controllers\Controller;
 use App\Modules\Jurusan\Models\Jurusan;
@@ -223,40 +224,42 @@ class NilaiController extends Controller
                     if ($cek_nilai) {
                         $nilai        = Nilai::find($cek_nilai->id);
                         $nilai->nilai = $data[$i][$j];
+                        try {
+                            $pesertaDidik = Pesertadidik::with(['siswa', 'kelas'])->findOrFail($id);
 
-                        $nilai->updated_by = Auth::id();
-                        $nilai->save();
-                    } else {
-                        $nilai              = new Nilai();
-                        $nilai->id_semester = $request->input("id_semester");
-                        $nilai->id_siswa    = $siswa->id;
-                        $nilai->id_mapel    = $id_mapel[$j];
-                        $nilai->nilai       = $data[$i][$j];
-
-                        $nilai->created_by = Auth::id();
-                        $nilai->save();
+                            return response()->json([
+                                'success' => true,
+                                'data'    => [
+                                    'id'             => $pesertaDidik->id,
+                                    'nama'           => $pesertaDidik->siswa->nama_siswa,
+                                    'tempat_lahir'   => $pesertaDidik->siswa->tempat_lahir ?? null,
+                                    'tgl_lahir'      => $pesertaDidik->siswa->tgl_lahir
+                                        ? Format::tanggal($pesertaDidik->siswa->tgl_lahir)
+                                        : null,
+                                    'nisn'           => $pesertaDidik->siswa->nisn ?? '-',
+                                    'nis'            => $pesertaDidik->siswa->nis ?? '-',
+                                    'kelas'          => $pesertaDidik->kelas->nama_kelas,
+                                    'jurusan'        => $pesertaDidik->kelas->jurusan ?? '-',
+                                    'tanggal_lulus'  => now()->format('d-m-Y'),
+                                    'nama_sekolah'   => env('APP_NAME', 'SMK Negeri 2 Semarang'),
+                                    'alamat_sekolah' => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
+                                ],
+                            ]);
+                        } catch (\Exception $e) {
+                            return response()->json(['error' => 'SKL tidak ditemukan'], 404);
+                        }
                     }
+                    // $nilai->nilai = $request->input("nilai");
 
-                    // dd($nilai);
+                    // $nilai->created_by = Auth::id();
+                    // $nilai->save();
+
+                    $text = 'membuat ' . $this->title; //' baru '.$nilai->what;
+                    $this->log($request, $text, ['nilai.id' => $nilai->id]);
+                    return redirect()->route('nilai.index')->with('message_success', 'Nilai berhasil ditambahkan!');
                 }
             }
-
-            // dd($data[$i]);
-
         }
-
-        // $nilai = new Nilai();
-        // $nilai->id_semester = $request->input("id_semester");
-        // $nilai->id_siswa = $request->input("id_siswa");
-        // $nilai->id_mapel = $request->input("id_mapel");
-        // $nilai->nilai = $request->input("nilai");
-
-        // $nilai->created_by = Auth::id();
-        // $nilai->save();
-
-        $text = 'membuat ' . $this->title; //' baru '.$nilai->what;
-        $this->log($request, $text, ['nilai.id' => $nilai->id]);
-        return redirect()->route('nilai.index')->with('message_success', 'Nilai berhasil ditambahkan!');
     }
 
     public function show(Request $request, Nilai $nilai)
@@ -593,7 +596,7 @@ class NilaiController extends Controller
         ]);
     }
 
-    private function buildLegerData($id_semester, $id_kelas)
+    public function buildLegerData($id_semester, $id_kelas)
     {
         $siswa = Pesertadidik::select('pesertadidik.*', 's.nama_siswa', 's.nisn')
             ->join('siswa as s', 'pesertadidik.id_siswa', '=', 's.id')
@@ -614,5 +617,77 @@ class NilaiController extends Controller
             'semester' => Semester::find($id_semester),
             'kelas'    => Kelas::find($id_kelas),
         ];
+    }
+
+    /**
+     * Menampilkan halaman SKL (Surat Keterangan Lulus)
+     */
+    public function skl(Request $request)
+    {
+        // Get search input
+        $search = $request->input('search', '');
+
+        // Query dengan tabel utama siswa, join ke pesertadidik dan kelas
+        $pesertaDidik = Siswa::select(
+            'siswa.id',
+            'siswa.nama_siswa',
+            'siswa.nisn',
+            'siswa.nis',
+            'pesertadidik.id as peserta_id',
+            'kelas.kelas',
+            'jurusan.jurusan'
+        )
+            ->join('pesertadidik', function ($join) {
+                $join->on('pesertadidik.id_siswa', '=', 'siswa.id')
+                    ->where('pesertadidik.id_semester', session('active_semester')['id']);
+            })
+            ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
+            ->join('jurusan', 'kelas.id_jurusan', '=', 'jurusan.id')
+            ->when($search, function ($query) use ($search) {
+                return $query->where('siswa.nama_siswa', 'LIKE', '%' . $search . '%');
+            })
+            ->orderBy('siswa.nama_siswa', 'ASC')
+            ->paginate(15);
+
+        $data = [
+            'pesertaDidik' => $pesertaDidik,
+            'search'       => $search,
+            'title'        => 'SKL (Surat Keterangan Lulus)',
+        ];
+
+        $this->log($request, 'melihat halaman ' . $data['title']);
+        return view('Nilai::skl', $data);
+    }
+
+    /**
+     * Mendapatkan detail SKL untuk ditampilkan di modal
+     */
+    public function sklDetail($id)
+    {
+        try {
+            $pesertaDidik = Pesertadidik::with(['siswa', 'kelas'])->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'data'    => [
+                    'id'             => $pesertaDidik->id,
+                    'nama'           => $pesertaDidik->siswa->nama_siswa,
+                    'tempat_lahir'   => $pesertaDidik->siswa->tempat_lahir ?? null,
+                    'tgl_lahir'      => $pesertaDidik->siswa->tgl_lahir
+                        ? Format::tanggal($pesertaDidik->siswa->tgl_lahir)
+                        : null,
+                    'nisn'           => $pesertaDidik->siswa->nisn ?? '-',
+                    'nis'            => $pesertaDidik->siswa->nis ?? '-',
+                    'kelas'          => $pesertaDidik->kelas->nama_kelas,
+                    'jurusan'        => $pesertaDidik->kelas->jurusan ?? '-',
+                    'orang_tua'      => $pesertaDidik->siswa->nama_ayah ?? '-',
+                    'tanggal_lulus'  => now()->format('d-m-Y'),
+                    'nama_sekolah'   => env('APP_NAME', 'SMK Negeri 2 Semarang'),
+                    'alamat_sekolah' => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'SKL tidak ditemukan'], 404);
+        }
     }
 }
