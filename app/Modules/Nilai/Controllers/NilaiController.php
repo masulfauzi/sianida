@@ -16,6 +16,7 @@ use App\Modules\Siswa\Models\Siswa;
 use Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class NilaiController extends Controller
@@ -665,25 +666,42 @@ class NilaiController extends Controller
     public function sklDetail($id)
     {
         try {
-            $pesertaDidik = Pesertadidik::with(['siswa', 'kelas'])->findOrFail($id);
+            $pesertaDidik = Pesertadidik::with(['siswa', 'kelas', 'kelas.jurusan'])->findOrFail($id);
+            $nilaiMapel   = Nilai::select('nilai.id_mapel', 'm.mapel', DB::raw('AVG(nilai.nilai) as rata_rata'))
+                ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
+                ->where('nilai.id_siswa', $pesertaDidik->id_siswa)
+                ->groupBy('nilai.id_mapel', 'm.mapel', 'm.urutan')
+                ->orderBy('m.urutan')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id_mapel'  => $item->id_mapel,
+                        'mapel'     => $item->mapel,
+                        'rata_rata' => $item->rata_rata !== null ? round($item->rata_rata, 2) : null,
+                    ];
+                })
+                ->values();
 
             return response()->json([
                 'success' => true,
                 'data'    => [
-                    'id'             => $pesertaDidik->id,
-                    'nama'           => $pesertaDidik->siswa->nama_siswa,
-                    'tempat_lahir'   => $pesertaDidik->siswa->tempat_lahir ?? null,
-                    'tgl_lahir'      => $pesertaDidik->siswa->tgl_lahir
+                    'id'                   => $pesertaDidik->id,
+                    'nama'                 => $pesertaDidik->siswa->nama_siswa,
+                    'tempat_lahir'         => $pesertaDidik->siswa->tempat_lahir ?? null,
+                    'tgl_lahir'            => $pesertaDidik->siswa->tgl_lahir
                         ? Format::tanggal($pesertaDidik->siswa->tgl_lahir)
                         : null,
-                    'nisn'           => $pesertaDidik->siswa->nisn ?? '-',
-                    'nis'            => $pesertaDidik->siswa->nis ?? '-',
-                    'kelas'          => $pesertaDidik->kelas->nama_kelas,
-                    'jurusan'        => $pesertaDidik->kelas->jurusan ?? '-',
-                    'orang_tua'      => $pesertaDidik->siswa->nama_ayah ?? '-',
-                    'tanggal_lulus'  => now()->format('d-m-Y'),
-                    'nama_sekolah'   => env('APP_NAME', 'SMK Negeri 2 Semarang'),
-                    'alamat_sekolah' => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
+                    'nisn'                 => $pesertaDidik->siswa->nisn ?? '-',
+                    'nis'                  => $pesertaDidik->siswa->nis ?? '-',
+                    'kelas'                => $pesertaDidik->kelas->nama_kelas,
+                    'jurusan'              => $pesertaDidik->kelas->jurusan ?? '-',
+                    'program_keahlian'     => $pesertaDidik->kelas->jurusan->jurusan ?? '-',
+                    'konsentrasi_keahlian' => $pesertaDidik->kelas->konsentrasi_keahlian ?? '-',
+                    'nilai'                => $nilaiMapel,
+                    'orang_tua'            => $pesertaDidik->siswa->nama_ayah ?? '-',
+                    'tanggal_lulus'        => now()->format('d-m-Y'),
+                    'nama_sekolah'         => env('APP_NAME', 'SMK Negeri 2 Semarang'),
+                    'alamat_sekolah'       => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
                 ],
             ]);
         } catch (\Exception $e) {

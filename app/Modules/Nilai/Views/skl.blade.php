@@ -71,7 +71,8 @@
         .skl-template {
             font-family: "Times New Roman", serif;
             margin: 20px;
-            font-size: 14px;
+            font-size: 15px;
+            line-height: 1.2;
             color: #000;
         }
 
@@ -80,23 +81,71 @@
         }
 
         .skl-template .header {
+            position: relative;
             text-align: center;
-            line-height: 1.4;
+            line-height: 1.2;
+            padding-left: 90px;
+            padding-right: 90px;
+        }
+
+        .skl-template .header-logo-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 70px;
+            height: auto;
+        }
+
+        .skl-template .header-logo {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: auto;
+        }
+
+        .skl-template .header-line {
+            border-top: 3px solid #000;
+            margin: 6px -90px 6px -90px;
+            width: calc(100% + 180px);
+        }
+
+        .skl-template .header-line-secondary {
+            border-top: 1px solid #000;
+            margin: -5px -90px 8px -90px;
+            width: calc(100% + 180px);
         }
 
         .skl-template .title {
             font-weight: bold;
-            font-size: 18px;
+            font-size: 19px;
             margin-top: 10px;
         }
 
         .skl-template .subtitle {
-            font-size: 16px;
-            margin-bottom: 10px;
+            font-size: 17px;
+            margin-bottom: 0;
+            line-height: 1.1;
+        }
+
+        .skl-template .header-table {
+            margin: 4px auto 6px;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+
+        .skl-template .header-table td {
+            padding: 0 4px;
+            vertical-align: top;
+        }
+
+        .skl-template .header-table .label,
+        .skl-template .header-table .value {
+            text-align: left;
         }
 
         .skl-template .content {
-            margin-top: 20px;
+            margin-top: 12px;
         }
 
         .skl-template .table-info {
@@ -105,7 +154,7 @@
         }
 
         .skl-template .table-info td {
-            padding: 4px;
+            padding: 2px;
         }
 
         .skl-template .nilai-table {
@@ -117,7 +166,22 @@
         .skl-template .nilai-table th,
         .skl-template .nilai-table td {
             border: 1px solid #000;
-            padding: 6px;
+            padding: 4px;
+        }
+
+        .skl-template .nilai-table th {
+            text-align: center;
+        }
+
+        .skl-template .nilai-table th:nth-child(1),
+        .skl-template .nilai-table td:nth-child(1),
+        .skl-template .nilai-table th:nth-child(3),
+        .skl-template .nilai-table td:nth-child(3) {
+            text-align: center;
+        }
+
+        .skl-template .nilai-table tfoot td {
+            text-align: center;
         }
 
         .skl-template .footer {
@@ -128,17 +192,18 @@
         .skl-template .ttd {
             width: 300px;
             float: right;
-            text-align: center;
+            text-align: left;
         }
 
         .skl-template .foto {
-            width: 120px;
-            height: 160px;
+            width: 100px;
+            height: 120px;
             border: 1px solid #000;
             text-align: center;
             line-height: 160px;
             float: left;
-            margin-top: 20px;
+            margin-left: 400px;
+            margin-top: 50px;
         }
 
         .skl-template .clear {
@@ -203,30 +268,34 @@
         }
 
         @media print {
+            * {
+                margin: 0;
+                padding: 0;
+                visibility: hidden;
+                box-sizing: border-box;
+            }
+
+            .skl-template,
+            .skl-template * {
+                visibility: visible;
+            }
+
             body {
                 margin: 0;
                 padding: 0;
-            }
-
-            .skl-modal,
-            .skl-modal-close,
-            .modal-actions,
-            .page-heading,
-            .search-form,
-            .table-responsive-md {
-                display: none !important;
-            }
-
-            .skl-modal-content {
-                width: 100%;
-                margin: 0;
-                border: none;
-                box-shadow: none;
-                animation: none;
+                background: white;
             }
 
             .skl-template {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
                 margin: 0;
+                padding: 20px;
+                page-break-after: avoid;
+                background: white;
+                visibility: visible;
             }
         }
     </style>
@@ -293,7 +362,7 @@
                                             </span>
                                         </td>
                                         <td>{{ $pd->nama_siswa }}</td>
-                                        <td>{{ $pd->nama_kelas ?? '-' }}</td>
+                                        <td>{{ $pd->kelas ?? '-' }}</td>
                                         <td>{{ $pd->jurusan ?? '-' }}</td>
                                         <td>
                                             <button type="button" class="btn btn-sm btn-success"
@@ -350,13 +419,13 @@
 
             // Show loading
             content.innerHTML = `
-                                                <div class="text-center py-5">
-                                                    <div class="spinner-border text-primary" role="status">
-                                                        <span class="visually-hidden">Loading...</span>
-                                                    </div>
-                                                    <p class="mt-3">Memuat SKL...</p>
-                                                </div>
-                                            `;
+                                                                                                                                                                                                                                        <div class="text-center py-5">
+                                                                                                                                                                                                                                            <div class="spinner-border text-primary" role="status">
+                                                                                                                                                                                                                                                <span class="visually-hidden">Loading...</span>
+                                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                            <p class="mt-3">Memuat SKL...</p>
+                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                    `;
 
             modal.classList.add('show');
 
@@ -374,19 +443,19 @@
                         content.innerHTML = sklHtml;
                     } else {
                         content.innerHTML = `
-                                                            <div class="alert alert-danger">
-                                                                <strong>Error:</strong> ${data.error || 'Gagal memuat SKL'}
-                                                            </div>
-                                                        `;
+                                                                                                                                                                                                                                                    <div class="alert alert-danger">
+                                                                                                                                                                                                                                                        <strong>Error:</strong> ${data.error || 'Gagal memuat SKL'}
+                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                `;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     content.innerHTML = `
-                                                        <div class="alert alert-danger">
-                                                            <strong>Error:</strong> Gagal memuat SKL. Silakan coba lagi.
-                                                        </div>
-                                                    `;
+                                                                                                                                                                                                                                                <div class="alert alert-danger">
+                                                                                                                                                                                                                                                    <strong>Error:</strong> Gagal memuat SKL. Silakan coba lagi.
+                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                            `;
                 });
         }
 
@@ -403,115 +472,154 @@
             const tanggalLahir = data.tgl_lahir || '-';
             const ttl = `${tempatLahir}, ${tanggalLahir}`;
             const orangTua = data.orang_tua || '-';
-            const programKeahlian = data.program_keahlian || data.jurusan || '-';
-            const kompetensiKeahlian = data.kompetensi_keahlian || data.jurusan || '-';
+            const programKeahlian = data.program_keahlian || '-';
+            const konsentrasiKeahlian = data.konsentrasi_keahlian || '-';
             const tahunAjaran = data.tahun_ajaran || '-';
             const kepalaSekolah = data.kepala_sekolah || data.nama_sekolah || '-';
-            const nip = data.nip || '-';
+            const nip = data.nip || '19690601 199203 1 012';
+            const nilaiList = Array.isArray(data.nilai) ? data.nilai : [];
+            const formatNilai = (value) => {
+                const numberValue = Number(value);
+                if (Number.isNaN(numberValue)) {
+                    return '-';
+                }
+                return Number.isInteger(numberValue) ? numberValue.toString() : numberValue.toFixed(2);
+            };
+            const nilaiRows = nilaiList.length
+                ? nilaiList.map((item, index) => {
+                    const nilaiText = formatNilai(item.rata_rata);
+                    return `
+                                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                                <td>${index + 1}</td>
+                                                                                                                                                                                                                                                <td>${item.mapel || '-'}</td>
+                                                                                                                                                                                                                                                <td>${nilaiText}</td>
+                                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                                                                                        `;
+                }).join('')
+                : `
+                                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                                <td>1</td>
+                                                                                                                                                                                                                                                <td>-</td>
+                                                                                                                                                                                                                                                <td>-</td>
+                                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                                                                                        `;
+            const totalNilai = nilaiList.reduce((sum, item) => {
+                const numberValue = Number(item.rata_rata);
+                return sum + (Number.isNaN(numberValue) ? 0 : numberValue);
+            }, 0);
+            const rataRataAll = nilaiList.length ? totalNilai / nilaiList.length : null;
+            const rataRataText = rataRataAll !== null ? formatNilai(rataRataAll) : '-';
 
             return `
-                            <div class="skl-template">
-                                <div class="header">
-                                    <div><strong>PEMERINTAH PROVINSI JAWA TENGAH</strong></div>
-                                    <div><strong>DINAS PENDIDIKAN DAN KEBUDAYAAN</strong></div>
-                                    <div><strong>SMK NEGERI 2 SEMARANG</strong></div>
-                                    <div>Jalan Dr. Cipto Nomor 121-A, Semarang 50124</div>
-                                    <div>Telepon (024) 8455757 | smkn2semarang.sch.id</div>
-                                </div>
+                                                                                                                                                                                                                    <div class="skl-template">
+                                                                                                                                                                                                                        <div class="header">
+                                                                                                                                                                                                                            <img class="header-logo-left" src="https://humas.jatengprov.go.id/foto/1622767670852-Logo%20Provinsi%20Jawa%20Tengah%20(PNG-1080p)%20-%20FileVector69.png" alt="Logo Provinsi Jawa Tengah">
+                                                                                                                                                                                                                            <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png" alt="Logo SMK N 2 Semarang">
+                                                                                                                                                                                                                            <div><strong>PEMERINTAH PROVINSI JAWA TENGAH</strong></div>
+                                                                                                                                                                                                                            <div><strong>DINAS PENDIDIKAN</strong></div>
+                                                                                                                                                                                                                            <div><strong>SMK NEGERI 2 SEMARANG</strong></div>
+                                                                                                                                                                                                                            <div>Jalan Dr. Cipto Nomor 121-A, Semarang 50124</div>
+                                                                                                                                                                                                                            <div>Telepon (024) 8455757 | smkn2semarang.sch.id</div>
+                                                                                                                                                                                                                            <div class="header-line"></div>
+                                                                                                                                                                                                                            <div class="header-line-secondary"></div>
+                                                                                                                                                                                                                        </div>
 
-                                <div class="center title">SURAT KETERANGAN LULUS</div>
-                                <div class="center subtitle">Nomor: ${nomorSurat}</div>
+                                                                                                                                                                                                                        <div class="center title">SURAT KETERANGAN LULUS</div>
+                                                                                                                                                                                                                        <div class="center subtitle">SMK NEGERI 2 SEMARANG</div>
+                                                                                                                                                                                                                        <div class="center subtitle">PROGRAM 3 TAHUN</div>
+                                                                                                                                                                                                                        <div class="center subtitle">TAHUN AJARAN 2025/2026</div>
+                                                                                                                                                                                                                        <table class="header-table">
+                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                <td class="label">Program Keahlian</td>
+                                                                                                                                                                                                                                <td>:</td>
+                                                                                                                                                                                                                                <td class="value">${programKeahlian}</td>
+                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                <td class="label">Konsentrasi Keahlian</td>
+                                                                                                                                                                                                                                <td>:</td>
+                                                                                                                                                                                                                                <td class="value">${konsentrasiKeahlian}</td>
+                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                                                                        </table>
+                                                                                                                                                                                                                        <div class="center subtitle">Nomor: ${nomorSurat}</div>
 
-                                <div class="content">
-                                    Yang bertanda tangan di bawah ini, Kepala SMK Negeri 2 Semarang menerangkan bahwa:
+                                                                                                                                                                                                                        <div class="content">
+                                                                                                                                                                                                                            Yang bertanda tangan di bawah ini, Kepala Sekolah Menengah Kejuruan Negeri 2 Kota Semarang, Provinsi Jawa Tengah menerangkan bahwa:
 
-                                    <table class="table-info">
-                                        <tr>
-                                            <td>Nama</td>
-                                            <td>: ${data.nama || '-'}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tempat, Tanggal Lahir</td>
-                                            <td>: ${ttl}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Nama Orang Tua / Wali</td>
-                                            <td>: ${orangTua}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>NIS</td>
-                                            <td>: ${data.nis || '-'}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>NISN</td>
-                                            <td>: ${data.nisn || '-'}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Program Keahlian</td>
-                                            <td>: ${programKeahlian}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Kompetensi Keahlian</td>
-                                            <td>: ${kompetensiKeahlian}</td>
-                                        </tr>
-                                    </table>
+                                                                                                                                                                                                                            <table class="table-info">
+                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                    <td>Nama</td>
+                                                                                                                                                                                                                                    <td>: ${data.nama || '-'}</td>
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                    <td>Tempat, Tanggal Lahir</td>
+                                                                                                                                                                                                                                    <td>: ${ttl}</td>
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                    <td>Nama Orang Tua / Wali</td>
+                                                                                                                                                                                                                                    <td>: ${orangTua}</td>
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                    <td>NIS</td>
+                                                                                                                                                                                                                                    <td>: ${data.nis || '-'}</td>
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                    <td>NISN</td>
+                                                                                                                                                                                                                                    <td>: ${data.nisn || '-'}</td>
+                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                            </table>
 
-                                    <p>
-                                        Dinyatakan <strong>LULUS</strong> dari SMK Negeri 2 Semarang Tahun Ajaran ${tahunAjaran},
-                                        dengan nilai sebagai berikut:
-                                    </p>
+                                                                                                                                                                                                                            <p>
+                                                                                                                                                                                                                                Dinyatakan <strong>LULUS</strong> dari satuan pendidikan berdasarkan kriteria kelulusan Sekolah Menengah Kejuruan Negeri 2 Kota Semarang Tahun Ajaran 2025/2026, dengan nilai sebagai berikut:
+                                                                                                                                                                                                                                dengan nilai sebagai berikut:
+                                                                                                                                                                                                                            </p>
 
-                                    <table class="nilai-table">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Mata Pelajaran</th>
-                                                <th>Nilai</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>-</td>
-                                                <td>-</td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td colspan="2"><strong>Rata-rata</strong></td>
-                                                <td><strong>-</strong></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                                                                                                                                                                                                                            <table class="nilai-table">
+                                                                                                                                                                                                                                <thead>
+                                                                                                                                                                                                                                    <tr>
+                                                                                                                                                                                                                                        <th>No</th>
+                                                                                                                                                                                                                                        <th>Mata Pelajaran</th>
+                                                                                                                                                                                                                                        <th>Nilai</th>
+                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                </thead>
+                                                                                                                                                                                                                                <tbody>
+                                                                                                                                                                                                                                    ${nilaiRows}
+                                                                                                                                                                                                                                </tbody>
+                                                                                                                                                                                                                                <tfoot>
+                                                                                                                                                                                                                                    <tr>
+                                                                                                                                                                                                                                        <td colspan="2"><strong>Rata-rata</strong></td>
+                                                                                                                                                                                                                                        <td><strong>${rataRataText}</strong></td>
+                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                </tfoot>
+                                                                                                                                                                                                                            </table>
 
-                                    <p>
-                                        Surat Keterangan Lulus ini berlaku sementara sampai dengan diterbitkannya ijazah,
-                                        untuk digunakan sebagaimana mestinya.
-                                    </p>
-                                </div>
+                                                                                                                                                                                                                            <p>
+                                                                                                                                                                                                                                Surat Keterangan Lulus ini berlaku sementara sampai dengan diterbitkannya Ijazah Tahun Ajaran 2025/2026, untuk menjadikan maklum bagi yang berkepentingan.
 
-                                <div class="foto">Foto 3x4</div>
+                                                                                                                                                                                                                            </p>
+                                                                                                                                                                                                                        </div>
 
-                                <div class="footer">
-                                    <div class="ttd">
-                                        Semarang, ${tanggalCetak}<br>
-                                        Kepala Sekolah,<br><br><br><br>
-                                        <strong>${kepalaSekolah}</strong><br>
-                                        NIP. ${nip}
-                                    </div>
-                                </div>
-                                <div class="clear"></div>
+                                                                                                                                                                                                                        <div class="foto">Foto 3x4</div>
 
-                                <div class="modal-actions">
-                                    <button class="btn-print" onclick="printSklModal()">
-                                        <i class="fa fa-print"></i> Cetak / Print
-                                    </button>
-                                    <button class="btn-close-modal" onclick="closeSklModal()">
-                                        <i class="fa fa-times"></i> Tutup
-                                    </button>
-                                </div>
-                            </div>
-                        `;
+                                                                                                                                                                                                                        <div class="footer">
+                                                                                                                                                                                                                            <div class="ttd">
+                                                                                                                                                                                                                                Semarang, ${tanggalCetak}<br>
+                                                                                                                                                                                                                                Kepala Sekolah,<br><br><br><br>
+                                                                                                                                                                                                                                <strong>Nana Mulyana, S.P., M.Si.</strong><br>
+                                                                                                                                                                                                                                NIP. ${nip}
+                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                        <div class="clear"></div>
+
+                                                                                                                                                                                                                        <div class="modal-actions">
+                                                                                                                                                                                                                            <button class="btn-print" onclick="printSklModal()">
+                                                                                                                                                                                                                                <i class="fa fa-print"></i> Cetak / Print
+                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                            <button class="btn-close-modal" onclick="closeSklModal()">
+                                                                                                                                                                                                                                <i class="fa fa-times"></i> Tutup
+                                                                                                                                                                                                                            </button>
+                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                `;
         }
 
         function closeSklModal() {
