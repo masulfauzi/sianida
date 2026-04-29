@@ -4,6 +4,7 @@ use App\Http\Controllers\AktivasiController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SnbpController;
+use App\Http\Controllers\SupportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +28,12 @@ Route::get('/aktivasi/radius', [AktivasiController::class, 'radius'])->name('akt
 Route::post('/registrasi', [AktivasiController::class, 'registrasi'])->name('registrasi')->middleware(['guest']);
 Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemail')->middleware(['guest']);
 Route::get('/skanida-mobile/kebijakan-privasi', [AktivasiController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi')->middleware(['guest']);
+
+// Support & Bantuan Routes
+Route::get('/support', [SupportController::class, 'index'])->name('support.index');
+Route::get('/support/faq', [SupportController::class, 'faq'])->name('support.faq');
+Route::get('/support/contact', [SupportController::class, 'contact'])->name('support.contact');
+Route::post('/support/send-message', [SupportController::class, 'sendMessage'])->name('support.send-message');
 
 Route::get('/app-ads.txt', function () {
     return response()->file(base_path('app-ads.txt'), ['Content-Type' => 'text/plain']);
