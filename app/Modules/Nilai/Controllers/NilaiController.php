@@ -667,17 +667,18 @@ class NilaiController extends Controller
     {
         try {
             $pesertaDidik = Pesertadidik::with(['siswa', 'kelas', 'kelas.jurusan'])->findOrFail($id);
-            $nilaiMapel   = Nilai::select('nilai.id_mapel', 'm.mapel', DB::raw('AVG(nilai.nilai) as rata_rata'))
+            $nilaiMapel   = Nilai::select('nilai.id_mapel', 'm.mapel', 'm.is_kejuruan', DB::raw('AVG(nilai.nilai) as rata_rata'))
                 ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
                 ->where('nilai.id_siswa', $pesertaDidik->id_siswa)
-                ->groupBy('nilai.id_mapel', 'm.mapel', 'm.urutan')
+                ->groupBy('nilai.id_mapel', 'm.mapel', 'm.urutan', 'm.is_kejuruan')
                 ->orderBy('m.urutan')
                 ->get()
                 ->map(function ($item) {
                     return [
-                        'id_mapel'  => $item->id_mapel,
-                        'mapel'     => $item->mapel,
-                        'rata_rata' => $item->rata_rata !== null ? round($item->rata_rata, 2) : null,
+                        'id_mapel'    => $item->id_mapel,
+                        'mapel'       => $item->mapel,
+                        'rata_rata'   => $item->rata_rata !== null ? round($item->rata_rata, 2) : null,
+                        'is_kejuruan' => $item->is_kejuruan,
                     ];
                 })
                 ->values();
@@ -686,13 +687,17 @@ class NilaiController extends Controller
                 'success' => true,
                 'data'    => [
                     'id'                   => $pesertaDidik->id,
-                    'nama'                 => $pesertaDidik->siswa->nama_siswa,
+                    'satuan_pendidikan'    => 'SMK Negeri 2 Semarang',
+                    'npsn'                 => '20328970',
+                    'nama_lengkap'         => $pesertaDidik->siswa->nama_siswa,
                     'tempat_lahir'         => $pesertaDidik->siswa->tempat_lahir ?? null,
                     'tgl_lahir'            => $pesertaDidik->siswa->tgl_lahir
                         ? Format::tanggal($pesertaDidik->siswa->tgl_lahir)
                         : null,
                     'nisn'                 => $pesertaDidik->siswa->nisn ?? '-',
                     'nis'                  => $pesertaDidik->siswa->nis ?? '-',
+                    'tanggal_kelulusan'    => '4 Mei 2026',
+                    'kurikulum'            => 'Kurikulum Merdeka',
                     'kelas'                => $pesertaDidik->kelas->nama_kelas,
                     'jurusan'              => $pesertaDidik->kelas->jurusan ?? '-',
                     'program_keahlian'     => $pesertaDidik->kelas->jurusan->jurusan ?? '-',
