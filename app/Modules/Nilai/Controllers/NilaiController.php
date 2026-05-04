@@ -707,6 +707,7 @@ class NilaiController extends Controller
                     'tanggal_lulus'        => now()->format('d-m-Y'),
                     'nama_sekolah'         => env('APP_NAME', 'SMK Negeri 2 Semarang'),
                     'alamat_sekolah'       => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
+                    'no_skl'               => $pesertaDidik->siswa->no_skl ?? '-',
                 ],
             ]);
         } catch (\Exception $e) {
