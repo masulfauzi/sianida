@@ -80,12 +80,16 @@
                     <br>
                     <br>
                     <br>
+                    <br>
+                    <br>
                     Nana Mulyana, S.P., M.Si.
                     <br>
                     NIP. 19690601 199203 1 012
                     <br>
                     <br>
                     Orang Tua/Wali
+                    <br>
+                    <br>
                     <br>
                     <br>
                     <br>
