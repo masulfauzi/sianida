@@ -70,43 +70,19 @@
                 <td class="bold">Tanda Tangan Kepala Sekolah, Stempel Sekolah, dan Tanda Tangan Orang Tua/Wali</td>
             </tr>
             <tr>
-                <td class="center">6 Mei 2025</td>
+                <td class="center">5 Mei 2026</td>
                 <td class="center">{{ $item->kelas }}</td>
                 <td class="center">LULUS</td>
                 <td>
-                    Semarang, 6 Mei 2025
+                    Semarang, 5 Mei 2026
                     <br>
                     Kepala Sekolah
                     <br>
                     <br>
                     <br>
-                    Sri Suwarno, S.Pd., M.Pd.
+                    Nana Mulyana, S.P., M.Si.
                     <br>
-                    NIP. 19700611 199702 1 003
-                    <br>
-                    <br>
-                    Orang Tua/Wali
-                    <br>
-                    <br>
-                    <br>
-                </td>
-            </tr>
-            <tr>
-                <td>
-
-                </td>
-                <td></td>
-                <td></td>
-                <td>
-                    .........., ........................................
-                    <br>
-                    Kepala Sekolah,
-                    <br>
-                    <br>
-                    <br>
-
-                    <br>
-                    NIP.
+                    NIP. 19690601 199203 1 012
                     <br>
                     <br>
                     Orang Tua/Wali
@@ -163,6 +139,7 @@
                     <br>
                 </td>
             </tr>
+
         </table>
         <div class="page_break"></div>
     @endforeach
