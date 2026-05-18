@@ -10,6 +10,7 @@
     <style>
         body {
             font-family: 'Trebuchet MS', sans-serif;
+            font-size: 11pt;
         }
 
         .center {
