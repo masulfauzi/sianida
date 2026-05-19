@@ -15,11 +15,14 @@ use App\Modules\Tingkat\Models\Tingkat;
 use App\Http\Controllers\Controller;
 use App\Modules\SoalSemester\Models\SoalSemester;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class UjianSemesterController extends Controller
 {
@@ -306,6 +309,175 @@ class UjianSemesterController extends Controller
 		$text = 'menghapus ' . $this->title;//.' '.$ujiansemester->what;
 		$this->log($request, $text, ['ujiansemester.id' => $ujiansemester->id]);
 		return back()->with('message_success', 'Ujian Semester berhasil dihapus!');
+	}
+
+	public function import(Request $request)
+	{
+		try {
+			// Validate request
+			$request->validate([
+				'file' => 'required|file|mimes:xlsx,xls',
+				'id_ujiansemester' => 'required|uuid'
+			]);
+
+			$idUjian = $request->get('id_ujiansemester');
+
+			// Verify ujian exists and user has access
+			$ujian = UjianSemester::find($idUjian);
+			if (!$ujian) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Ujian semester tidak ditemukan.'
+				], 404);
+			}
+
+			// Verify authorization (user is the owner or admin)
+			$isAdmin = in_array(session('active_role')['id'], [
+				'bf1548f3-295c-4d73-809d-66ab7c240091',
+				'1fe8326c-22c4-4732-9c12-f7b83a16b842'
+			]);
+			if (!$isAdmin && $ujian->id_guru !== session('id_guru')) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Anda tidak memiliki akses untuk mengimport soal ujian ini.'
+				], 403);
+			}
+
+			// Load Excel file
+			$file = $request->file('file');
+			$spreadsheet = IOFactory::load($file);
+			$worksheet = $spreadsheet->getActiveSheet();
+
+			// Get all rows
+			$rows = $worksheet->toArray();
+			if (count($rows) < 2) {
+				return response()->json([
+					'success' => false,
+					'message' => 'File Excel kosong atau hanya memiliki header.'
+				]);
+			}
+
+			// Prepare data
+			$soalData = [];
+			$errors = [];
+			$startRow = 2; // Start from row 2 (row 1 is header)
+
+			DB::beginTransaction();
+
+			foreach ($rows as $index => $row) {
+				$rowNumber = $index + 1;
+				if ($rowNumber < $startRow) continue;
+				if (empty($row[0])) continue; // Skip empty rows
+
+				// Column mapping: A=0, B=1, C=2, ... P=15
+				$noSoal = trim($row[0] ?? '');
+				$soal = trim($row[1] ?? '');
+				$opsiA = trim($row[2] ?? '');
+				$opsiB = trim($row[3] ?? '');
+				$opsiC = trim($row[4] ?? '');
+				$opsiD = trim($row[5] ?? '');
+				$opsiE = trim($row[6] ?? '');
+				$kunci = strtoupper(trim($row[7] ?? ''));
+				// Skip column I (index 8) - not used
+				$gambar = trim($row[9] ?? '');
+				// Skip column K (index 10) - not used
+				$gambarA = trim($row[11] ?? '');
+				$gambarB = trim($row[12] ?? '');
+				$gambarC = trim($row[13] ?? '');
+				$gambarD = trim($row[14] ?? '');
+				$gambarE = trim($row[15] ?? '');
+
+				// Validation
+				if (empty($noSoal)) {
+					$errors[] = "Baris $rowNumber: No soal tidak boleh kosong.";
+					continue;
+				}
+
+				if (empty($soal)) {
+					$errors[] = "Baris $rowNumber: Soal tidak boleh kosong.";
+					continue;
+				}
+
+				if (!in_array($kunci, ['A', 'B', 'C', 'D', 'E'])) {
+					$errors[] = "Baris $rowNumber: Kunci harus A, B, C, D, atau E (ditemukan: $kunci).";
+					continue;
+				}
+
+				// Prepare data for insert
+				$soalData[] = [
+					'id' => Str::uuid(),
+					'id_ujiansemester' => $idUjian,
+					'no_soal' => $noSoal,
+					'soal' => $soal,
+					'opsi_a' => $opsiA,
+					'opsi_b' => $opsiB,
+					'opsi_c' => $opsiC,
+					'opsi_d' => $opsiD,
+					'opsi_e' => $opsiE,
+					'kunci' => $kunci,
+					'gambar' => $gambar ? $gambar : null,
+					'gambar_a' => $gambarA ? $gambarA : null,
+					'gambar_b' => $gambarB ? $gambarB : null,
+					'gambar_c' => $gambarC ? $gambarC : null,
+					'gambar_d' => $gambarD ? $gambarD : null,
+					'gambar_e' => $gambarE ? $gambarE : null,
+					'created_by' => Auth::id(),
+					'created_at' => now(),
+					'updated_at' => now()
+				];
+			}
+
+			// If there are errors, rollback and return
+			if (!empty($errors)) {
+				DB::rollBack();
+				return response()->json([
+					'success' => false,
+					'message' => 'Data tidak valid:<br>' . implode('<br>', array_slice($errors, 0, 10)),
+					'errors' => $errors
+				]);
+			}
+
+			// If no valid data, return error
+			if (empty($soalData)) {
+				DB::rollBack();
+				return response()->json([
+					'success' => false,
+					'message' => 'Tidak ada data soal yang valid untuk diimport.'
+				]);
+			}
+
+			// Delete existing soal for this ujian before import
+			SoalSemester::where('id_ujiansemester', $idUjian)->delete();
+
+			// Bulk insert in chunks for better performance
+			$chunks = array_chunk($soalData, 100);
+			$totalInserted = 0;
+
+			foreach ($chunks as $chunk) {
+				SoalSemester::insert($chunk);
+				$totalInserted += count($chunk);
+			}
+
+			DB::commit();
+
+			$this->log($request, 'mengimport soal ujian semester', ['ujiansemester.id' => $idUjian, 'total_soal' => $totalInserted]);
+
+			return response()->json([
+				'success' => true,
+				'message' => "Import berhasil! Soal lama dihapus dan $totalInserted soal baru telah ditambahkan.",
+				'count' => $totalInserted
+			]);
+
+		} catch (\Exception $e) {
+			if (DB::transactionLevel() > 0) {
+				DB::rollBack();
+			}
+
+			return response()->json([
+				'success' => false,
+				'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+			], 500);
+		}
 	}
 
 }
