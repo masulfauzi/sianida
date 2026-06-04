@@ -8,6 +8,11 @@ Route::controller(NilaiController::class)->middleware(['web', 'auth'])->name('ni
     Route::get('/nilai/skl', 'skl')->name('skl.index');
     Route::get('/nilai/skl/{id}/detail', 'sklDetail')->name('skl.show');
 
+    // Transkrip Routes
+    Route::get('/nilai/transkrip', 'transkrip')->name('transkrip.index');
+    Route::get('/nilai/transkrip/{id}/detail', 'transkripDetail')->name('transkrip.show');
+    Route::get('/nilai/transkrip/kelas/{idKelas}/siswa', 'transkripSiswaKelas')->name('transkrip.siswa.show');
+
     // custom role
     Route::get('/nilai/personal', 'index_siswa')->name('siswa.index');
     Route::get('/verif_nilai', 'verif_nilai')->name('verif_nilai.index');

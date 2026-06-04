@@ -714,4 +714,134 @@ class NilaiController extends Controller
             return response()->json(['error' => 'SKL tidak ditemukan'], 404);
         }
     }
+
+    /**
+     * Menampilkan halaman Transkrip Nilai
+     */
+    public function transkrip(Request $request)
+    {
+        // Get search input
+        $search = $request->input('search', '');
+
+        if ($search) {
+            // Jika ada pencarian, tampilkan data siswa dengan pagination
+            $pesertaDidik = Siswa::select(
+                'siswa.id',
+                'siswa.nama_siswa',
+                'siswa.nisn',
+                'siswa.nis',
+                'pesertadidik.id as peserta_id',
+                'kelas.kelas',
+                'jurusan.jurusan'
+            )
+                ->join('pesertadidik', function ($join) {
+                    $join->on('pesertadidik.id_siswa', '=', 'siswa.id')
+                        ->where('pesertadidik.id_semester', session('active_semester')['id']);
+                })
+                ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
+                ->join('jurusan', 'kelas.id_jurusan', '=', 'jurusan.id')
+                ->where('siswa.nama_siswa', 'LIKE', '%' . $search . '%')
+                ->orderBy('siswa.nama_siswa', 'ASC')
+                ->paginate(15);
+        } else {
+            // Jika tidak ada pencarian, tampilkan daftar kelas tingkat XII tanpa pagination
+            $pesertaDidik = Kelas::select('kelas.*')
+                ->join('tingkat as t', 'kelas.id_tingkat', '=', 't.id')
+                ->where('t.tingkat', 'XII')
+                ->orderBy('kelas.kelas', 'ASC')
+                ->get();
+        }
+
+        $data = [
+            'pesertaDidik' => $pesertaDidik,
+            'search'       => $search,
+            'title'        => 'Transkrip Nilai',
+        ];
+
+        $this->log($request, 'melihat halaman ' . $data['title']);
+        return view('Nilai::transkrip', $data);
+    }
+
+    /**
+     * Mendapatkan daftar siswa dari kelas tertentu
+     */
+    public function transkripSiswaKelas($idKelas)
+    {
+        try {
+            $siswa = Pesertadidik::select(
+                'pesertadidik.id as peserta_id',
+                's.id as siswa_id',
+                's.nama_siswa',
+                's.nisn',
+                's.nis'
+            )
+                ->join('siswa as s', 'pesertadidik.id_siswa', '=', 's.id')
+                ->where('pesertadidik.id_kelas', $idKelas)
+                ->where('pesertadidik.id_semester', session('active_semester')['id'])
+                ->orderBy('s.nama_siswa', 'ASC')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data'    => $siswa,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Gagal memuat data siswa'], 404);
+        }
+    }
+
+    /**
+     * Mendapatkan detail Transkrip untuk ditampilkan di modal
+     */
+    public function transkripDetail($id)
+    {
+        try {
+            $pesertaDidik = Pesertadidik::with(['siswa', 'kelas', 'kelas.jurusan'])->findOrFail($id);
+            $nilaiMapel   = Nilai::select('nilai.id_mapel', 'm.mapel', 'm.is_kejuruan', DB::raw('AVG(nilai.nilai) as rata_rata'))
+                ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
+                ->where('nilai.id_siswa', $pesertaDidik->id_siswa)
+                ->groupBy('nilai.id_mapel', 'm.mapel', 'm.urutan', 'm.is_kejuruan')
+                ->orderBy('m.urutan')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'id_mapel'    => $item->id_mapel,
+                        'mapel'       => $item->mapel,
+                        'rata_rata'   => $item->rata_rata !== null ? round($item->rata_rata, 2) : null,
+                        'is_kejuruan' => $item->is_kejuruan,
+                    ];
+                })
+                ->values();
+
+            return response()->json([
+                'success' => true,
+                'data'    => [
+                    'id'                   => $pesertaDidik->id,
+                    'satuan_pendidikan'    => 'SMK Negeri 2 Semarang',
+                    'npsn'                 => '20328970',
+                    'nama_lengkap'         => $pesertaDidik->siswa->nama_siswa,
+                    'tempat_lahir'         => $pesertaDidik->siswa->tempat_lahir ?? null,
+                    'tgl_lahir'            => $pesertaDidik->siswa->tgl_lahir
+                        ? Format::tanggal($pesertaDidik->siswa->tgl_lahir)
+                        : null,
+                    'nisn'                 => $pesertaDidik->siswa->nisn ?? '-',
+                    'nis'                  => $pesertaDidik->siswa->nis ?? '-',
+                    'tanggal_kelulusan'    => '4 Mei 2026',
+                    'kurikulum'            => 'Kurikulum Merdeka',
+                    'kelas'                => $pesertaDidik->kelas->nama_kelas,
+                    'jurusan'              => $pesertaDidik->kelas->jurusan ?? '-',
+                    'program_keahlian'     => $pesertaDidik->kelas->jurusan->jurusan ?? '-',
+                    'konsentrasi_keahlian' => $pesertaDidik->kelas->konsentrasi_keahlian ?? '-',
+                    'nilai'                => $nilaiMapel,
+                    'orang_tua'            => $pesertaDidik->siswa->nama_ayah ?? '-',
+                    'tanggal_lulus'        => now()->format('d-m-Y'),
+                    'nama_sekolah'         => env('APP_NAME', 'SMK Negeri 2 Semarang'),
+                    'alamat_sekolah'       => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
+                    'no_skl'               => $pesertaDidik->siswa->no_skl ?? '-',
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Transkrip tidak ditemukan'], 404);
+        }
+    }
 }
