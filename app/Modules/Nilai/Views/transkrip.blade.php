@@ -637,18 +637,18 @@
                         });
                     }
 
-                    if (nilaiMulok.length > 0) {
-                        html += `<tr class="group-header"><td colspan="3">Muatan Lokal</td></tr>`;
-                        nilaiMulok.forEach((item) => {
+                    if (nilaiPilihan.length > 0) {
+                        html += `<tr class="group-header"><td colspan="3">Mata Pelajaran Pilihan</td></tr>`;
+                        nilaiPilihan.forEach((item) => {
                             const nilaiText = formatNilai(item.rata_rata);
                             html += `<tr><td>${noCounter}</td><td>${item.mapel || '-'}</td><td>${nilaiText}</td></tr>`;
                             noCounter++;
                         });
                     }
 
-                    if (nilaiPilihan.length > 0) {
-                        html += `<tr class="group-header"><td colspan="3">Mata Pelajaran Pilihan</td></tr>`;
-                        nilaiPilihan.forEach((item) => {
+                    if (nilaiMulok.length > 0) {
+                        html += `<tr class="group-header"><td colspan="3">Muatan Lokal</td></tr>`;
+                        nilaiMulok.forEach((item) => {
                             const nilaiText = formatNilai(item.rata_rata);
                             html += `<tr><td>${noCounter}</td><td>${item.mapel || '-'}</td><td>${nilaiText}</td></tr>`;
                             noCounter++;
