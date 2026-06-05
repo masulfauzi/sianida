@@ -280,6 +280,11 @@
         }
 
         @media print {
+            @page {
+                size: A4;
+                margin: 10mm 10mm 10mm 10mm;
+            }
+
             * {
                 margin: 0;
                 padding: 0;
@@ -304,15 +309,82 @@
             }
 
             .transkrip-template {
-                position: absolute;
-                left: 0;
-                top: 0;
+                position: relative;
                 width: 100%;
                 margin: 0;
-                padding: 20px;
+                padding: 0;
                 page-break-after: avoid;
                 background: white;
                 visibility: visible;
+                font-size: 13px;
+                line-height: 1.1;
+            }
+
+            .transkrip-template .header {
+                padding-left: 60px;
+                padding-right: 60px;
+            }
+
+            .transkrip-template .header-logo-left {
+                width: 70px;
+            }
+
+            .transkrip-template .header-logo {
+                width: 70px;
+            }
+
+            .transkrip-template .header-line {
+                margin: 3px -60px 3px -60px;
+                width: calc(100% + 120px);
+            }
+
+            .transkrip-template .header-line-secondary {
+                margin: -3px -60px 5px -60px;
+                width: calc(100% + 120px);
+            }
+
+            .transkrip-template .subtitle {
+                font-size: 14px;
+                margin: 2px 0;
+            }
+
+            .transkrip-template .table-info {
+                margin-top: 8px;
+                font-size: 12px;
+            }
+
+            .transkrip-template .table-info td {
+                padding: 1px 2px;
+            }
+
+            .transkrip-template .nilai-table {
+                margin-top: 10px;
+                font-size: 12px;
+            }
+
+            .transkrip-template .nilai-table th,
+            .transkrip-template .nilai-table td {
+                padding: 2px 2px;
+                border: 0.5px solid #000;
+            }
+
+            .transkrip-template .footer {
+                margin-top: 15px;
+            }
+
+            .transkrip-template .ttd {
+                width: 250px;
+                font-size: 11px;
+                line-height: 1;
+            }
+
+            .transkrip-template .content {
+                margin-top: 8px;
+            }
+
+            .transkrip-template .content p {
+                margin: 5px 0;
+                font-size: 12px;
             }
         }
     </style>
