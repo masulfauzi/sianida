@@ -612,9 +612,10 @@
             };
             const nilaiRows = nilaiList.length
                 ? (() => {
-                    const nilaiUmum = nilaiList.filter(item => (!item.is_kejuruan || item.is_kejuruan === 0 || item.is_kejuruan === '0') && (!item.is_mulok || item.is_mulok === 0 || item.is_mulok === '0'));
+                    const nilaiUmum = nilaiList.filter(item => (!item.is_kejuruan || item.is_kejuruan === 0 || item.is_kejuruan === '0') && (!item.is_mulok || item.is_mulok === 0 || item.is_mulok === '0') && (!item.is_pilihan || item.is_pilihan === 0 || item.is_pilihan === '0'));
                     const nilaiKejuruan = nilaiList.filter(item => item.is_kejuruan === 1 || item.is_kejuruan === '1');
                     const nilaiMulok = nilaiList.filter(item => item.is_mulok === 1 || item.is_mulok === '1');
+                    const nilaiPilihan = nilaiList.filter(item => item.is_pilihan === 1 || item.is_pilihan === '1');
                     let html = '';
                     let noCounter = 1;
 
@@ -639,6 +640,15 @@
                     if (nilaiMulok.length > 0) {
                         html += `<tr class="group-header"><td colspan="3">Muatan Lokal</td></tr>`;
                         nilaiMulok.forEach((item) => {
+                            const nilaiText = formatNilai(item.rata_rata);
+                            html += `<tr><td>${noCounter}</td><td>${item.mapel || '-'}</td><td>${nilaiText}</td></tr>`;
+                            noCounter++;
+                        });
+                    }
+
+                    if (nilaiPilihan.length > 0) {
+                        html += `<tr class="group-header"><td colspan="3">Mata Pelajaran Pilihan</td></tr>`;
+                        nilaiPilihan.forEach((item) => {
                             const nilaiText = formatNilai(item.rata_rata);
                             html += `<tr><td>${noCounter}</td><td>${item.mapel || '-'}</td><td>${nilaiText}</td></tr>`;
                             noCounter++;

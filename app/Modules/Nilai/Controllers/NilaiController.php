@@ -797,10 +797,10 @@ class NilaiController extends Controller
     {
         try {
             $pesertaDidik = Pesertadidik::with(['siswa', 'kelas', 'kelas.jurusan'])->findOrFail($id);
-            $nilaiMapel   = Nilai::select('nilai.id_mapel', 'm.mapel', 'm.is_kejuruan', 'm.is_mulok', DB::raw('AVG(nilai.nilai) as rata_rata'))
+            $nilaiMapel   = Nilai::select('nilai.id_mapel', 'm.mapel', 'm.is_kejuruan', 'm.is_mulok', 'm.is_pilihan', DB::raw('AVG(nilai.nilai) as rata_rata'))
                 ->join('mapel as m', 'nilai.id_mapel', '=', 'm.id')
                 ->where('nilai.id_siswa', $pesertaDidik->id_siswa)
-                ->groupBy('nilai.id_mapel', 'm.mapel', 'm.urutan', 'm.is_kejuruan', 'm.is_mulok')
+                ->groupBy('nilai.id_mapel', 'm.mapel', 'm.urutan', 'm.is_kejuruan', 'm.is_mulok', 'm.is_pilihan')
                 ->orderBy('m.urutan')
                 ->get()
                 ->map(function ($item) {
@@ -810,6 +810,7 @@ class NilaiController extends Controller
                         'rata_rata'   => $item->rata_rata !== null ? round($item->rata_rata, 2) : null,
                         'is_kejuruan' => $item->is_kejuruan,
                         'is_mulok'    => $item->is_mulok,
+                        'is_pilihan'  => $item->is_pilihan,
                     ];
                 })
                 ->values();
