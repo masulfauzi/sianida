@@ -344,13 +344,13 @@
             }
 
             .transkrip-template .subtitle {
-                font-size: 14px;
+                font-size: 16px;
                 margin: 2px 0;
             }
 
             .transkrip-template .table-info {
                 margin-top: 8px;
-                font-size: 12px;
+                font-size: 14px;
             }
 
             .transkrip-template .table-info td {
@@ -359,7 +359,7 @@
 
             .transkrip-template .nilai-table {
                 margin-top: 10px;
-                font-size: 12px;
+                font-size: 14px;
             }
 
             .transkrip-template .nilai-table th,
@@ -384,7 +384,7 @@
 
             .transkrip-template .content p {
                 margin: 5px 0;
-                font-size: 12px;
+                font-size: 14px;
             }
         }
     </style>
