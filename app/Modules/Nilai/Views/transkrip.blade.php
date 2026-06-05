@@ -350,7 +350,7 @@
 
             .transkrip-template .table-info {
                 margin-top: 8px;
-                font-size: 14px;
+                font-size: 16px;
             }
 
             .transkrip-template .table-info td {
@@ -359,7 +359,7 @@
 
             .transkrip-template .nilai-table {
                 margin-top: 10px;
-                font-size: 14px;
+                font-size: 16px;
             }
 
             .transkrip-template .nilai-table th,
@@ -384,7 +384,7 @@
 
             .transkrip-template .content p {
                 margin: 5px 0;
-                font-size: 14px;
+                font-size: 16px;
             }
         }
     </style>
@@ -656,12 +656,12 @@
                     <div class="header">
                         <img class="header-logo-left" src="https://humas.jatengprov.go.id/foto/1622767670852-Logo%20Provinsi%20Jawa%20Tengah%20(PNG-1080p)%20-%20FileVector69.png" alt="Logo Provinsi Jawa Tengah">
                         <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png" alt="Logo SMK N 2 Semarang">
-                        <div style="font-size: 21px; margin: 2px 0px; line-height: 0.9;">PEMERINTAH PROVINSI JAWA TENGAH</div>
-                        <div style="font-size: 26px; margin: 2px 0px; line-height: 0.9; font-weight: bold;">DINAS PENDIDIKAN</div>
-                        <div style="font-size: 26px; margin: 2px 0px; line-height: 0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
-                        <div style="font-size: 15px; margin: 2px 0px; line-height: 0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
-                        <div style="font-size: 15px; margin: 2px 0px; line-height: 0.8;">Telepon 024-8455757, Fakssimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
-                        <div style="font-size: 15px; margin: 2px 0px; line-height: 0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
+                        <div style="font-size: 20px; margin: 2px 0px; line-height: 0.9;">PEMERINTAH PROVINSI JAWA TENGAH</div>
+                        <div style="font-size: 25px; margin: 2px 0px; line-height: 0.9; font-weight: bold;">DINAS PENDIDIKAN</div>
+                        <div style="font-size: 25px; margin: 2px 0px; line-height: 0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
+                        <div style="font-size: 14px; margin: 2px 0px; line-height: 0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
+                        <div style="font-size: 14px; margin: 2px 0px; line-height: 0.8;">Telepon 024-8455757, Fakssimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
+                        <div style="font-size: 14px; margin: 2px 0px; line-height: 0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
                         <div class="header-line"></div>
                         <div class="header-line-secondary"></div>
                     </div>
@@ -743,7 +743,7 @@
                     <div class="footer">
                         <div class="ttd">
                             Semarang, ${tanggalCetak}<br>
-                            Kepala Sekolah,<br><br><br><br>
+                            Kepala Sekolah,<br><br><br><br><br><br><br><br>
                             <strong>Nana Mulyana, S.P., M.Si.</strong><br>
                             NIP. ${nip}
                         </div>
