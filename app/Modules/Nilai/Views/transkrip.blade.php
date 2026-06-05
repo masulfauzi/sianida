@@ -374,7 +374,7 @@
 
             .transkrip-template .ttd {
                 width: 250px;
-                font-size: 13px;
+                font-size: 15px;
                 line-height: 1;
             }
 
@@ -743,7 +743,7 @@
                     <div class="footer">
                         <div class="ttd">
                             Semarang, ${tanggalCetak}<br>
-                            Kepala Sekolah,<br><br><br><br><br><br><br><br>
+                            Kepala Sekolah,<br><br><br><br><br><br><br>
                             <strong>Nana Mulyana, S.P., M.Si.</strong><br>
                             NIP. ${nip}
                         </div>
