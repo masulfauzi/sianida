@@ -181,7 +181,7 @@
             background-color: #f0f0f0;
             font-weight: bold;
             text-align: left !important;
-            padding: 8px 4px;
+            padding: 4px 4px;
             border: 1px solid #000;
         }
 
@@ -763,7 +763,7 @@
                     <div class="footer">
                         <div class="ttd">
                             Semarang, ${tanggalCetak}<br>
-                            Kepala Sekolah,<br><br><br><br><br><br><br>
+                            Kepala Sekolah,<br><br><br><br><br><br>
                             <strong>Nana Mulyana, S.P., M.Si.</strong><br>
                             NIP. ${nip}
                         </div>
