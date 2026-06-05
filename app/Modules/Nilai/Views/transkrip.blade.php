@@ -687,8 +687,7 @@
                     </div>
 
                     <div class="center subtitle">TRANSKRIP NILAI</div>
-                    <div class="center subtitle">SMK NEGERI 2 SEMARANG</div>
-                    <div class="center subtitle">TAHUN AJARAN 2025/2026</div>
+                    <div class="center subtitle">Nomor: 400.3.11.1/..........</div>
                     <table class="header-table">
                     </table>
 
@@ -715,8 +714,12 @@
                                 <td>: ${nisn}</td>
                             </tr>
                             <tr>
-                                <td>Nomor Induk Siswa</td>
+                                <td>Nomor Ijazah</td>
                                 <td>: ${nis}</td>
+                            </tr>
+                            <tr>
+                                <td>Tanggal Kelulusan</td>
+                                <td>: 4 Mei 2026</td>
                             </tr>
                             <tr>
                                 <td>Kurikulum</td>
