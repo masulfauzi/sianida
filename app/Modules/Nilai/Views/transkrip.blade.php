@@ -374,7 +374,7 @@
 
             .transkrip-template .ttd {
                 width: 250px;
-                font-size: 15px;
+                font-size: 16px;
                 line-height: 1;
             }
 
