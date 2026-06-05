@@ -354,7 +354,7 @@
             }
 
             .transkrip-template .table-info td {
-                padding: 1px 2px;
+                padding: 0px 2px;
             }
 
             .transkrip-template .nilai-table {
@@ -364,7 +364,7 @@
 
             .transkrip-template .nilai-table th,
             .transkrip-template .nilai-table td {
-                padding: 2px 2px;
+                padding: 1px 2px;
                 border: 0.5px solid #000;
             }
 
@@ -383,7 +383,7 @@
             }
 
             .transkrip-template .content p {
-                margin: 5px 0;
+                margin: 2px 0;
                 font-size: 16px;
             }
         }
