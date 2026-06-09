@@ -29,40 +29,30 @@ class KirimWa extends Command
      */
     public function handle()
     {
-        $pesan = Pesan::whereStatus(0)->orderBy('created_at', 'asc')->limit(2)->get();
+        $pesan = Pesan::whereStatus(0)->orderBy('created_at', 'asc')->limit(1)->get();
 
         foreach ($pesan as $kirim) {
             $device = Device::orderBy('last_used', 'asc')->first();
 
+            $oneHourAgo = now()->subHour();
+
+            // Cek apakah device perlu break (sudah 10 pesan dalam 1 jam)
+            if ($device->counter >= 10 && $device->last_used > $oneHourAgo) {
+                $this->info("Device #{$device->id} masih dalam periode break. Counter: {$device->counter}");
+                return 0;
+            }
+
+            // Reset counter jika sudah lebih dari 1 jam
+            if ($device->last_used < $oneHourAgo && $device->counter > 0) {
+                $device->counter = 0;
+            }
+
+            // Delay 5-55 detik sebelum mengirim
+            sleep(rand(5, 55));
+
             if ($kirim->id_file != null) {
 
                 $file = FilePesan::find($kirim->id_file);
-
-                // $curl = curl_init();
-
-                // curl_setopt_array($curl, array(
-                //     CURLOPT_URL => 'https://app.saungwa.com/api/create-message',
-                //     CURLOPT_RETURNTRANSFER => true,
-                //     CURLOPT_ENCODING => '',
-                //     CURLOPT_MAXREDIRS => 10,
-                //     CURLOPT_TIMEOUT => 0,
-                //     CURLOPT_FOLLOWLOCATION => true,
-                //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                //     CURLOPT_CUSTOMREQUEST => 'POST',
-                //     CURLOPT_POSTFIELDS => array(
-                //         'appkey' => $device->app_key,
-                //         'authkey' => $device->auth_key,
-                //         'to' => $kirim->nomor,
-                //         'message' => $kirim->isi_pesan,
-                //         'file' => 'https://apps.smkn2semarang.sch.id/file_pesan/' . $file->nama_file,
-                //         'sandbox' => 'false'
-                //     ),
-                // ));
-
-                // $response = json_decode(curl_exec($curl));
-
-                // curl_close($curl);
-                // echo $response;
 
                 $url  = "http://112.78.37.70:3000/api/sendFile";
                 $data = [
@@ -86,8 +76,6 @@ class KirimWa extends Command
                 ]);
                 $response = curl_exec($ch);
                 curl_close($ch);
-
-                echo $response;
             } else {
                 $url  = "http://112.78.37.70:3000/api/sendText";
                 $data = [
@@ -106,33 +94,6 @@ class KirimWa extends Command
                 ]);
                 $response = curl_exec($ch);
                 curl_close($ch);
-
-                echo $response;
-
-                // $curl = curl_init();
-
-                // curl_setopt_array($curl, array(
-                //     CURLOPT_URL => 'https://app.saungwa.com/api/create-message',
-                //     CURLOPT_RETURNTRANSFER => true,
-                //     CURLOPT_ENCODING => '',
-                //     CURLOPT_MAXREDIRS => 10,
-                //     CURLOPT_TIMEOUT => 0,
-                //     CURLOPT_FOLLOWLOCATION => true,
-                //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                //     CURLOPT_CUSTOMREQUEST => 'POST',
-                //     CURLOPT_POSTFIELDS => array(
-                //             'appkey' => $device->app_key,
-                //             'authkey' => $device->auth_key,
-                //             'to' => $kirim->nomor,
-                //             'message' => $kirim->isi_pesan,
-                //             'sandbox' => 'false'
-                //         ),
-                // ));
-
-                // $response = json_decode(curl_exec($curl));
-
-                // curl_close($curl);
-                // dd($response);
             }
 
             $response = json_decode($response);
@@ -147,11 +108,12 @@ class KirimWa extends Command
                 $update->save();
             }
 
-            $update_device            = Device::find($device->id);
-            $update_device->last_used = date('Y-m-d H:i:s');
-            $update_device->save();
+            // Increment counter dan update last_used device
+            $device->counter++;
+            $device->last_used = now();
+            $device->save();
         }
 
-        // $this->info('Hellyeah! ' . $module . ' module was successfully created.');
+        return 0;
     }
 }
