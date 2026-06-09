@@ -496,6 +496,7 @@
             const tanggalLahir = data.tgl_lahir || '-';
             const ttl = `${tempatLahir}, ${tanggalLahir}`;
             const nisn = data.nisn || '-';
+            const no_ijazah = data.no_ijazah || '-';
             const tanggalKelulusan = data.tanggal_kelulusan || '4 Mei 2026';
             const kurikulum = data.kurikulum || 'Kurikulum Merdeka';
             const orangTua = capitalizeWords(data.orang_tua || '-');

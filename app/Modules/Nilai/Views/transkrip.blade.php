@@ -597,6 +597,7 @@
             const ttl = `${tempatLahir}, ${tanggalLahir}`;
             const nisn = data.nisn || '-';
             const nis = data.nis || '-';
+            const no_ijazah = data.no_ijazah || '-';
             const kurikulum = data.kurikulum || 'Kurikulum Merdeka';
             const orangTua = capitalizeWords(data.orang_tua || '-');
             const programKeahlian = capitalizeWords(data.program_keahlian || '-');
