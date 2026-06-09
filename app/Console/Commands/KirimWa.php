@@ -37,7 +37,7 @@ class KirimWa extends Command
             $oneHourAgo = now()->subHour();
 
             // Cek apakah device perlu break (sudah 10 pesan dalam 1 jam)
-            if ($device->counter >= 10 && $device->last_used > $oneHourAgo) {
+            if ($device->counter >= 11 && $device->last_used > $oneHourAgo) {
                 $this->info("Device #{$device->id} masih dalam periode break. Counter: {$device->counter}");
                 return 0;
             }
