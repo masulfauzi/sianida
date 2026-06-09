@@ -716,7 +716,7 @@
                             </tr>
                             <tr>
                                 <td>Nomor Ijazah</td>
-                                <td>: ${nis}</td>
+                                <td>: ${no_ijazah}</td>
                             </tr>
                             <tr>
                                 <td>Tanggal Kelulusan</td>
