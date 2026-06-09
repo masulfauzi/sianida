@@ -586,6 +586,7 @@
 
             const satuan_pendidikan = data.satuan_pendidikan || 'SMK Negeri 2 Semarang';
             const npsn = data.npsn || '20328970';
+            const noTranskrip = data.no_transkrip || '-';
             const capitalizeWords = (str) => {
                 if (!str || str === '-') return str;
                 return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
@@ -687,7 +688,7 @@
                     </div>
 
                     <div class="center subtitle">TRANSKRIP NILAI</div>
-                    <div class="center subtitle">Nomor: 400.3.11.1/..........</div>
+                    <div class="center subtitle">Nomor: ${noTranskrip}</div>
                     <table class="header-table">
                     </table>
 

@@ -208,7 +208,7 @@ class NilaiController extends Controller
 
         // dd($id_mapel);
 
-        // echo "<pre>";
+        $totalDataProcessed = 0;
 
         for ($i = 1; $i < $jml_baris; $i++) {
             $jml_kolom = count($data[$i]);
@@ -223,44 +223,28 @@ class NilaiController extends Controller
                         ->first();
 
                     if ($cek_nilai) {
-                        $nilai        = Nilai::find($cek_nilai->id);
+                        $nilai = Nilai::find($cek_nilai->id);
                         $nilai->nilai = $data[$i][$j];
-                        try {
-                            $pesertaDidik = Pesertadidik::with(['siswa', 'kelas'])->findOrFail($id);
-
-                            return response()->json([
-                                'success' => true,
-                                'data'    => [
-                                    'id'             => $pesertaDidik->id,
-                                    'nama'           => $pesertaDidik->siswa->nama_siswa,
-                                    'tempat_lahir'   => $pesertaDidik->siswa->tempat_lahir ?? null,
-                                    'tgl_lahir'      => $pesertaDidik->siswa->tgl_lahir
-                                        ? Format::tanggal($pesertaDidik->siswa->tgl_lahir)
-                                        : null,
-                                    'nisn'           => $pesertaDidik->siswa->nisn ?? '-',
-                                    'nis'            => $pesertaDidik->siswa->nis ?? '-',
-                                    'kelas'          => $pesertaDidik->kelas->nama_kelas,
-                                    'jurusan'        => $pesertaDidik->kelas->jurusan ?? '-',
-                                    'tanggal_lulus'  => now()->format('d-m-Y'),
-                                    'nama_sekolah'   => env('APP_NAME', 'SMK Negeri 2 Semarang'),
-                                    'alamat_sekolah' => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
-                                ],
-                            ]);
-                        } catch (\Exception $e) {
-                            return response()->json(['error' => 'SKL tidak ditemukan'], 404);
-                        }
+                        $nilai->updated_by = Auth::id();
+                        $nilai->save();
+                    } else {
+                        $nilai = new Nilai();
+                        $nilai->id_semester = $request->input("id_semester");
+                        $nilai->id_siswa = $siswa->id;
+                        $nilai->id_mapel = $id_mapel[$j];
+                        $nilai->nilai = $data[$i][$j];
+                        $nilai->created_by = Auth::id();
+                        $nilai->save();
                     }
-                    // $nilai->nilai = $request->input("nilai");
 
-                    // $nilai->created_by = Auth::id();
-                    // $nilai->save();
-
-                    $text = 'membuat ' . $this->title; //' baru '.$nilai->what;
-                    $this->log($request, $text, ['nilai.id' => $nilai->id]);
-                    return redirect()->route('nilai.index')->with('message_success', 'Nilai berhasil ditambahkan!');
+                    $totalDataProcessed++;
                 }
             }
         }
+
+        $text = 'mengimport nilai sebanyak ' . $totalDataProcessed . ' data';
+        $this->log($request, $text);
+        return redirect()->route('nilai.index')->with('message_success', 'Nilai berhasil ditambahkan! Total data: ' . $totalDataProcessed);
     }
 
     public function show(Request $request, Nilai $nilai)
@@ -840,6 +824,7 @@ class NilaiController extends Controller
                     'nama_sekolah'         => env('APP_NAME', 'SMK Negeri 2 Semarang'),
                     'alamat_sekolah'       => 'Jl. Majapahit No. 56, Semarang, Jawa Tengah',
                     'no_skl'               => $pesertaDidik->siswa->no_skl ?? '-',
+                    'no_transkrip'         => $pesertaDidik->siswa->no_transkrip ?? '-',
                 ],
             ]);
         } catch (\Exception $e) {
