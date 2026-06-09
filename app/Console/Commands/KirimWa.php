@@ -48,7 +48,7 @@ class KirimWa extends Command
             }
 
             // Delay 5-55 detik sebelum mengirim
-            sleep(rand(5, 55));
+            sleep(rand(5, 115));
 
             if ($kirim->id_file != null) {
 
