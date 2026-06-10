@@ -499,7 +499,7 @@
                                     <th width="5%">No</th>
                                     <th width="30%">Kelas</th>
                                     <th width="20%">Jurusan</th>
-                                    <th width="10%">Aksi</th>
+                                    <th width="20%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -522,6 +522,10 @@
                                                 <button type="button" class="btn btn-sm btn-primary"
                                                     onclick="showSiswaModal('{{ $pd->id }}', '{{ $pd->kelas }}')">
                                                     <i class="fa fa-users"></i> Lihat Siswa
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-success"
+                                                    onclick="bulkPrintKelas('{{ $pd->id }}', '{{ $pd->kelas }}')">
+                                                    <i class="fa fa-print"></i> Cetak Semua
                                                 </button>
                                             @endif
                                         </td>
@@ -743,7 +747,7 @@
                         <div style="font-size: 14px; margin: 0px; line-height: 0.9; font-weight: bold;">DINAS PENDIDIKAN</div>
                         <div style="font-size: 14px; margin: 0px; line-height: 0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
                         <div style="font-size: 8px; margin: 0px; line-height: 0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
-                        <div style="font-size: 8px; margin: 0px; line-height: 0.8;">Telepon 024-8455757, Fakssimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
+                        <div style="font-size: 8px; margin: 0px; line-height: 0.8;">Telepon 024-8455757, Faksimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
                         <div style="font-size: 8px; margin: 0px; line-height: 0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
                         <div class="header-line"></div>
                         <div class="header-line-secondary"></div>
@@ -853,15 +857,8 @@
             modal.classList.remove('show');
         }
 
-        function printTranskripModal() {
-            const template = document.querySelector('#transkripModal .transkrip-template');
-            if (!template) {
-                window.print();
-                return;
-            }
-
-            // CSS standalone untuk dokumen cetak (terisolasi dari layout admin)
-            const printCss = `
+        function getPrintCss() {
+            return `
                 @page { size: A4; margin: 0; }
                 * { box-sizing: border-box; }
                 html, body { margin: 0; padding: 0; }
@@ -918,9 +915,12 @@
                 .transkrip-template .ttd { width: 280px; float: right; text-align: left; line-height: 1.3; }
                 .transkrip-template .clear { clear: both; }
                 .modal-actions { display: none !important; }
+                .page-break { page-break-after: always; }
             `;
+        }
 
-            // Buat iframe tersembunyi berisi hanya transkrip
+        function printViaIframe(htmlContent, title) {
+            const printCss = getPrintCss();
             const iframe = document.createElement('iframe');
             iframe.style.position = 'fixed';
             iframe.style.right = '0';
@@ -933,17 +933,15 @@
             const doc = iframe.contentWindow.document;
             doc.open();
             doc.write(
-                '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Transkrip Nilai</title>' +
+                '<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + title + '</title>' +
                 '<style>' + printCss + '</style></head><body>' +
-                template.outerHTML +
+                htmlContent +
                 '</body></html>'
             );
             doc.close();
 
             const cleanup = () => {
-                if (iframe.parentNode) {
-                    iframe.parentNode.removeChild(iframe);
-                }
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
             };
 
             const doPrint = () => {
@@ -952,7 +950,7 @@
                 setTimeout(cleanup, 1000);
             };
 
-            // Tunggu logo (gambar) selesai dimuat agar tidak terpotong/blank
+            // Tunggu semua gambar selesai dimuat
             const imgs = doc.images;
             if (!imgs || imgs.length === 0) {
                 setTimeout(doPrint, 250);
@@ -961,25 +959,70 @@
 
             let loaded = 0;
             let printed = false;
-            const tryPrint = () => {
-                if (printed) return;
-                printed = true;
-                doPrint();
-            };
-            const onImg = () => {
-                loaded++;
-                if (loaded >= imgs.length) tryPrint();
-            };
+            const tryPrint = () => { if (!printed) { printed = true; doPrint(); } };
+            const onImg = () => { if (++loaded >= imgs.length) tryPrint(); };
             for (let i = 0; i < imgs.length; i++) {
-                if (imgs[i].complete) {
-                    onImg();
-                } else {
+                if (imgs[i].complete) { onImg(); }
+                else {
                     imgs[i].addEventListener('load', onImg);
                     imgs[i].addEventListener('error', onImg);
                 }
             }
-            // Fallback bila gambar lambat/ gagal
             setTimeout(tryPrint, 2500);
+        }
+
+        function printTranskripModal() {
+            const template = document.querySelector('#transkripModal .transkrip-template');
+            if (!template) { window.print(); return; }
+            printViaIframe(template.outerHTML, 'Transkrip Nilai');
+        }
+
+        async function bulkPrintKelas(idKelas, namaKelas) {
+            const btn = event.currentTarget;
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Memuat...';
+
+            try {
+                // 1. Ambil daftar siswa di kelas
+                const res = await fetch(`/nilai/transkrip/kelas/${idKelas}/siswa`);
+                const json = await res.json();
+                if (!json.success || !json.data.length) {
+                    alert('Tidak ada siswa di kelas ini.');
+                    return;
+                }
+
+                // 2. Fetch detail transkrip semua siswa secara paralel
+                const results = await Promise.all(
+                    json.data.map(s =>
+                        fetch(`/nilai/transkrip/${s.peserta_id}/detail`).then(r => r.json())
+                    )
+                );
+
+                // 3. Generate HTML tiap transkrip, pisahkan dengan page-break
+                const pages = results
+                    .filter(r => r.success)
+                    .map((r, i, arr) => {
+                        const html = generateTranskripHtml(r.data);
+                        return i < arr.length - 1
+                            ? html + '<div class="page-break"></div>'
+                            : html;
+                    });
+
+                if (!pages.length) {
+                    alert('Tidak ada data transkrip yang tersedia.');
+                    return;
+                }
+
+                printViaIframe(pages.join(''), 'Transkrip Nilai - ' + namaKelas);
+
+            } catch (e) {
+                console.error(e);
+                alert('Gagal memuat data. Silakan coba lagi.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
         }
 
         window.addEventListener('click', function (event) {
