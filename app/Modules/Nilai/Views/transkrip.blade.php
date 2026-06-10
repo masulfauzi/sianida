@@ -835,6 +835,7 @@
                             Semarang, ${tanggalCetak}<br>
                             Kepala Sekolah,<br><br><br><br>
                             <strong>Nana Mulyana, S.P., M.Si.</strong><br>
+                            Pembina Tk.I, IV/b<br>
                             NIP. ${nip}
                         </div>
                     </div>
