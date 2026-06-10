@@ -94,6 +94,7 @@
             left: 0;
             width: 90px;
             height: auto;
+            margin-top: 3px;
         }
 
         .transkrip-template .header-logo {
@@ -102,6 +103,7 @@
             right: 0;
             width: 85px;
             height: auto;
+            margin-top: 3px;
         }
 
         .transkrip-template .header-line {
@@ -886,10 +888,10 @@
                     line-height: 0.95 !important;
                 }
                 .transkrip-template .header-logo-left {
-                    position: absolute; top: 0; left: 0; width: 60px; height: auto;
+                    position: absolute; top: 0; left: 0; width: 60px; height: auto; margin-top: 3px;
                 }
                 .transkrip-template .header-logo {
-                    position: absolute; top: 0; right: 0; width: 60px; height: auto;
+                    position: absolute; top: 0; right: 0; width: 60px; height: auto; margin-top: 3px;
                 }
                 /* Garis tidak perlu negative margin — header sudah tanpa padding */
                 .transkrip-template .header-line {
