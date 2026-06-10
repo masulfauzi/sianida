@@ -282,7 +282,7 @@
         @media print {
             @page {
                 size: A4;
-                margin: 10mm 10mm 10mm 10mm;
+                margin: 0;
             }
 
             * {
@@ -312,7 +312,7 @@
                 position: relative;
                 width: 100%;
                 margin: 0;
-                padding: 0;
+                padding: 15px;
                 page-break-after: avoid;
                 background: white;
                 visibility: visible;
@@ -321,8 +321,8 @@
             }
 
             .transkrip-template .header {
-                padding-left: 60px;
-                padding-right: 60px;
+                padding-left: 15px;
+                padding-right: 15px;
             }
 
             .transkrip-template .header-logo-left {
@@ -334,13 +334,13 @@
             }
 
             .transkrip-template .header-line {
-                margin: 3px -60px 3px -60px;
-                width: calc(100% + 120px);
+                margin: 3px -15px 3px -15px;
+                width: calc(100% + 30px);
             }
 
             .transkrip-template .header-line-secondary {
-                margin: -3px -60px 5px -60px;
-                width: calc(100% + 120px);
+                margin: -3px -15px 5px -15px;
+                width: calc(100% + 30px);
             }
 
             .transkrip-template .subtitle {
