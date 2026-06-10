@@ -312,79 +312,80 @@
                 position: relative;
                 width: 100%;
                 margin: 0;
-                padding: 0;
+                padding: 10px;
                 page-break-after: avoid;
                 background: white;
                 visibility: visible;
-                font-size: 13px;
-                line-height: 1.1;
+                font-size: 11px;
+                line-height: 1;
             }
 
             .transkrip-template .header {
-                padding-left: 20px;
-                padding-right: 20px;
+                padding-left: 10px;
+                padding-right: 10px;
+                font-size: 10px;
             }
 
             .transkrip-template .header-logo-left {
-                width: 70px;
+                width: 50px;
             }
 
             .transkrip-template .header-logo {
-                width: 70px;
+                width: 50px;
             }
 
             .transkrip-template .header-line {
-                margin: 3px -20px 3px -20px;
-                width: calc(100% + 40px);
+                margin: 2px -10px 2px -10px;
+                width: calc(100% + 20px);
             }
 
             .transkrip-template .header-line-secondary {
-                margin: -3px -20px 5px -20px;
-                width: calc(100% + 40px);
+                margin: -2px -10px 3px -10px;
+                width: calc(100% + 20px);
             }
 
             .transkrip-template .subtitle {
-                font-size: 16px;
-                margin: 2px 0;
+                font-size: 13px;
+                margin: 0px 0 1px 0;
             }
 
             .transkrip-template .table-info {
-                margin-top: 8px;
-                font-size: 16px;
+                margin-top: 3px;
+                font-size: 11px;
             }
 
             .transkrip-template .table-info td {
-                padding: 0px 2px;
+                padding: 1px 2px;
             }
 
             .transkrip-template .nilai-table {
-                margin-top: 10px;
-                font-size: 16px;
+                margin-top: 5px;
+                font-size: 11px;
             }
 
             .transkrip-template .nilai-table th,
             .transkrip-template .nilai-table td {
-                padding: 1px 2px;
+                padding: 1px 1px;
                 border: 0.5px solid #000;
             }
 
             .transkrip-template .footer {
-                margin-top: 15px;
+                margin-top: 5px;
             }
 
             .transkrip-template .ttd {
-                width: 250px;
-                font-size: 16px;
-                line-height: 1;
+                width: 200px;
+                font-size: 10px;
+                line-height: 1.2;
             }
 
             .transkrip-template .content {
-                margin-top: 8px;
+                margin-top: 3px;
             }
 
             .transkrip-template .content p {
-                margin: 2px 0;
-                font-size: 16px;
+                margin: 1px 0;
+                font-size: 11px;
             }
         }
     </style>
@@ -604,6 +605,12 @@
             const konsentrasiKeahlian = capitalizeWords(data.konsentrasi_keahlian || '-');
             const kepalaSekolah = data.kepala_sekolah || data.nama_sekolah || '-';
             const nip = data.nip || '19690601 199203 1 012';
+            const printStyles = `
+                .transkrip-template .header > div {
+                    margin: 0px !important;
+                    line-height: 0.9 !important;
+                }
+            `;
             const nilaiList = Array.isArray(data.nilai) ? data.nilai : [];
             const formatNilai = (value) => {
                 const numberValue = Number(value);
@@ -674,16 +681,17 @@
             const rataRataText = rataRataAll !== null ? formatNilai(rataRataAll) : '-';
 
             return `
+                <style>${printStyles}</style>
                 <div class="transkrip-template">
                     <div class="header">
                         <img class="header-logo-left" src="https://humas.jatengprov.go.id/foto/1622767670852-Logo%20Provinsi%20Jawa%20Tengah%20(PNG-1080p)%20-%20FileVector69.png" alt="Logo Provinsi Jawa Tengah">
                         <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png" alt="Logo SMK N 2 Semarang">
-                        <div style="font-size: 20px; margin: 2px 0px; line-height: 0.9;">PEMERINTAH PROVINSI JAWA TENGAH</div>
-                        <div style="font-size: 25px; margin: 2px 0px; line-height: 0.9; font-weight: bold;">DINAS PENDIDIKAN</div>
-                        <div style="font-size: 25px; margin: 2px 0px; line-height: 0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
-                        <div style="font-size: 14px; margin: 2px 0px; line-height: 0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
-                        <div style="font-size: 14px; margin: 2px 0px; line-height: 0.8;">Telepon 024-8455757, Fakssimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
-                        <div style="font-size: 14px; margin: 2px 0px; line-height: 0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
+                        <div style="font-size: 14px; margin: 0px; line-height: 0.9;">PEMERINTAH PROVINSI JAWA TENGAH</div>
+                        <div style="font-size: 16px; margin: 0px; line-height: 0.9; font-weight: bold;">DINAS PENDIDIKAN</div>
+                        <div style="font-size: 16px; margin: 0px; line-height: 0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
+                        <div style="font-size: 10px; margin: 0px; line-height: 0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
+                        <div style="font-size: 10px; margin: 0px; line-height: 0.8;">Telepon 024-8455757, Fakssimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
+                        <div style="font-size: 10px; margin: 0px; line-height: 0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
                         <div class="header-line"></div>
                         <div class="header-line-secondary"></div>
                     </div>
@@ -737,7 +745,7 @@
                             </tr>
                         </table>
 
-                        <p style="margin-top: 15px;">
+                        <p style="margin-top: 3px;">
                             Berikut ini adalah daftar nilai mata pelajaran siswa:
                         </p>
 
@@ -760,7 +768,7 @@
                             </tfoot>
                         </table>
 
-                        <p style="margin-top: 20px;">
+                        <p style="margin-top: 3px; margin-bottom: 5px;">
                             Demikian transkrip ini dibuat dengan sebenarnya untuk keperluan yang diinginkan oleh siswa yang bersangkutan.
                         </p>
                     </div>
@@ -768,7 +776,7 @@
                     <div class="footer">
                         <div class="ttd">
                             Semarang, ${tanggalCetak}<br>
-                            Kepala Sekolah,<br><br><br><br><br><br>
+                            Kepala Sekolah,<br><br><br>
                             <strong>Nana Mulyana, S.P., M.Si.</strong><br>
                             NIP. ${nip}
                         </div>
