@@ -868,7 +868,7 @@
                 body {
                     font-family: "Times New Roman", serif;
                     color: #000;
-                    padding: 12px 10mm;
+                    padding: 10mm 10mm 12px;
                 }
                 .transkrip-template { width: 100%; font-size: 12px; line-height: 1.15; }
                 .transkrip-template .center { text-align: center; }
