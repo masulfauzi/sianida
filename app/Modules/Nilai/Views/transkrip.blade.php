@@ -860,13 +860,12 @@
 
         function getPrintCss() {
             return `
-                @page { size: A4; margin: 0; }
+                @page { size: A4; margin: 10mm 10mm 12px 10mm; }
                 * { box-sizing: border-box; }
                 html, body { margin: 0; padding: 0; }
                 body {
                     font-family: "Times New Roman", serif;
                     color: #000;
-                    padding: 10mm 10mm 12px;
                 }
                 .transkrip-template { width: 100%; font-size: 12px; line-height: 1; }
                 .transkrip-template .center { text-align: center; }
