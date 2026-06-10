@@ -832,7 +832,7 @@
 
                     <div class="footer">
                         <div class="ttd">
-                            Semarang, ${tanggalCetak}<br>
+                            Semarang, 29 Mei 2026<br>
                             Kepala Sekolah,<br><br><br><br>
                             <strong>Nana Mulyana, S.P., M.Si.</strong><br>
                             Pembina Tk.I, IV/b<br>
