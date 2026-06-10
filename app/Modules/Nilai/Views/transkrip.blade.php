@@ -854,7 +854,126 @@
         }
 
         function printTranskripModal() {
-            window.print();
+            const template = document.querySelector('#transkripModal .transkrip-template');
+            if (!template) {
+                window.print();
+                return;
+            }
+
+            // CSS standalone untuk dokumen cetak (terisolasi dari layout admin)
+            const printCss = `
+                @page { size: A4; margin: 0; }
+                * { box-sizing: border-box; }
+                html, body { margin: 0; padding: 0; }
+                body {
+                    font-family: "Times New Roman", serif;
+                    color: #000;
+                    padding: 12px 16px;
+                }
+                .transkrip-template { width: 100%; font-size: 12px; line-height: 1.15; }
+                .transkrip-template .center { text-align: center; }
+                .transkrip-template .header {
+                    position: relative;
+                    text-align: center;
+                    padding: 0 60px;
+                }
+                .transkrip-template .header > div { margin: 0 !important; line-height: 0.95 !important; }
+                .transkrip-template .header-logo-left {
+                    position: absolute; top: 0; left: 0; width: 65px; height: auto;
+                }
+                .transkrip-template .header-logo {
+                    position: absolute; top: 0; right: 0; width: 65px; height: auto;
+                }
+                .transkrip-template .header-line {
+                    border-top: 3px solid #000; margin: 4px -60px; width: calc(100% + 120px);
+                }
+                .transkrip-template .header-line-secondary {
+                    border-top: 1px solid #000; margin: -2px -60px 6px; width: calc(100% + 120px);
+                }
+                .transkrip-template .subtitle { font-size: 14px; margin: 1px 0; }
+                .transkrip-template .content { margin-top: 6px; }
+                .transkrip-template .content p { margin: 3px 0; }
+                .transkrip-template .table-info { width: 100%; margin-top: 6px; }
+                .transkrip-template .table-info td { padding: 1px 2px; }
+                .transkrip-template .table-info td:nth-child(2) { text-transform: capitalize; }
+                .transkrip-template .nilai-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+                .transkrip-template .nilai-table th,
+                .transkrip-template .nilai-table td { border: 1px solid #000; padding: 2px 3px; }
+                .transkrip-template .nilai-table th { text-align: center; }
+                .transkrip-template .nilai-table .group-header td {
+                    background-color: #f0f0f0; font-weight: bold; text-align: left !important;
+                }
+                .transkrip-template .nilai-table th:nth-child(1),
+                .transkrip-template .nilai-table td:nth-child(1),
+                .transkrip-template .nilai-table th:nth-child(3),
+                .transkrip-template .nilai-table td:nth-child(3) { text-align: center; }
+                .transkrip-template .nilai-table tfoot td { text-align: center; }
+                .transkrip-template .footer { margin-top: 18px; width: 100%; }
+                .transkrip-template .ttd { width: 280px; float: right; text-align: left; line-height: 1.3; }
+                .transkrip-template .clear { clear: both; }
+                .modal-actions { display: none !important; }
+            `;
+
+            // Buat iframe tersembunyi berisi hanya transkrip
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.right = '0';
+            iframe.style.bottom = '0';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = '0';
+            document.body.appendChild(iframe);
+
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(
+                '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Transkrip Nilai</title>' +
+                '<style>' + printCss + '</style></head><body>' +
+                template.outerHTML +
+                '</body></html>'
+            );
+            doc.close();
+
+            const cleanup = () => {
+                if (iframe.parentNode) {
+                    iframe.parentNode.removeChild(iframe);
+                }
+            };
+
+            const doPrint = () => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+                setTimeout(cleanup, 1000);
+            };
+
+            // Tunggu logo (gambar) selesai dimuat agar tidak terpotong/blank
+            const imgs = doc.images;
+            if (!imgs || imgs.length === 0) {
+                setTimeout(doPrint, 250);
+                return;
+            }
+
+            let loaded = 0;
+            let printed = false;
+            const tryPrint = () => {
+                if (printed) return;
+                printed = true;
+                doPrint();
+            };
+            const onImg = () => {
+                loaded++;
+                if (loaded >= imgs.length) tryPrint();
+            };
+            for (let i = 0; i < imgs.length; i++) {
+                if (imgs[i].complete) {
+                    onImg();
+                } else {
+                    imgs[i].addEventListener('load', onImg);
+                    imgs[i].addEventListener('error', onImg);
+                }
+            }
+            // Fallback bila gambar lambat/ gagal
+            setTimeout(tryPrint, 2500);
         }
 
         window.addEventListener('click', function (event) {
