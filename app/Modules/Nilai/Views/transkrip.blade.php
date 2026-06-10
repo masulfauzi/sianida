@@ -286,20 +286,36 @@
             }
 
             * {
-                margin: 0;
-                padding: 0;
-                visibility: hidden;
                 box-sizing: border-box;
             }
 
-            .transkrip-template,
-            .transkrip-template * {
-                visibility: visible;
+            /* Hapus chrome layout (sidebar/header/footer) agar tidak menggeser konten.
+               display:none mengkolaps layout, berbeda dengan visibility:hidden. */
+            #sidebar,
+            #main > header,
+            #main > footer,
+            footer {
+                display: none !important;
             }
 
-            .modal-actions {
+            #app {
+                display: block !important;
+            }
+
+            #main {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            #main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            /* Sembunyikan konten halaman (search/table) selain modal transkrip */
+            #main-content > .page-heading {
                 display: none !important;
-                visibility: hidden !important;
             }
 
             body {
@@ -308,19 +324,31 @@
                 background: white;
             }
 
-            /* Reset modal containers agar template bisa mengalir ke halaman saat print */
-            .transkrip-modal {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                height: auto !important;
-                overflow: visible !important;
-                background: none !important;
-                display: block !important;
+            .modal-actions,
+            .transkrip-modal-close {
+                display: none !important;
             }
 
-            .transkrip-modal-content {
+            /* Sembunyikan semua modal; hanya yang terbuka (.show) yang dicetak.
+               Kedua modal memakai class .transkrip-modal, jadi harus discope. */
+            .transkrip-modal {
+                display: none !important;
+            }
+
+            /* Tampilkan modal terbuka sebagai aliran normal di atas halaman */
+            .transkrip-modal.show {
+                position: static !important;
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                background: none !important;
+                animation: none !important;
+            }
+
+            .transkrip-modal.show .transkrip-modal-content {
                 position: static !important;
                 margin: 0 !important;
                 padding: 0 !important;
@@ -333,23 +361,16 @@
                 box-shadow: none !important;
                 border-radius: 0 !important;
                 background: white !important;
-            }
-
-            .transkrip-modal-close {
-                display: none !important;
-                visibility: hidden !important;
+                animation: none !important;
             }
 
             .transkrip-template {
-                position: absolute;
-                left: 0;
-                top: 0;
+                position: static;
                 width: 100%;
                 margin: 0;
                 padding: 10px;
                 page-break-after: avoid;
                 background: white;
-                visibility: visible;
                 font-size: 11px;
                 line-height: 1;
             }
