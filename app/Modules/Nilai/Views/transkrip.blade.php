@@ -92,7 +92,7 @@
             position: absolute;
             top: 15px;
             left: 0;
-            width: 95px;
+            width: 90px;
             height: auto;
         }
 
@@ -100,7 +100,7 @@
             position: absolute;
             top: 15px;
             right: 0;
-            width: 90px;
+            width: 85px;
             height: auto;
         }
 
@@ -881,15 +881,15 @@
                 }
                 /* Teks di header diberi padding agar tidak tertimpa logo */
                 .transkrip-template .header > div:not(.header-line):not(.header-line-secondary) {
-                    padding: 0 65px;
+                    padding: 0 60px;
                     margin: 0 !important;
                     line-height: 0.95 !important;
                 }
                 .transkrip-template .header-logo-left {
-                    position: absolute; top: 0; left: 0; width: 65px; height: auto;
+                    position: absolute; top: 0; left: 0; width: 60px; height: auto;
                 }
                 .transkrip-template .header-logo {
-                    position: absolute; top: 0; right: 0; width: 65px; height: auto;
+                    position: absolute; top: 0; right: 0; width: 60px; height: auto;
                 }
                 /* Garis tidak perlu negative margin — header sudah tanpa padding */
                 .transkrip-template .header-line {
