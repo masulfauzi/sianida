@@ -387,6 +387,11 @@
                 margin: 1px 0;
                 font-size: 11px;
             }
+
+            .transkrip-template .header > div {
+                margin: 0px !important;
+                line-height: 0.9 !important;
+            }
         }
     </style>
 @endsection
@@ -605,12 +610,6 @@
             const konsentrasiKeahlian = capitalizeWords(data.konsentrasi_keahlian || '-');
             const kepalaSekolah = data.kepala_sekolah || data.nama_sekolah || '-';
             const nip = data.nip || '19690601 199203 1 012';
-            const printStyles = `
-                .transkrip-template .header > div {
-                    margin: 0px !important;
-                    line-height: 0.9 !important;
-                }
-            `;
             const nilaiList = Array.isArray(data.nilai) ? data.nilai : [];
             const formatNilai = (value) => {
                 const numberValue = Number(value);
@@ -681,7 +680,6 @@
             const rataRataText = rataRataAll !== null ? formatNilai(rataRataAll) : '-';
 
             return `
-                <style>${printStyles}</style>
                 <div class="transkrip-template">
                     <div class="header">
                         <img class="header-logo-left" src="https://humas.jatengprov.go.id/foto/1622767670852-Logo%20Provinsi%20Jawa%20Tengah%20(PNG-1080p)%20-%20FileVector69.png" alt="Logo Provinsi Jawa Tengah">
