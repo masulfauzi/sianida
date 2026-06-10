@@ -875,21 +875,26 @@
                 .transkrip-template .header {
                     position: relative;
                     text-align: center;
-                    padding: 0 65px;
-                    overflow: visible;
+                    padding: 0;
                 }
-                .transkrip-template .header > div { margin: 0 !important; line-height: 0.95 !important; }
+                /* Teks di header diberi padding agar tidak tertimpa logo */
+                .transkrip-template .header > div:not(.header-line):not(.header-line-secondary) {
+                    padding: 0 65px;
+                    margin: 0 !important;
+                    line-height: 0.95 !important;
+                }
                 .transkrip-template .header-logo-left {
                     position: absolute; top: 0; left: 0; width: 65px; height: auto;
                 }
                 .transkrip-template .header-logo {
                     position: absolute; top: 0; right: 0; width: 65px; height: auto;
                 }
+                /* Garis tidak perlu negative margin — header sudah tanpa padding */
                 .transkrip-template .header-line {
-                    border-top: 3px solid #000; margin: 4px -65px; width: calc(100% + 130px);
+                    border-top: 3px solid #000; margin: 4px 0; width: 100%;
                 }
                 .transkrip-template .header-line-secondary {
-                    border-top: 1px solid #000; margin: -2px -65px 6px; width: calc(100% + 130px);
+                    border-top: 1px solid #000; margin: -2px 0 6px; width: 100%;
                 }
                 .transkrip-template .subtitle { font-size: 14px; margin: 1px 0; }
                 .transkrip-template .content { margin-top: 6px; }
