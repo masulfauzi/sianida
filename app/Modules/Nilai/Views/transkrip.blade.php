@@ -743,12 +743,12 @@
                     <div class="header">
                         <img class="header-logo-left" src="https://humas.jatengprov.go.id/foto/1622767670852-Logo%20Provinsi%20Jawa%20Tengah%20(PNG-1080p)%20-%20FileVector69.png" alt="Logo Provinsi Jawa Tengah">
                         <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png" alt="Logo SMK N 2 Semarang">
-                        <div style="font-size: 12px; margin: 0px; line-height: 0.9;">PEMERINTAH PROVINSI JAWA TENGAH</div>
-                        <div style="font-size: 14px; margin: 0px; line-height: 0.9; font-weight: bold;">DINAS PENDIDIKAN</div>
-                        <div style="font-size: 14px; margin: 0px; line-height: 0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
-                        <div style="font-size: 8px; margin: 0px; line-height: 0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
-                        <div style="font-size: 8px; margin: 0px; line-height: 0.8;">Telepon 024-8455757, Faksimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
-                        <div style="font-size: 8px; margin: 0px; line-height: 0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
+                        <div style="font-size:12px;margin:0;line-height:0.9;">PEMERINTAH PROVINSI JAWA TENGAH</div>
+                        <div style="font-size:14px;margin:0;line-height:0.9;font-weight:bold;">DINAS PENDIDIKAN</div>
+                        <div style="font-size:14px;margin:0;line-height:0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
+                        <div style="font-size:8px;margin:0;line-height:0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
+                        <div style="font-size:8px;margin:0;line-height:0.8;">Telepon 024-8455757, Faksimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
+                        <div style="font-size:8px;margin:0;line-height:0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
                         <div class="header-line"></div>
                         <div class="header-line-secondary"></div>
                     </div>
@@ -915,7 +915,10 @@
                 .transkrip-template .ttd { width: 280px; float: right; text-align: left; line-height: 1.3; }
                 .transkrip-template .clear { clear: both; }
                 .modal-actions { display: none !important; }
-                .page-break { page-break-after: always; }
+                .transkrip-template + .transkrip-template {
+                    page-break-before: always;
+                    break-before: page;
+                }
             `;
         }
 
@@ -999,15 +1002,10 @@
                     )
                 );
 
-                // 3. Generate HTML tiap transkrip, pisahkan dengan page-break
+                // 3. Generate HTML tiap transkrip — CSS adjacent sibling (+) menangani page break
                 const pages = results
                     .filter(r => r.success)
-                    .map((r, i, arr) => {
-                        const html = generateTranskripHtml(r.data);
-                        return i < arr.length - 1
-                            ? html + '<div class="page-break"></div>'
-                            : html;
-                    });
+                    .map(r => generateTranskripHtml(r.data));
 
                 if (!pages.length) {
                     alert('Tidak ada data transkrip yang tersedia.');
