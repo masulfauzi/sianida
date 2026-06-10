@@ -280,6 +280,11 @@
         }
 
         @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
             * {
                 margin: 0;
                 padding: 0;
@@ -304,12 +309,12 @@
             }
 
             .skl-template {
-                position: absolute;
+                position: relative;
                 left: 0;
                 top: 0;
                 width: 100%;
                 margin: 0;
-                padding: 20px;
+                padding: 15px;
                 page-break-after: avoid;
                 background: white;
                 visibility: visible;
