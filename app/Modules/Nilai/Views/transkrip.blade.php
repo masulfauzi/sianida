@@ -870,7 +870,7 @@
                     color: #000;
                     padding: 10mm 10mm 12px;
                 }
-                .transkrip-template { width: 100%; font-size: 12px; line-height: 1.15; }
+                .transkrip-template { width: 100%; font-size: 12px; line-height: 1; }
                 .transkrip-template .center { text-align: center; }
                 .transkrip-template .header {
                     position: relative;
@@ -894,11 +894,11 @@
                 .transkrip-template .content { margin-top: 6px; }
                 .transkrip-template .content p { margin: 3px 0; }
                 .transkrip-template .table-info { width: 100%; margin-top: 6px; }
-                .transkrip-template .table-info td { padding: 1px 2px; }
+                .transkrip-template .table-info td { padding: 0px 2px; }
                 .transkrip-template .table-info td:nth-child(2) { text-transform: capitalize; }
                 .transkrip-template .nilai-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
                 .transkrip-template .nilai-table th,
-                .transkrip-template .nilai-table td { border: 1px solid #000; padding: 2px 3px; }
+                .transkrip-template .nilai-table td { border: 1px solid #000; padding: 1px 3px; }
                 .transkrip-template .nilai-table th { text-align: center; }
                 .transkrip-template .nilai-table .group-header td {
                     background-color: #f0f0f0; font-weight: bold; text-align: left !important;
