@@ -308,8 +308,42 @@
                 background: white;
             }
 
+            /* Reset modal containers agar template bisa mengalir ke halaman saat print */
+            .transkrip-modal {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                background: none !important;
+                display: block !important;
+            }
+
+            .transkrip-modal-content {
+                position: static !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+                max-height: none !important;
+                height: auto !important;
+                overflow: visible !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                background: white !important;
+            }
+
+            .transkrip-modal-close {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
             .transkrip-template {
-                position: relative;
+                position: absolute;
+                left: 0;
+                top: 0;
                 width: 100%;
                 margin: 0;
                 padding: 10px;
