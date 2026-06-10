@@ -829,7 +829,7 @@
                     <div class="footer">
                         <div class="ttd">
                             Semarang, ${tanggalCetak}<br>
-                            Kepala Sekolah,<br><br><br>
+                            Kepala Sekolah,<br><br><br><br>
                             <strong>Nana Mulyana, S.P., M.Si.</strong><br>
                             NIP. ${nip}
                         </div>
