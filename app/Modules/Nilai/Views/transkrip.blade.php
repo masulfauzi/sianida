@@ -211,14 +211,15 @@
         }
 
         .transkrip-template .foto {
-            width: 100px;
-            height: 120px;
+            width: 70px;
+            height: 90px;
             border: 1px solid #000;
             text-align: center;
-            line-height: 120px;
+            line-height: 90px;
             flex-shrink: 0;
-            font-size: 12px;
+            font-size: 11px;
             color: #888;
+            margin-top: 30px;
         }
 
         .transkrip-template .clear {
@@ -916,7 +917,7 @@
                 .transkrip-template .nilai-table td:nth-child(3) { text-align: center; }
                 .transkrip-template .nilai-table tfoot td { text-align: center; }
                 .transkrip-template .footer { margin-top: 18px; width: 100%; display: flex; justify-content: flex-end; gap: 12px; align-items: flex-start; }
-                .transkrip-template .foto { width: 80px; height: 100px; border: 1px solid #000; text-align: center; line-height: 100px; font-size: 10px; color: #888; flex-shrink: 0; }
+                .transkrip-template .foto { width: 60px; height: 75px; border: 1px solid #000; text-align: center; line-height: 75px; font-size: 9px; color: #888; flex-shrink: 0; margin-top: 10mm; }
                 .transkrip-template .ttd { width: 280px; text-align: left; line-height: 1.3; }
                 .transkrip-template .clear { clear: both; }
                 .modal-actions { display: none !important; }
