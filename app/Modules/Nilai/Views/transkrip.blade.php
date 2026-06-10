@@ -745,7 +745,7 @@
                         <img class="header-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Skanida.png" alt="Logo SMK N 2 Semarang">
                         <div style="font-size:12px;margin:0;line-height:0.9;">PEMERINTAH PROVINSI JAWA TENGAH</div>
                         <div style="font-size:14px;margin:0;line-height:0.9;font-weight:bold;">DINAS PENDIDIKAN</div>
-                        <div style="font-size:14px;margin:0;line-height:0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</strong></div>
+                        <div style="font-size:14px;margin:0;line-height:0.9;"><strong>SEKOLAH MENENGAH KEJURUAN NEGERI 2<br>SEMARANG</strong></div>
                         <div style="font-size:8px;margin:0;line-height:0.8;">Jalan Dr. Cipto Nomor 121 A, Semarang Timur, Kota Semarang, Jawa Tengah, Kode Pos 50124</div>
                         <div style="font-size:8px;margin:0;line-height:0.8;">Telepon 024-8455757, Faksimile 024-8455757, Laman https://smkn2semarang.sch.id</div>
                         <div style="font-size:8px;margin:0;line-height:0.8;">Pos-el smkn2kotasemarang@gmail.com, smeansa_smg@yahoo.co.id</div>
