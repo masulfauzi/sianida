@@ -208,7 +208,7 @@
         }
 
         .transkrip-template .ttd {
-            width: 300px;
+            width: 250px;
             text-align: left;
         }
 
@@ -435,7 +435,7 @@
             }
 
             .transkrip-template .ttd {
-                width: 200px;
+                width: 170px;
                 font-size: 10px;
                 line-height: 1.2;
             }
@@ -920,7 +920,7 @@
                 .transkrip-template .nilai-table tfoot td { text-align: center; }
                 .transkrip-template .footer { margin-top: 18px; width: 100%; display: flex; justify-content: flex-end; gap: 12px; align-items: flex-start; }
                 .transkrip-template .foto { width: 60px; height: 75px; border: 1px solid #000; text-align: center; line-height: 75px; font-size: 9px; color: #888; flex-shrink: 0; margin-top: 10mm; }
-                .transkrip-template .ttd { width: 280px; text-align: left; line-height: 1.3; }
+                .transkrip-template .ttd { width: 230px; text-align: left; line-height: 1.3; }
                 .transkrip-template .clear { clear: both; }
                 .modal-actions { display: none !important; }
                 .transkrip-template + .transkrip-template {
