@@ -70,7 +70,7 @@
 
         .transkrip-template {
             font-family: "Times New Roman", serif;
-            margin: 20px;
+            margin: 20px 10mm;
             font-size: 17px;
             line-height: 1.2;
             color: #000;
@@ -814,9 +814,9 @@
                         <table class="nilai-table">
                             <thead>
                                 <tr>
-                                    <th>No</th>
+                                    <th style="width: 8%">No</th>
                                     <th>Mata Pelajaran</th>
-                                    <th>Nilai</th>
+                                    <th style="width: 25%">Nilai</th>
                                 </tr>
                             </thead>
                             <tbody>
