@@ -809,9 +809,7 @@
                             </tr>
                         </table>
 
-                        <p style="margin-top: 3px;">
-                            Berikut ini adalah daftar nilai mata pelajaran siswa:
-                        </p>
+                        
 
                         <table class="nilai-table">
                             <thead>
