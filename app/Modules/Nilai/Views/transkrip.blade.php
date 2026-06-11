@@ -832,9 +832,7 @@
                             </tfoot>
                         </table>
 
-                        <p style="margin-top: 3px; margin-bottom: 5px;">
-                            Demikian transkrip ini dibuat dengan sebenarnya untuk keperluan yang diinginkan oleh siswa yang bersangkutan.
-                        </p>
+                        
                     </div>
 
                     <div class="footer">
