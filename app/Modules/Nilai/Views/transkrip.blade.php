@@ -772,7 +772,7 @@
                                 <td>: ${satuan_pendidikan}</td>
                             </tr>
                             <tr>
-                                <td>Nomor Pokok Satuan Pendidikan</td>
+                                <td>Nomor Pokok Sekolah Nasional</td>
                                 <td>: ${npsn}</td>
                             </tr>
                             <tr>
