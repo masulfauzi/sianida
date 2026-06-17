@@ -66,7 +66,8 @@
                             <th style="white-space:nowrap">No</th>
                             <th class="text-start" style="min-width:180px">Nama Siswa</th>
                             @for ($d = 1; $d <= $jumlah_hari; $d++)
-                                <th>{{ $d }}</th>
+                                @php $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]); @endphp
+                                <th @class(['table-secondary' => $isWeekend])>{{ $d }}</th>
                             @endfor
                             <th class="table-success">Hadir</th>
                             <th class="table-warning">Sakit</th>
@@ -79,7 +80,12 @@
                                 <td>{{ $i + 1 }}</td>
                                 <td class="text-start">{{ $s->nama_siswa }}</td>
                                 @for ($d = 1; $d <= $jumlah_hari; $d++)
-                                    <td>{{ $rekap[$s->id_siswa][$d] ?? '-' }}</td>
+                                    @php $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]); @endphp
+                                    @if ($isWeekend)
+                                        <td class="table-secondary text-muted">OFF</td>
+                                    @else
+                                        <td>{{ $rekap[$s->id_siswa][$d] ?? '-' }}</td>
+                                    @endif
                                 @endfor
                                 <td class="table-success fw-bold">{{ $summary[$s->id_siswa]['hadir'] ?? 0 }}</td>
                                 <td class="table-warning fw-bold">{{ $summary[$s->id_siswa]['sakit'] ?? 0 }}</td>
