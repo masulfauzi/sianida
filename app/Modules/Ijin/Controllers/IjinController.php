@@ -25,12 +25,29 @@ class IjinController extends Controller
 
     public function index(Request $request)
     {
-        $query = Ijin::query();
-        if ($request->has('search')) {
+        $query = Ijin::query()
+            ->join('siswa', 'ijin.id_siswa', '=', 'siswa.id')
+            ->join('status_ijin', 'ijin.id_status_ijin', '=', 'status_ijin.id')
+            ->join('jenis_ijin', 'ijin.id_jenis_ijin', '=', 'jenis_ijin.id')
+            ->select(
+                'ijin.id',
+                'siswa.nama_siswa',
+                'siswa.nisn',
+                'jenis_ijin.jenis_ijin',
+                'status_ijin.status_ijin',
+                'ijin.lama_ijin',
+                'ijin.tgl_mulai',
+                'ijin.tgl_selesai'
+            );
+
+        if ($request->filled('search')) {
             $search = $request->get('search');
-            // $query->where('name', 'like', "%$search%");
+            $query->where('siswa.nama_siswa', 'like', "%$search%");
         }
-        $data['data'] = $query->paginate(10)->withQueryString();
+
+        $data['data'] = $query->orderBy('ijin.created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
         $this->log($request, 'melihat halaman manajemen data ' . $this->title);
         return view('Ijin::ijin', array_merge($data, ['title' => $this->title]));
@@ -91,6 +108,36 @@ class IjinController extends Controller
         $text = 'melihat detail ' . $this->title; //.' '.$ijin->what;
         $this->log($request, $text, ['ijin.id' => $ijin->id]);
         return view('Ijin::ijin_detail', array_merge($data, ['title' => $this->title]));
+    }
+
+    public function approve(Request $request, Ijin $ijin)
+    {
+        $status = StatusIjin::where('status_ijin', 'Diterima')->first();
+        if (! $status) {
+            return back()->with('message_error', 'Status "Diterima" belum ada di tabel status_ijin.');
+        }
+
+        $ijin->id_status_ijin = $status->id;
+        $ijin->updated_by     = Auth::id();
+        $ijin->save();
+
+        $this->log($request, 'menerima ajuan ' . $this->title, ['ijin.id' => $ijin->id]);
+        return redirect()->route('ijin.index')->with('message_success', 'Ajuan ijin diterima!');
+    }
+
+    public function reject(Request $request, Ijin $ijin)
+    {
+        $status = StatusIjin::where('status_ijin', 'Ditolak')->first();
+        if (! $status) {
+            return back()->with('message_error', 'Status "Ditolak" belum ada di tabel status_ijin.');
+        }
+
+        $ijin->id_status_ijin = $status->id;
+        $ijin->updated_by     = Auth::id();
+        $ijin->save();
+
+        $this->log($request, 'menolak ajuan ' . $this->title, ['ijin.id' => $ijin->id]);
+        return redirect()->route('ijin.index')->with('message_success', 'Ajuan ijin ditolak!');
     }
 
     public function edit(Request $request, Ijin $ijin)

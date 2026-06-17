@@ -9,6 +9,8 @@ Route::controller(IjinController::class)->middleware(['web','auth'])->name('ijin
 	Route::get('/ijin/create', 'create')->name('create');
 	Route::post('/ijin', 'store')->name('store');
 	Route::get('/ijin/{ijin}', 'show')->name('show');
+	Route::patch('/ijin/{ijin}/approve', 'approve')->name('approve');
+	Route::patch('/ijin/{ijin}/reject', 'reject')->name('reject');
 	Route::get('/ijin/{ijin}/edit', 'edit')->name('edit');
 	Route::patch('/ijin/{ijin}', 'update')->name('update');
 	Route::get('/ijin/{ijin}/delete', 'destroy')->name('destroy');

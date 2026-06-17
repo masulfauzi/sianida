@@ -46,14 +46,14 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
+                                <td>Nama Siswa</td>
+                                <td>NISN</td>
                                 <td>Jenis Ijin</td>
-								<td>Siswa</td>
-								<td>Status Ijin</td>
-								<td>Lama Ijin</td>
-								<td>Tgl Mulai</td>
-								<td>Tgl Selesai</td>
-								
-                                <th width="20%">Aksi</th>
+                                <td>Tgl Mulai</td>
+                                <td>Tgl Selesai</td>
+                                <td>Lama Ijin</td>
+                                <td>Status</td>
+                                <th width="10%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,22 +61,20 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->id_jenis_ijin }}</td>
-									<td>{{ $item->id_siswa }}</td>
-									<td>{{ $item->id_status_ijin }}</td>
-									<td>{{ $item->lama_ijin }}</td>
-									<td>{{ $item->tgl_mulai }}</td>
-									<td>{{ $item->tgl_selesai }}</td>
-									
+                                    <td>{{ $item->nama_siswa }}</td>
+                                    <td>{{ $item->nisn }}</td>
+                                    <td>{{ $item->jenis_ijin }}</td>
+                                    <td>{{ $item->tgl_mulai }}</td>
+                                    <td>{{ $item->tgl_selesai }}</td>
+                                    <td>{{ $item->lama_ijin }} hari</td>
+                                    <td>{{ $item->status_ijin }}</td>
                                     <td>
-										{!! button('ijin.show','', $item->id) !!}
-										{!! button('ijin.edit', $title, $item->id) !!}
-                                        {!! button('ijin.destroy', $title, $item->id) !!}
+                                        {!! button('ijin.show', 'Detail', $item->id) !!}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center"><i>No data.</i></td>
+                                    <td colspan="9" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>
