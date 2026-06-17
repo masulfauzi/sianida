@@ -28,25 +28,27 @@ class PresensiHarian extends Model
 
     public static function rekap_kehadiran_per_kelas($tingkat, $id_semester)
     {
-        return DB::table('presensi_harian as ph')
-            ->join('siswa as s', 'ph.id_siswa', '=', 's.id')
-            ->join('statuskehadiran as sk', 'ph.id_status_kehadiran', '=', 'sk.id')
-            ->join('pesertadidik as pd', function ($join) use ($id_semester) {
-                $join->on('pd.id_siswa', '=', 's.id')
-                     ->where('pd.id_semester', '=', $id_semester);
-            })
+        $today = today()->toDateString();
+
+        return DB::table('pesertadidik as pd')
             ->join('kelas as k', 'pd.id_kelas', '=', 'k.id')
             ->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
+            ->leftJoin('presensi_harian as ph', function ($join) use ($today) {
+                $join->on('ph.id_siswa', '=', 'pd.id_siswa')
+                     ->whereDate('ph.tgl', $today)
+                     ->whereNull('ph.deleted_at');
+            })
+            ->leftJoin('statuskehadiran as sk', 'ph.id_status_kehadiran', '=', 'sk.id')
+            ->where('pd.id_semester', $id_semester)
+            ->whereNull('pd.deleted_at')
             ->where('t.tingkat', $tingkat)
-            ->whereDate('ph.tgl', today())
-            ->whereNull('ph.deleted_at')
-            ->groupBy('k.id', 'k.kelas', 'sk.id', 'sk.status_kehadiran')
+            ->groupBy('k.id', 'k.kelas', DB::raw('CASE WHEN ph.id IS NULL THEN \'Tidak Hadir\' ELSE sk.status_kehadiran END'))
             ->orderBy('k.kelas')
             ->select(
                 'k.id as id_kelas',
                 'k.kelas as nama_kelas',
-                'sk.status_kehadiran',
-                DB::raw('COUNT(ph.id) as jumlah')
+                DB::raw('CASE WHEN ph.id IS NULL THEN \'Tidak Hadir\' ELSE sk.status_kehadiran END as status_kehadiran'),
+                DB::raw('COUNT(pd.id) as jumlah')
             )
             ->get();
     }
