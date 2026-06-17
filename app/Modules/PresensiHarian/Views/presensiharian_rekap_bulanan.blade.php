@@ -85,7 +85,7 @@
                                     @if ($isWeekend)
                                         <td class="table-secondary text-muted">OFF</td>
                                     @else
-                                        <td>{{ $rekap[$s->id_siswa][$d] ?? '-' }}</td>
+                                        <td>{{ $rekap[$s->id_siswa][$d] ?? 'A' }}</td>
                                     @endif
                                 @endfor
                                 <td class="table-success fw-bold">{{ $summary[$s->id_siswa]['hadir'] ?? 0 }}</td>
