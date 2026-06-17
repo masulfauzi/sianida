@@ -72,6 +72,7 @@
                             <th class="table-success">Hadir</th>
                             <th class="table-warning">Sakit</th>
                             <th class="table-info">Ijin</th>
+                            <th class="table-danger">Alfa</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,10 +91,17 @@
                                 <td class="table-success fw-bold">{{ $summary[$s->id_siswa]['hadir'] ?? 0 }}</td>
                                 <td class="table-warning fw-bold">{{ $summary[$s->id_siswa]['sakit'] ?? 0 }}</td>
                                 <td class="table-info fw-bold">{{ $summary[$s->id_siswa]['ijin'] ?? 0 }}</td>
+                                @php
+                                    $alfa = $hari_efektif
+                                        - ($summary[$s->id_siswa]['hadir'] ?? 0)
+                                        - ($summary[$s->id_siswa]['sakit'] ?? 0)
+                                        - ($summary[$s->id_siswa]['ijin'] ?? 0);
+                                @endphp
+                                <td class="table-danger fw-bold">{{ max(0, $alfa) }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $jumlah_hari + 5 }}" class="text-center">
+                                <td colspan="{{ $jumlah_hari + 6 }}" class="text-center">
                                     <i>Tidak ada siswa di kelas ini.</i>
                                 </td>
                             </tr>

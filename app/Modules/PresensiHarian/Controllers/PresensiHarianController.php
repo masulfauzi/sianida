@@ -73,16 +73,25 @@ class PresensiHarianController extends Controller
 		$data['bulan']     = $request->get('bulan');
 		$data['tahun']     = $request->get('tahun', date('Y'));
 
-		$data['siswa']       = collect();
-		$data['rekap']       = [];
-		$data['summary']     = [];
-		$data['jumlah_hari'] = 0;
+		$data['siswa']        = collect();
+		$data['rekap']        = [];
+		$data['summary']      = [];
+		$data['jumlah_hari']  = 0;
+		$data['hari_efektif'] = 0;
 
 		if ($data['id_kelas'] && $data['bulan']) {
 			$tahun = $data['tahun'];
 			$bulan = $data['bulan'];
 
 			$data['jumlah_hari'] = (int) date('t', mktime(0, 0, 0, (int) $bulan, 1, (int) $tahun));
+
+			$hari_efektif = 0;
+			for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
+				if (!in_array(date('N', mktime(0, 0, 0, (int) $bulan, $d, (int) $tahun)), [6, 7])) {
+					$hari_efektif++;
+				}
+			}
+			$data['hari_efektif'] = $hari_efektif;
 
 			$data['siswa'] = Pesertadidik::get_pd_by_idkelas($data['id_kelas'], $id_semester);
 
