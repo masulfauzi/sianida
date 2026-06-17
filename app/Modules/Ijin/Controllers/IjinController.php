@@ -112,7 +112,7 @@ class IjinController extends Controller
 
     public function approve(Request $request, Ijin $ijin)
     {
-        $status = StatusIjin::where('status_ijin', 'Diterima')->first();
+        $status = StatusIjin::where('status_ijin', 'Disetujui')->first();
         if (! $status) {
             return back()->with('message_error', 'Status "Diterima" belum ada di tabel status_ijin.');
         }
