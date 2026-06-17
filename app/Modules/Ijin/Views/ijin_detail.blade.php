@@ -41,21 +41,56 @@
                     </div>
                 </div>
 
+                {{-- Tampilan surat --}}
+                <div class="row mt-4">
+                    <div class="col-lg-10 offset-lg-2">
+                        <p class="fw-semibold mb-2">Surat Keterangan</p>
+                        @if ($ijin->surat)
+                            @php
+                                $ext = strtolower(pathinfo($ijin->surat, PATHINFO_EXTENSION));
+                            @endphp
+                            @if ($ext === 'pdf')
+                                <iframe src="{{ asset('surat_ijin/' . $ijin->surat) }}"
+                                        width="100%" height="500px"
+                                        style="border: 1px solid #dee2e6; border-radius: 4px;">
+                                </iframe>
+                                <div class="mt-2">
+                                    <a href="{{ asset('surat_ijin/' . $ijin->surat) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fa fa-external-link-alt"></i> Buka di tab baru
+                                    </a>
+                                </div>
+                            @else
+                                <img src="{{ asset('surat_ijin/' . $ijin->surat) }}"
+                                     alt="Surat Keterangan"
+                                     class="img-fluid"
+                                     style="max-height: 500px; border: 1px solid #dee2e6; border-radius: 4px;">
+                                <div class="mt-2">
+                                    <a href="{{ asset('surat_ijin/' . $ijin->surat) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        <i class="fa fa-external-link-alt"></i> Buka di tab baru
+                                    </a>
+                                </div>
+                            @endif
+                        @else
+                            <p class="text-muted fst-italic">Tidak ada surat yang dilampirkan.</p>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Tombol aksi --}}
                 @if ($ijin->statusIjin->status_ijin === 'Menunggu')
                     <div class="row mt-4">
                         <div class="col-lg-10 offset-lg-2">
-                            <form action="{{ route('ijin.approve', $ijin->id) }}" method="post" class="d-inline">
+                            <form id="form-approve" action="{{ route('ijin.approve', $ijin->id) }}" method="post" class="d-inline">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="btn btn-success">
+                                <button type="button" class="btn btn-success" onclick="confirmApprove()">
                                     <i class="fa fa-check"></i> Terima
                                 </button>
                             </form>
-                            <form action="{{ route('ijin.reject', $ijin->id) }}" method="post" class="d-inline"
-                                  onsubmit="return confirm('Yakin tolak ajuan ijin ini?')">
+                            <form id="form-reject" action="{{ route('ijin.reject', $ijin->id) }}" method="post" class="d-inline">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" class="btn btn-danger">
+                                <button type="button" class="btn btn-danger" onclick="confirmReject()">
                                     <i class="fa fa-times"></i> Tolak
                                 </button>
                             </form>
@@ -79,4 +114,32 @@
 @endsection
 
 @section('inline-js')
+<script>
+    function confirmApprove() {
+        swal({
+            title: "Terima ajuan ijin?",
+            text: "Ajuan ijin {{ $ijin->siswa->nama_siswa }} akan diterima.",
+            icon: "info",
+            buttons: { cancel: "Batal", confirm: { text: "Ya, Terima", value: true } },
+        }).then(function (confirmed) {
+            if (confirmed) {
+                document.getElementById('form-approve').submit();
+            }
+        });
+    }
+
+    function confirmReject() {
+        swal({
+            title: "Tolak ajuan ijin?",
+            text: "Ajuan ijin {{ $ijin->siswa->nama_siswa }} akan ditolak.",
+            icon: "warning",
+            buttons: { cancel: "Batal", confirm: { text: "Ya, Tolak", value: true } },
+            dangerMode: true,
+        }).then(function (confirmed) {
+            if (confirmed) {
+                document.getElementById('form-reject').submit();
+            }
+        });
+    }
+</script>
 @endsection
