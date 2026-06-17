@@ -38,6 +38,7 @@ class PresensiHarian extends Model
             ->join('kelas as k', 'pd.id_kelas', '=', 'k.id')
             ->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
             ->where('t.tingkat', $tingkat)
+            ->whereDate('ph.tgl', today())
             ->whereNull('ph.deleted_at')
             ->groupBy('k.id', 'k.kelas', 'sk.id', 'sk.status_kehadiran')
             ->orderBy('k.kelas')
