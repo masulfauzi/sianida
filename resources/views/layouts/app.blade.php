@@ -15,7 +15,8 @@
     {{-- <link rel="stylesheet" href="{{ asset('assets/css/select2.css') }}"> --}}
     {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/base.min.css"/> --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.13.5/css/selectize.bootstrap5.min.css"/>
-    
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@latest"></script>
     <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
     <style>
         .ck-editor__editable {

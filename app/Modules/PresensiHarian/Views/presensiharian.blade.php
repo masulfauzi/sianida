@@ -48,7 +48,6 @@
 @endsection
 
 @section('page-js')
-<script src="{{ asset('assets/js/extensions/ui-apexchart.js') }}"></script>
 @endsection
 
 @section('inline-js')
