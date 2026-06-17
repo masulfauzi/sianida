@@ -11,6 +11,8 @@ use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Modules\Kelas\Models\Kelas;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
 
 class PresensiHarianController extends Controller
 {
@@ -60,6 +62,37 @@ class PresensiHarianController extends Controller
 			'categories' => $categories->values(),
 			'series'     => $series,
 		];
+	}
+
+	public function rekap_bulanan(Request $request)
+	{
+		$id_semester = get_semester('active_semester_id');
+
+		$data['ref_kelas'] = Kelas::orderBy('kelas')->get()->pluck('kelas', 'id');
+		$data['id_kelas']  = $request->get('id_kelas');
+		$data['bulan']     = $request->get('bulan');
+
+		$data['siswa']       = collect();
+		$data['rekap']       = [];
+		$data['jumlah_hari'] = 0;
+
+		if ($data['id_kelas'] && $data['bulan']) {
+			[$tahun, $bulan] = explode('-', $data['bulan']);
+
+			$data['jumlah_hari'] = (int) date('t', mktime(0, 0, 0, (int) $bulan, 1, (int) $tahun));
+
+			$data['siswa'] = Pesertadidik::get_pd_by_idkelas($data['id_kelas'], $id_semester);
+
+			$rows = PresensiHarian::rekap_bulanan($data['id_kelas'], $id_semester, $tahun, $bulan);
+			$matriks = [];
+			foreach ($rows as $row) {
+				$matriks[$row->id_siswa][$row->tanggal] = $row->status;
+			}
+			$data['rekap'] = $matriks;
+		}
+
+		$this->log($request, 'melihat rekap bulanan '.$this->title);
+		return view('PresensiHarian::presensiharian_rekap_bulanan', array_merge($data, ['title' => $this->title]));
 	}
 
 	public function create(Request $request)
