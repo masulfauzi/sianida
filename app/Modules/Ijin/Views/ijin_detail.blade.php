@@ -80,14 +80,14 @@
                 @if ($ijin->statusIjin->status_ijin === 'Menunggu')
                     <div class="row mt-4">
                         <div class="col-lg-10 offset-lg-2">
-                            <form id="form-approve" action="{{ route('ijin.approve', $ijin->id) }}" method="post" class="d-inline">
+                            <form id="form-approve" action="{{ route('ijin.approve.update', $ijin->id) }}" method="post" class="d-inline">
                                 @csrf
                                 @method('PATCH')
                                 <button type="button" class="btn btn-success" onclick="confirmApprove()">
                                     <i class="fa fa-check"></i> Terima
                                 </button>
                             </form>
-                            <form id="form-reject" action="{{ route('ijin.reject', $ijin->id) }}" method="post" class="d-inline">
+                            <form id="form-reject" action="{{ route('ijin.reject.update', $ijin->id) }}" method="post" class="d-inline">
                                 @csrf
                                 @method('PATCH')
                                 <button type="button" class="btn btn-danger" onclick="confirmReject()">
