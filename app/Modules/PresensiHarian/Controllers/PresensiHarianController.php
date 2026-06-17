@@ -25,15 +25,39 @@ class PresensiHarianController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = PresensiHarian::query();
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$id_semester = get_semester('active_semester_id');
 
-		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		$data['chart_x']   = $this->buildChartData('X', $id_semester);
+		$data['chart_xi']  = $this->buildChartData('XI', $id_semester);
+		$data['chart_xii'] = $this->buildChartData('XII', $id_semester);
+
+		$this->log($request, 'melihat halaman grafik '.$this->title);
 		return view('PresensiHarian::presensiharian', array_merge($data, ['title' => $this->title]));
+	}
+
+	private function buildChartData($tingkat, $id_semester)
+	{
+		$rows = PresensiHarian::rekap_kehadiran_per_kelas($tingkat, $id_semester);
+
+		$categories = $rows->pluck('nama_kelas')->unique()->values();
+		$statuses   = $rows->pluck('status_kehadiran')->unique()->values();
+
+		$series = [];
+		foreach ($statuses as $status) {
+			$dataPerKelas = [];
+			foreach ($categories as $kelas) {
+				$match = $rows->first(function ($r) use ($kelas, $status) {
+					return $r->nama_kelas === $kelas && $r->status_kehadiran === $status;
+				});
+				$dataPerKelas[] = $match ? (int) $match->jumlah : 0;
+			}
+			$series[] = ['name' => $status, 'data' => $dataPerKelas];
+		}
+
+		return [
+			'categories' => $categories->values(),
+			'series'     => $series,
+		];
 	}
 
 	public function create(Request $request)

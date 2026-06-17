@@ -22,70 +22,55 @@
     </div>
 
     <section class="section">
-        <div class="card">
-            <h6 class="card-header">
-                Tabel Data {{ $title }}
-            </h6>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-9">
-                        <form action="{{ route('presensiharian.index') }}" method="get">
-                            <div class="form-group col-md-3 has-icon-left position-relative">
-                                <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
-                                <div class="form-control-icon"><i class="fa fa-search"></i></div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-3">  
-						{!! button('presensiharian.create', $title) !!}  
-                    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><h6>Grafik Kehadiran Kelas X</h6></div>
+                    <div class="card-body"><div id="chart-x"></div></div>
                 </div>
-                @include('include.flash')
-                <div class="table-responsive-md col-12">
-                    <table class="table" id="table1">
-                        <thead>
-                            <tr>
-                                <th width="15">No</th>
-                                <td>Siswa</td>
-								<td>Status Kehadiran</td>
-								<td>Tgl</td>
-								
-                                <th width="20%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php $no = $data->firstItem(); @endphp
-                            @forelse ($data as $item)
-                                <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $item->id_siswa }}</td>
-									<td>{{ $item->id_status_kehadiran }}</td>
-									<td>{{ $item->tgl }}</td>
-									
-                                    <td>
-										{!! button('presensiharian.show','', $item->id) !!}
-										{!! button('presensiharian.edit', $title, $item->id) !!}
-                                        {!! button('presensiharian.destroy', $title, $item->id) !!}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center"><i>No data.</i></td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><h6>Grafik Kehadiran Kelas XI</h6></div>
+                    <div class="card-body"><div id="chart-xi"></div></div>
                 </div>
-				{{ $data->links() }}
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><h6>Grafik Kehadiran Kelas XII</h6></div>
+                    <div class="card-body"><div id="chart-xii"></div></div>
+                </div>
             </div>
         </div>
-
     </section>
+
 </div>
 @endsection
 
 @section('page-js')
+<script src="{{ asset('assets/js/extensions/ui-apexchart.js') }}"></script>
 @endsection
 
 @section('inline-js')
+<script>
+    function renderBarChart(selector, chartData) {
+        var options = {
+            chart: { type: 'bar', height: 350, stacked: false },
+            series: chartData.series,
+            xaxis: { categories: chartData.categories },
+            plotOptions: { bar: { horizontal: false, columnWidth: '55%' } },
+            dataLabels: { enabled: false },
+            legend: { position: 'top' },
+            noData: { text: 'Tidak ada data kehadiran' }
+        };
+        var chart = new ApexCharts(document.querySelector(selector), options);
+        chart.render();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        renderBarChart('#chart-x',   @json($chart_x));
+        renderBarChart('#chart-xi',  @json($chart_xi));
+        renderBarChart('#chart-xii', @json($chart_xii));
+    });
+</script>
 @endsection
