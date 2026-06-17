@@ -7,7 +7,10 @@ use App\Modules\Ijin\Models\Ijin;
 use App\Modules\JenisIjin\Models\JenisIjin;
 use App\Modules\Log\Models\Log;
 use App\Modules\Siswa\Models\Siswa;
+use App\Modules\PresensiHarian\Models\PresensiHarian;
+use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use App\Modules\StatusIjin\Models\StatusIjin;
+use Carbon\Carbon;
 use Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -114,12 +117,30 @@ class IjinController extends Controller
     {
         $status = StatusIjin::where('status_ijin', 'Disetujui')->first();
         if (! $status) {
-            return back()->with('message_error', 'Status "Diterima" belum ada di tabel status_ijin.');
+            return back()->with('message_error', 'Status "Disetujui" belum ada di tabel status_ijin.');
         }
 
         $ijin->id_status_ijin = $status->id;
         $ijin->updated_by     = Auth::id();
         $ijin->save();
+
+        $jenisIjin       = strtolower($ijin->jenisIjin->jenis_ijin);
+        $statusKehadiran = Statuskehadiran::whereRaw('LOWER(status_kehadiran) = ?', [$jenisIjin])->first();
+
+        if ($statusKehadiran) {
+            $current    = Carbon::parse($ijin->tgl_mulai);
+            $tglSelesai = Carbon::parse($ijin->tgl_selesai);
+
+            while ($current->lte($tglSelesai)) {
+                PresensiHarian::create([
+                    'id_siswa'            => $ijin->id_siswa,
+                    'id_status_kehadiran' => $statusKehadiran->id,
+                    'tgl'                 => $current->toDateString(),
+                    'created_by'          => Auth::id(),
+                ]);
+                $current->addDay();
+            }
+        }
 
         $this->log($request, 'menerima ajuan ' . $this->title, ['ijin.id' => $ijin->id]);
         return redirect()->route('ijin.index')->with('message_success', 'Ajuan ijin diterima!');
