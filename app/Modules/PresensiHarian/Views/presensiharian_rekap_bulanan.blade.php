@@ -36,9 +36,18 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-3">
                         <label class="form-label">Bulan</label>
-                        <input type="month" name="bulan" class="form-control" value="{{ $bulan }}">
+                        <select name="bulan" class="form-select" required>
+                            <option value="">-- Pilih Bulan --</option>
+                            @foreach ([1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'] as $num => $nama)
+                                <option value="{{ $num }}" {{ $bulan == $num ? 'selected' : '' }}>{{ $nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Tahun</label>
+                        <input type="number" name="tahun" class="form-control" value="{{ $tahun ?: date('Y') }}" min="2000" max="2099" required>
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">Tampilkan</button>

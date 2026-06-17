@@ -71,13 +71,15 @@ class PresensiHarianController extends Controller
 		$data['ref_kelas'] = Kelas::orderBy('kelas')->get()->pluck('kelas', 'id');
 		$data['id_kelas']  = $request->get('id_kelas');
 		$data['bulan']     = $request->get('bulan');
+		$data['tahun']     = $request->get('tahun', date('Y'));
 
 		$data['siswa']       = collect();
 		$data['rekap']       = [];
 		$data['jumlah_hari'] = 0;
 
 		if ($data['id_kelas'] && $data['bulan']) {
-			[$tahun, $bulan] = explode('-', $data['bulan']);
+			$tahun = $data['tahun'];
+			$bulan = $data['bulan'];
 
 			$data['jumlah_hari'] = (int) date('t', mktime(0, 0, 0, (int) $bulan, 1, (int) $tahun));
 
