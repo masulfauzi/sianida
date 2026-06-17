@@ -67,7 +67,17 @@
                                     <td>{{ $item->tgl_mulai }}</td>
                                     <td>{{ $item->tgl_selesai }}</td>
                                     <td>{{ $item->lama_ijin }} hari</td>
-                                    <td>{{ $item->status_ijin }}</td>
+                                    <td>
+                                        @php
+                                            $badgeClass = match($item->status_ijin) {
+                                                'Menunggu'  => 'bg-warning text-dark',
+                                                'Ditolak'   => 'bg-danger',
+                                                'Disetujui' => 'bg-success',
+                                                default     => 'bg-secondary',
+                                            };
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }}">{{ $item->status_ijin }}</span>
+                                    </td>
                                     <td>
                                         {!! button('ijin.show', 'Detail', $item->id) !!}
                                     </td>
