@@ -52,12 +52,25 @@
 
 @section('inline-js')
 <script>
+    var statusColors = {
+        'Hadir':        '#28a745',
+        'Terlambat':    '#fd7e14',
+        'Tidak Hadir':  '#dc3545',
+    };
+
+    function getSeriesColors(series) {
+        return series.map(function (s) {
+            return statusColors[s.name] || '#6c757d';
+        });
+    }
+
     function renderBarChart(selector, chartData) {
         var options = {
             chart: { type: 'bar', height: 350, stacked: false },
             series: chartData.series,
+            colors: getSeriesColors(chartData.series),
             xaxis: { categories: chartData.categories },
-            plotOptions: { bar: { horizontal: false, columnWidth: '55%' } },
+            plotOptions: { bar: { horizontal: false, columnWidth: '55%', distributed: false } },
             dataLabels: { enabled: false },
             legend: { position: 'top' },
             noData: { text: 'Tidak ada data kehadiran' }
