@@ -42,7 +42,8 @@ class PresensiHarian extends Model
             ->select(
                 'ph.id_siswa',
                 DB::raw('DAY(ph.tgl) as tanggal'),
-                'sk.status_kehadiran_pendek as status'
+                'sk.status_kehadiran_pendek as status',
+                'sk.status_kehadiran as status_lengkap'
             )
             ->get();
     }

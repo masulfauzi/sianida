@@ -75,6 +75,7 @@ class PresensiHarianController extends Controller
 
 		$data['siswa']       = collect();
 		$data['rekap']       = [];
+		$data['summary']     = [];
 		$data['jumlah_hari'] = 0;
 
 		if ($data['id_kelas'] && $data['bulan']) {
@@ -87,10 +88,24 @@ class PresensiHarianController extends Controller
 
 			$rows = PresensiHarian::rekap_bulanan($data['id_kelas'], $id_semester, $tahun, $bulan);
 			$matriks = [];
+			$summary = [];
 			foreach ($rows as $row) {
 				$matriks[$row->id_siswa][$row->tanggal] = $row->status;
+
+				if (!isset($summary[$row->id_siswa])) {
+					$summary[$row->id_siswa] = ['hadir' => 0, 'sakit' => 0, 'ijin' => 0];
+				}
+				$sl = strtolower($row->status_lengkap);
+				if (in_array($sl, ['hadir', 'terlambat'])) {
+					$summary[$row->id_siswa]['hadir']++;
+				} elseif ($sl === 'sakit') {
+					$summary[$row->id_siswa]['sakit']++;
+				} elseif (in_array($sl, ['ijin', 'izin'])) {
+					$summary[$row->id_siswa]['ijin']++;
+				}
 			}
-			$data['rekap'] = $matriks;
+			$data['rekap']   = $matriks;
+			$data['summary'] = $summary;
 		}
 
 		$this->log($request, 'melihat rekap bulanan '.$this->title);

@@ -68,6 +68,9 @@
                             @for ($d = 1; $d <= $jumlah_hari; $d++)
                                 <th>{{ $d }}</th>
                             @endfor
+                            <th class="table-success">Hadir</th>
+                            <th class="table-warning">Sakit</th>
+                            <th class="table-info">Ijin</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,10 +81,13 @@
                                 @for ($d = 1; $d <= $jumlah_hari; $d++)
                                     <td>{{ $rekap[$s->id_siswa][$d] ?? '-' }}</td>
                                 @endfor
+                                <td class="table-success fw-bold">{{ $summary[$s->id_siswa]['hadir'] ?? 0 }}</td>
+                                <td class="table-warning fw-bold">{{ $summary[$s->id_siswa]['sakit'] ?? 0 }}</td>
+                                <td class="table-info fw-bold">{{ $summary[$s->id_siswa]['ijin'] ?? 0 }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ $jumlah_hari + 2 }}" class="text-center">
+                                <td colspan="{{ $jumlah_hari + 5 }}" class="text-center">
                                     <i>Tidak ada siswa di kelas ini.</i>
                                 </td>
                             </tr>
