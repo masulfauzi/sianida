@@ -26,16 +26,16 @@ class PresensiHarian extends Model
         return $this->belongsTo(StatusKehadiran::class, "id_status_kehadiran", "id");
     }
 
-    public static function rekap_kehadiran_per_kelas($tingkat, $id_semester)
+    public static function rekap_kehadiran_per_kelas($tingkat, $id_semester, $tgl = null)
     {
-        $today = today()->toDateString();
+        $tgl = $tgl ? \Carbon\Carbon::createFromFormat('Y-m-d', $tgl)->toDateString() : today()->toDateString();
 
         return DB::table('pesertadidik as pd')
             ->join('kelas as k', 'pd.id_kelas', '=', 'k.id')
             ->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
-            ->leftJoin('presensi_harian as ph', function ($join) use ($today) {
+            ->leftJoin('presensi_harian as ph', function ($join) use ($tgl) {
                 $join->on('ph.id_siswa', '=', 'pd.id_siswa')
-                     ->whereDate('ph.tgl', $today)
+                     ->whereDate('ph.tgl', $tgl)
                      ->whereNull('ph.deleted_at');
             })
             ->leftJoin('statuskehadiran as sk', 'ph.id_status_kehadiran', '=', 'sk.id')

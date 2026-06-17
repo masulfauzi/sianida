@@ -22,6 +22,24 @@
     </div>
 
     <section class="section">
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><h6>Filter Tanggal</h6></div>
+                    <div class="card-body">
+                        <form action="{{ route('presensiharian.index') }}" method="get" class="d-flex gap-2 align-items-end">
+                            <div class="form-group">
+                                <label for="tgl" class="form-label">Pilih Tanggal</label>
+                                <input type="date" id="tgl" name="tgl" class="form-control" value="{{ $tgl }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="{{ route('presensiharian.index') }}" class="btn btn-secondary">Reset</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <div class="card">
