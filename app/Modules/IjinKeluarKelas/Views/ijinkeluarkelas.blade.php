@@ -1,6 +1,21 @@
 @extends('layouts.app')
 
 @section('page-css')
+<style>
+	.modal-dialog-a5-landscape {
+		max-width: 210mm;
+	}
+	.cetak-a5-page {
+		width: 190mm;
+		min-height: 128mm;
+		margin: 0 auto;
+		padding: 10mm;
+		box-sizing: border-box;
+		background: #fff;
+		border: 1px solid #ddd;
+		font-size: 11pt;
+	}
+</style>
 @endsection
 
 @section('main')
@@ -108,14 +123,14 @@
 	@foreach ($data as $item)
 		@if($item->is_valid_bk == '1')
 			<div class="modal fade" id="modalCetak{{ $item->id }}" tabindex="-1" aria-hidden="true">
-				<div class="modal-dialog modal-lg">
+				<div class="modal-dialog modal-dialog-a5-landscape">
 					<div class="modal-content">
 						<div class="modal-header">
 							<h5 class="modal-title">Surat Ijin Meninggalkan Pelajaran</h5>
 							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
 						<div class="modal-body">
-							<div id="cetakArea{{ $item->id }}">
+							<div id="cetakArea{{ $item->id }}" class="cetak-a5-page">
 								<table width="100%">
 									<tr>
 										<td width="15%"><img src="{{ asset('assets/images/logo/logo_jateng.png') }}" alt="" width="80px"></td>
