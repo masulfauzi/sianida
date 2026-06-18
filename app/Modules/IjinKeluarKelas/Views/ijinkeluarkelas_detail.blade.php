@@ -37,8 +37,8 @@
 									<div class='col-lg-2'><p>Keperluan</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijinkeluarkelas->keperluan }}</p></div>
 									<div class='col-lg-2'><p>Jam Keluar</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijinkeluarkelas->jam_keluar }}</p></div>
 									<div class='col-lg-2'><p>Jam Kembali</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijinkeluarkelas->jam_kembali }}</p></div>
-									<div class='col-lg-2'><p>Is Valguru</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijinkeluarkelas->isValguru->id }}</p></div>
-									<div class='col-lg-2'><p>Is Valbk</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijinkeluarkelas->isValbk->id }}</p></div>
+									<div class='col-lg-2'><p>Validasi Guru</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijinkeluarkelas->is_valid_guru == '1' ? 'Disetujui' : 'Belum Disetujui' }}</p></div>
+									<div class='col-lg-2'><p>Validasi BK</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijinkeluarkelas->is_valid_bk == '1' ? 'Disetujui' : 'Belum Disetujui' }}</p></div>
 									
                         </div>
                     </div>
