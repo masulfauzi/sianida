@@ -1,5 +1,5 @@
 <?php
-namespace App\Modules\IjinKeluarIjinKeluarKelas\Controllers;
+namespace App\Modules\IjinKeluarKelas\Controllers;
 
 use Form;
 use App\Helpers\Logger;
@@ -15,7 +15,7 @@ use App\Modules\Jampelajaran\Models\Jampelajaran;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
-class IjinKeluarIjinKeluarKelasController extends Controller
+class IjinKeluarKelasController extends Controller
 {
 	use Logger;
 	protected $log;
