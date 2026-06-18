@@ -31,7 +31,7 @@ function printArea(elementId){
 	var content = document.getElementById(elementId).innerHTML;
 	var printWindow = window.open('', '_blank');
 	printWindow.document.write('<html><head><title>Cetak Surat Ijin</title>');
-	printWindow.document.write('<style>body{font-family: Arial, sans-serif; font-size: 12pt;} table{width:100%;border-collapse:collapse;} td{padding:2px 6px;} .center{text-align:center;} .bold{font-weight:bold;} .underline{text-decoration:underline;} hr.atas{border-top:3px solid black;} hr.bawah{border-top:1px solid black;margin-top:-8px;}</style>');
+	printWindow.document.write('<style>@page{size: A5 landscape; margin: 10mm;} body{font-family: Arial, sans-serif; font-size: 11pt;} table{width:100%;border-collapse:collapse;} td{padding:2px 6px;} .center{text-align:center;} .bold{font-weight:bold;} .underline{text-decoration:underline;} hr.atas{border-top:3px solid black;} hr.bawah{border-top:1px solid black;margin-top:-8px;}</style>');
 	printWindow.document.write('</head><body>');
 	printWindow.document.write(content);
 	printWindow.document.write('</body></html>');
