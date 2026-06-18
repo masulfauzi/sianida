@@ -5,7 +5,7 @@ use App\Helpers\UsesUuid;
 use App\Modules\Guru\Models\Guru;
 use App\Modules\IsValbk\Models\IsValbk;
 use App\Modules\IsValguru\Models\IsValguru;
-use App\Modules\JenisIjinKeluar\Models\JenisIjinKeluar;
+use App\Modules\JenisIjinKeluarKelas\Models\JenisIjinKeluarKelas;
 use App\Modules\Siswa\Models\Siswa;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,7 +29,7 @@ class IjinKeluarKelas extends Model
     }
     public function jenisIjinKeluar()
     {
-        return $this->belongsTo(JenisIjinKeluar::class, "id_jenis_ijin_keluar", "id");
+        return $this->belongsTo(JenisIjinKeluarKelas::class, "id_jenis_ijin_keluar", "id");
     }
     public function isValguru()
     {
