@@ -3,6 +3,7 @@ namespace App\Modules\IjinKeluarKelas\Models;
 
 use App\Helpers\UsesUuid;
 use App\Modules\Guru\Models\Guru;
+use App\Modules\Jampelajaran\Models\Jampelajaran;
 use App\Modules\JenisIjinKeluarKelas\Models\JenisIjinKeluarKelas;
 use App\Modules\Siswa\Models\Siswa;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,13 @@ class IjinKeluarKelas extends Model
     {
         return $this->belongsTo(JenisIjinKeluarKelas::class, "id_jenis_ijin_keluar", "id");
     }
-    
+    public function jamKeluar()
+    {
+        return $this->belongsTo(Jampelajaran::class, "jam_keluar", "id");
+    }
+    public function jamKembali()
+    {
+        return $this->belongsTo(Jampelajaran::class, "jam_kembali", "id");
+    }
 
 }
