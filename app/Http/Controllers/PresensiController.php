@@ -24,10 +24,21 @@ class PresensiController extends Controller
             ]);
 
             if ($validator->fails()) {
+                $errors = $validator->errors();
+
+                if ($errors->has('image') && $request->hasFile('image')) {
+                    $image = $request->file('image');
+                    $errors->add(
+                        'image',
+                        'File yang diupload: ' . $image->getClientOriginalName() .
+                        ' (format: ' . $image->getClientOriginalExtension() . ')'
+                    );
+                }
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation error',
-                    'errors'  => $validator->errors(),
+                    'errors'  => $errors,
                 ], 422);
             }
 
