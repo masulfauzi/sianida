@@ -13,7 +13,7 @@
 		box-sizing: border-box;
 		background: #fff;
 		border: 1px solid #ddd;
-		font-size: 7pt;
+		font-size: 9pt;
 	}
 </style>
 @endsection
@@ -135,18 +135,18 @@
 									<tr>
 										<td width="15%"><img src="{{ asset('assets/images/logo/logo_jateng.png') }}" alt="" width="80px"></td>
 										<td class="center">
-											<font style="font-weight: bold; font-size: 8pt;">PEMERINTAH PROVINSI JAWA TENGAH</font><br>
-											<font style="font-weight: bold; font-size: 8pt;">DINAS PENDIDIKAN DAN KEBUDAYAAN</font><br>
-											<font style="font-weight: bold; font-size: 10pt;">SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</font><br>
-											<font style="font-size: 6pt;">Jalan Dr. Cipto Nomor 121 A, Kota Semarang Kode Pos 50124 Telepon 024-8455757</font><br>
-											<font style="font-size: 6pt;">Faksimile 024-8455757 Surat Elektronik smeansa_smg@yahoo.co.id</font>
+											<font style="font-weight: bold; font-size: 10pt;">PEMERINTAH PROVINSI JAWA TENGAH</font><br>
+											<font style="font-weight: bold; font-size: 10pt;">DINAS PENDIDIKAN DAN KEBUDAYAAN</font><br>
+											<font style="font-weight: bold; font-size: 12pt;">SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</font><br>
+											<font style="font-size: 8pt;">Jalan Dr. Cipto Nomor 121 A, Kota Semarang Kode Pos 50124 Telepon 024-8455757</font><br>
+											<font style="font-size: 8pt;">Faksimile 024-8455757 Surat Elektronik smeansa_smg@yahoo.co.id</font>
 										</td>
 									</tr>
 								</table>
 								<hr class="atas">
 								<hr class="bawah">
 
-								<p class="center bold underline" style="font-size: 9pt;">SURAT IJIN MENINGGALKAN PELAJARAN</p>
+								<p class="center bold underline" style="font-size: 11pt;">SURAT IJIN MENINGGALKAN PELAJARAN</p>
 
 								<p>Diberikan Kepada</p>
 								<table>

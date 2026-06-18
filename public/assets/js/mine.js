@@ -31,7 +31,7 @@ function printArea(elementId){
 	var content = document.getElementById(elementId).innerHTML;
 	var printWindow = window.open('', '_blank');
 	printWindow.document.write('<!DOCTYPE html><html><head><title>Cetak Surat Ijin</title>');
-	printWindow.document.write('<style>@page{size: 210mm 148mm; margin: 0;} html,body{margin:0;padding:0;width:100%;} body{font-family: Arial, sans-serif; font-size: 7pt; box-sizing:border-box; padding: 8mm;} *{box-sizing:border-box;} table{width:100%;border-collapse:collapse;} img{max-width:100%;} td{padding:2px 6px;} .center{text-align:center;} .bold{font-weight:bold;} .underline{text-decoration:underline;} hr.atas{border-top:3px solid black;} hr.bawah{border-top:1px solid black;margin-top:-8px;}</style>');
+	printWindow.document.write('<style>@page{size: 210mm 148mm; margin: 0;} html,body{margin:0;padding:0;width:100%;} body{font-family: Arial, sans-serif; font-size: 9pt; box-sizing:border-box; padding: 8mm;} *{box-sizing:border-box;} table{width:100%;border-collapse:collapse;} img{max-width:100%;} td{padding:2px 6px;} .center{text-align:center;} .bold{font-weight:bold;} .underline{text-decoration:underline;} hr.atas{border-top:3px solid black;} hr.bawah{border-top:1px solid black;margin-top:-8px;}</style>');
 	printWindow.document.write('</head><body>');
 	printWindow.document.write(content);
 	printWindow.document.write('</body></html>');
