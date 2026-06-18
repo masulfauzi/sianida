@@ -44,7 +44,7 @@
 									</div>
 									<div class='col-lg-2'><p>Validasi BK</p></div><div class='col-lg-10'>
 										<span class="badge {{ $ijinkeluarkelas->is_valid_bk == '1' ? 'bg-success' : 'bg-danger' }}">{{ $ijinkeluarkelas->is_valid_bk == '1' ? 'Disetujui' : 'Belum Disetujui' }}</span>
-										@if($ijinkeluarkelas->is_valid_bk != '1')
+										@if($ijinkeluarkelas->is_valid_guru == '1' && $ijinkeluarkelas->is_valid_bk != '1')
 											<form id="formValidasiBk" action="{{ route('ijinkeluarkelas.validasi_bk', $ijinkeluarkelas->id) }}" method="POST" class="d-inline">
 												@csrf
 												@method('PATCH')
