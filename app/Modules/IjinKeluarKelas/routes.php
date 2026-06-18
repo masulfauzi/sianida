@@ -9,6 +9,7 @@ Route::controller(IjinKeluarKelasController::class)->middleware(['web','auth'])-
 	Route::get('/ijinkeluarkelas/create', 'create')->name('create');
 	Route::post('/ijinkeluarkelas', 'store')->name('store');
 	Route::get('/ijinkeluarkelas/{ijinkeluarkelas}', 'show')->name('show');
+	Route::patch('/ijinkeluarkelas/{ijinkeluarkelas}/validasi-bk', 'validasiBk')->name('validasi_bk');
 	Route::get('/ijinkeluarkelas/{ijinkeluarkelas}/edit', 'edit')->name('edit');
 	Route::patch('/ijinkeluarkelas/{ijinkeluarkelas}', 'update')->name('update');
 	Route::get('/ijinkeluarkelas/{ijinkeluarkelas}/delete', 'destroy')->name('destroy');

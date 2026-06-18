@@ -124,6 +124,17 @@ class IjinKeluarKelasController extends Controller
 		return view('IjinKeluarKelas::ijinkeluarkelas_detail', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function validasiBk(Request $request, IjinKeluarKelas $ijinkeluarkelas)
+	{
+		$ijinkeluarkelas->is_valid_bk = '1';
+		$ijinkeluarkelas->updated_by = Auth::id();
+		$ijinkeluarkelas->save();
+
+		$text = 'memvalidasi BK '.$this->title;
+		$this->log($request, $text, ['ijinkeluarkelas.id' => $ijinkeluarkelas->id]);
+		return redirect()->route('ijinkeluarkelas.show', $ijinkeluarkelas->id)->with('message_success', 'Ijin Keluar Kelas berhasil divalidasi oleh BK!');
+	}
+
 	public function edit(Request $request, IjinKeluarKelas $ijinkeluarkelas)
 	{
 		$data['ijinkeluarkelas'] = $ijinkeluarkelas;

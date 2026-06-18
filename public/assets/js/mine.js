@@ -13,6 +13,20 @@ function deleteConfirm(url){
 	});
 }
 
+function validasiConfirm(formId, text){
+	swal({
+		title: "Apakah Anda yakin?",
+		text: text,
+		icon: "warning",
+		buttons: true,
+	})
+	.then((confirmed) => {
+		if (confirmed) {
+			document.getElementById(formId).submit();
+		}
+	});
+}
+
 function loadDatePicker(element){
 	if(element == '.datepicker'){
 		comp = {

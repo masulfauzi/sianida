@@ -28,6 +28,7 @@
                 Detail Data {{ $title }}: {{ $ijinkeluarkelas->siswa->nama_siswa ?? '-' }}
             </h6>
             <div class="card-body">
+                @include('include.flash')
                 <div class="row">
                     <div class="col-lg-10 offset-lg-2">
                         <div class="row">
@@ -43,6 +44,13 @@
 									</div>
 									<div class='col-lg-2'><p>Validasi BK</p></div><div class='col-lg-10'>
 										<span class="badge {{ $ijinkeluarkelas->is_valid_bk == '1' ? 'bg-success' : 'bg-danger' }}">{{ $ijinkeluarkelas->is_valid_bk == '1' ? 'Disetujui' : 'Belum Disetujui' }}</span>
+										@if($ijinkeluarkelas->is_valid_bk != '1')
+											<form id="formValidasiBk" action="{{ route('ijinkeluarkelas.validasi_bk', $ijinkeluarkelas->id) }}" method="POST" class="d-inline">
+												@csrf
+												@method('PATCH')
+											</form>
+											<button type="button" onclick="validasiConfirm('formValidasiBk', 'Ijin keluar kelas ini akan divalidasi oleh BK.')" class="btn btn-sm btn-success ms-2"><i class="fa fa-check"></i> Validasi BK</button>
+										@endif
 									</div>
 
                         </div>
