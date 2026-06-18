@@ -10,7 +10,6 @@ use App\Modules\Siswa\Models\Siswa;
 use App\Modules\Guru\Models\Guru;
 use App\Modules\JenisIjinKeluarKelas\Models\JenisIjinKeluarKelas;
 use App\Modules\Jampelajaran\Models\Jampelajaran;
-use App\Modules\Jampelajaran\Models\Jampelajaran;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
