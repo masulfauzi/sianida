@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Modules\IjinKeluarIjinKeluarKelas\Controllers\IjinKeluarIjinKeluarKelasController;
+use App\Modules\IjinKeluarKelas\Controllers\IjinKeluarKelasController;
 
 Route::controller(IjinKeluarKelasController::class)->middleware(['web','auth'])->name('ijinkeluarkelas.')->group(function(){
 	Route::get('/ijinkeluarkelas', 'index')->name('index');
