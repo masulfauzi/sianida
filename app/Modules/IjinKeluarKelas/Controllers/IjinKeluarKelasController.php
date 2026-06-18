@@ -27,12 +27,33 @@ class IjinKeluarKelasController extends Controller
 
 	public function index(Request $request)
 	{
-		$query = IjinKeluarKelas::query();
-		if($request->has('search')){
+		$query = IjinKeluarKelas::query()
+			->join('siswa', 'ijin_keluar_kelas.id_siswa', '=', 'siswa.id')
+			->join('guru', 'ijin_keluar_kelas.id_guru', '=', 'guru.id')
+			->join('jenis_ijin_keluar_kelas', 'ijin_keluar_kelas.id_jenis_ijin_keluar', '=', 'jenis_ijin_keluar_kelas.id')
+			->join('jampelajaran as jam_keluar_table', 'ijin_keluar_kelas.jam_keluar', '=', 'jam_keluar_table.id')
+			->join('jampelajaran as jam_kembali_table', 'ijin_keluar_kelas.jam_kembali', '=', 'jam_kembali_table.id')
+			->select(
+				'ijin_keluar_kelas.id',
+				'siswa.nama_siswa',
+				'guru.nama as nama_guru',
+				'jenis_ijin_keluar_kelas.jenis_ijin_keluar_kelas',
+				'ijin_keluar_kelas.keperluan',
+				'jam_keluar_table.jam_pelajaran as jam_keluar_pelajaran',
+				'jam_kembali_table.jam_pelajaran as jam_kembali_pelajaran',
+				'ijin_keluar_kelas.is_valid_guru',
+				'ijin_keluar_kelas.is_valid_bk',
+				'ijin_keluar_kelas.created_at'
+			);
+
+		if($request->filled('search')){
 			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
+			$query->where('siswa.nama_siswa', 'like', "%$search%");
 		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+
+		$data['data'] = $query->orderBy('ijin_keluar_kelas.created_at', 'desc')
+			->paginate(10)
+			->withQueryString();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('IjinKeluarKelas::ijinkeluarkelas', array_merge($data, ['title' => $this->title]));

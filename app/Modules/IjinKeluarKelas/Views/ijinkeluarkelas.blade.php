@@ -52,9 +52,9 @@
 								<td>Keperluan</td>
 								<td>Jam Keluar</td>
 								<td>Jam Kembali</td>
-								<td>Is Valguru</td>
-								<td>Is Valbk</td>
-								
+								<td>Validasi Guru</td>
+								<td>Validasi BK</td>
+
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -63,17 +63,27 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->id_siswa }}</td>
-									<td>{{ $item->id_guru }}</td>
-									<td>{{ $item->id_jenis_ijin_keluar }}</td>
+                                    <td>{{ $item->nama_siswa }}</td>
+									<td>{{ $item->nama_guru }}</td>
+									<td>{{ $item->jenis_ijin_keluar_kelas }}</td>
 									<td>{{ $item->keperluan }}</td>
-									<td>{{ $item->jam_keluar }}</td>
-									<td>{{ $item->jam_kembali }}</td>
-									<td>{{ $item->is_valid_guru }}</td>
-									<td>{{ $item->is_valid_bk }}</td>
-									
+									<td>{{ $item->jam_keluar_pelajaran }}</td>
+									<td>{{ $item->jam_kembali_pelajaran }}</td>
+									<td>
+										@php
+											$badgeGuru = $item->is_valid_guru == '1' ? 'bg-success' : 'bg-warning text-dark';
+										@endphp
+										<span class="badge {{ $badgeGuru }}">{{ $item->is_valid_guru == '1' ? 'Disetujui' : 'Belum Disetujui' }}</span>
+									</td>
+									<td>
+										@php
+											$badgeBk = $item->is_valid_bk == '1' ? 'bg-success' : 'bg-warning text-dark';
+										@endphp
+										<span class="badge {{ $badgeBk }}">{{ $item->is_valid_bk == '1' ? 'Disetujui' : 'Belum Disetujui' }}</span>
+									</td>
+
                                     <td>
-										{!! button('ijinkeluarkelas.show','', $item->id) !!}
+										{!! button('ijinkeluarkelas.show', 'Detail', $item->id) !!}
 										{!! button('ijinkeluarkelas.edit', $title, $item->id) !!}
                                         {!! button('ijinkeluarkelas.destroy', $title, $item->id) !!}
                                     </td>
