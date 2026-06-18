@@ -64,6 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/riwayat-izin', [IjinKeluarKelasController::class, 'index']);
     Route::get('/daftar-ijin-siswa', [IjinKeluarKelasController::class, 'index_guru']);
     Route::post('/keluar-kelas', [IjinKeluarKelasController::class, 'store']);
+    Route::get('/keluar-kelas/{id}', [IjinKeluarKelasController::class, 'show']);
+    Route::patch('/keluar-kelas/{id}/approve', [IjinKeluarKelasController::class, 'approve']);
 
     // Presensi Sholat API endpoints
     Route::get('/presensi-sholat', [PresensiSholatController::class, 'index']);
