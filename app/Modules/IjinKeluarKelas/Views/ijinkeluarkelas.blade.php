@@ -86,6 +86,9 @@
 										{!! button('ijinkeluarkelas.show', 'Detail', $item->id) !!}
 										{!! button('ijinkeluarkelas.edit', $title, $item->id) !!}
                                         {!! button('ijinkeluarkelas.destroy', $title, $item->id) !!}
+										@if($item->is_valid_bk == '1')
+											<button type="button" class="btn btn-sm icon icon-left btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalCetak{{ $item->id }}"><i class="fa fa-print"></i> Cetak</button>
+										@endif
                                     </td>
                                 </tr>
                             @empty
@@ -101,6 +104,95 @@
         </div>
 
     </section>
+
+	@foreach ($data as $item)
+		@if($item->is_valid_bk == '1')
+			<div class="modal fade" id="modalCetak{{ $item->id }}" tabindex="-1" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Surat Ijin Meninggalkan Pelajaran</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div id="cetakArea{{ $item->id }}">
+								<table width="100%">
+									<tr>
+										<td width="15%"><img src="{{ asset('assets/images/logo/logo_jateng.png') }}" alt="" width="80px"></td>
+										<td class="center">
+											<font style="font-weight: bold; font-size: 12pt;">PEMERINTAH PROVINSI JAWA TENGAH</font><br>
+											<font style="font-weight: bold; font-size: 12pt;">DINAS PENDIDIKAN DAN KEBUDAYAAN</font><br>
+											<font style="font-weight: bold; font-size: 14pt;">SEKOLAH MENENGAH KEJURUAN NEGERI 2 SEMARANG</font><br>
+											<font style="font-size: 10pt;">Jalan Dr. Cipto Nomor 121 A, Kota Semarang Kode Pos 50124 Telepon 024-8455757</font><br>
+											<font style="font-size: 10pt;">Faksimile 024-8455757 Surat Elektronik smeansa_smg@yahoo.co.id</font>
+										</td>
+									</tr>
+								</table>
+								<hr class="atas">
+								<hr class="bawah">
+
+								<p class="center bold underline" style="font-size: 13pt;">SURAT IJIN MENINGGALKAN PELAJARAN</p>
+
+								<p>Diberikan Kepada</p>
+								<table>
+									<tr>
+										<td width="20%">Nama</td>
+										<td width="2%">:</td>
+										<td>{{ $item->nama_siswa }}</td>
+									</tr>
+									<tr>
+										<td width="20%">Nomor Induk Siswa</td>
+										<td width="2%">:</td>
+										<td>{{ $item->nis }}</td>
+									</tr>
+									<tr>
+										<td width="20%">Ijin Jam Ke</td>
+										<td width="2%">:</td>
+										<td>{{ $item->jam_keluar_pelajaran }} s.d. {{ $item->jam_kembali_pelajaran }}</td>
+									</tr>
+									<tr>
+										<td width="20%">Alasan ijin</td>
+										<td width="2%">:</td>
+										<td>{{ $item->jenis_ijin_keluar_kelas }} - {{ $item->keperluan }}</td>
+									</tr>
+									<tr>
+										<td width="20%">Alamat Rumah</td>
+										<td width="2%">:</td>
+										<td>{{ $item->alamat_siswa }}</td>
+									</tr>
+								</table>
+
+								<br>
+
+								<table>
+									<tr>
+										<td width="50%">Mengetahui :</td>
+										<td>Semarang, {{ \App\Helpers\Format::tanggal($item->tanggal) }}</td>
+									</tr>
+									<tr>
+										<td>Orang Tua/Wali/Lembaga</td>
+										<td>a.n. Kepala SMK 2 Semarang<br>Guru BK / Guru Piket</td>
+									</tr>
+									<tr>
+										<td><br><br><br></td>
+										<td><br><br><br></td>
+									</tr>
+									<tr>
+										<td>( .......................................... )</td>
+										<td>( .......................................... )</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+							<button type="button" class="btn btn-primary" onclick="printArea('cetakArea{{ $item->id }}')"><i class="fa fa-print"></i> Cetak</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		@endif
+	@endforeach
 </div>
 @endsection
 

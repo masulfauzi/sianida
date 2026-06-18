@@ -36,9 +36,12 @@ class IjinKeluarKelasController extends Controller
 			->select(
 				'ijin_keluar_kelas.id',
 				'siswa.nama_siswa',
+				'siswa.nis',
+				'siswa.alamat as alamat_siswa',
 				'guru.nama as nama_guru',
 				'jenis_ijin_keluar_kelas.jenis_ijin_keluar_kelas',
 				'ijin_keluar_kelas.keperluan',
+				'ijin_keluar_kelas.tanggal',
 				'jam_keluar_table.jam_pelajaran as jam_keluar_pelajaran',
 				'jam_kembali_table.jam_pelajaran as jam_kembali_pelajaran',
 				'ijin_keluar_kelas.is_valid_guru',
