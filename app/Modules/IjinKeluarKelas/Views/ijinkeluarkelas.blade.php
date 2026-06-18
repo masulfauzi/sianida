@@ -189,8 +189,8 @@
 										<td>a.n. Kepala SMK 2 Semarang<br>Guru BK / Guru Piket</td>
 									</tr>
 									<tr>
-										<td><br></td>
-										<td><br></td>
+										<td><br><br></td>
+										<td><br><br></td>
 									</tr>
 									<tr>
 										<td>( .......................................... )</td>
