@@ -11,6 +11,7 @@ use App\Modules\Guru\Models\Guru;
 use App\Modules\Mapel\Models\Mapel;
 use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Tingkat\Models\Tingkat;
+use App\Modules\VerifikasiAtp\Models\VerifikasiAtp;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,7 @@ class JamMengajarController extends Controller
 		$data['data'] = JamMengajar::get_guru(session('active_semester')['id']);
 		$data['kelas'] = JamMengajar::get_kelas(session('active_semester')['id']);
 		$data['id_semester'] = session('active_semester')['id'];
+		$data['verifikasi_atp_by_guru'] = VerifikasiAtp::whereIdSemester($data['id_semester'])->pluck('id', 'id_guru')->all();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('JamMengajar::jammengajar', array_merge($data, ['title' => $this->title]));
