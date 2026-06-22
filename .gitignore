@@ -23,3 +23,6 @@ public/tmp/*
 prompt.txt
 issue.md
 template/*
+dump/*
+
+*.md
