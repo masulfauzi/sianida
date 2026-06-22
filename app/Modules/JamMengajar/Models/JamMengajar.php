@@ -44,7 +44,7 @@ class JamMengajar extends Model
                 $join->on('b.id_semester', '=', DB::raw("'" . $id_semester . "'"));
             })
         // ->whereNull('b.deleted_at')
-        ->where('a.is_aktif', '=', 1)
+        ->where('a.is_aktif', '=', '1')
             ->groupBy('a.id')
             ->orderBy('a.nama')
             ->get();
