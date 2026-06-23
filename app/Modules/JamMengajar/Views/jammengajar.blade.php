@@ -245,6 +245,47 @@
                 margin-top: 6px !important;
                 font-size: 15px !important;
             }
+
+            .rpp-template {
+                font-size: 16px !important;
+                line-height: 1.05 !important;
+            }
+
+            .rpp-template .title {
+                font-size: 18px !important;
+            }
+
+            .rpp-template .identitas-table {
+                margin-top: 4px !important;
+                font-size: 15px !important;
+            }
+
+            .rpp-template .skor-table {
+                margin-top: 4px !important;
+                font-size: 14px !important;
+            }
+
+            .rpp-template .skor-table th,
+            .rpp-template .skor-table td {
+                padding: 1px 2px !important;
+                line-height: 1.05 !important;
+            }
+
+            .rpp-template .keterangan {
+                margin-top: 2px !important;
+                font-size: 14px !important;
+            }
+
+            .rpp-template .review-box {
+                margin-top: 4px !important;
+                min-height: 20px !important;
+                padding: 2px !important;
+            }
+
+            .rpp-template .ttd {
+                margin-top: 4px !important;
+                font-size: 15px !important;
+            }
         }
     </style>
 @endsection
@@ -306,6 +347,7 @@
                                                             <td>Guru</td>
                                                             <td>Jml Jam</td>
                                                             <td>Verifikasi ATP</td>
+                                                            <td>Verifikasi RPP</td>
 
                                                             <th width="30%">Aksi</th>
                                                         </tr>
@@ -327,6 +369,16 @@
                                                                         <span class="badge bg-warning text-dark">Belum Diverifikasi</span>
                                                                     @endif
                                                                 </td>
+                                                                <td>
+                                                                    @if (isset($verifikasi_rpp_by_guru[$item->id_guru]))
+                                                                        <span class="badge bg-success" role="button"
+                                                                            style="cursor: pointer;"
+                                                                            onclick="showRppModal('{{ $verifikasi_rpp_by_guru[$item->id_guru] }}')">Sudah
+                                                                            Diverifikasi</span>
+                                                                    @else
+                                                                        <span class="badge bg-warning text-dark">Belum Diverifikasi</span>
+                                                                    @endif
+                                                                </td>
 
                                                                 <td>
                                                                     <a href="{{ route('jammengajar.guru.index', $item->id_guru) }}"
@@ -338,11 +390,18 @@
                                                                         <a href="{{ route('verifikasiatp.create', ['id_guru' => $item->id_guru]) }}"
                                                                             class="btn btn-primary">Verifikasi ATP</a>
                                                                     @endif
+                                                                    @if (isset($verifikasi_rpp_by_guru[$item->id_guru]))
+                                                                        <a href="{{ route('verifikasirpp.edit', $verifikasi_rpp_by_guru[$item->id_guru]) }}"
+                                                                            class="btn btn-info">Verifikasi RPP</a>
+                                                                    @else
+                                                                        <a href="{{ route('verifikasirpp.create', ['id_guru' => $item->id_guru]) }}"
+                                                                            class="btn btn-info">Verifikasi RPP</a>
+                                                                    @endif
                                                                 </td>
                                                             </tr>
                                                         @empty
                                                             <tr>
-                                                                <td colspan="7" class="text-center"><i>No data.</i></td>
+                                                                <td colspan="8" class="text-center"><i>No data.</i></td>
                                                             </tr>
                                                         @endforelse
                                                     </tbody>
@@ -459,6 +518,21 @@
                         <span class="visually-hidden">Loading...</span>
                     </div>
                     <p class="mt-3">Memuat data verifikasi ATP...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Verifikasi RPP -->
+    <div id="rppModal" class="atp-modal">
+        <div class="atp-modal-content">
+            <span class="atp-modal-close" onclick="closeRppModal()">&times;</span>
+            <div id="rppContent">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Memuat data verifikasi RPP...</p>
                 </div>
             </div>
         </div>
@@ -646,16 +720,190 @@
             window.print();
         }
 
+        function showRppModal(verifikasiRppId) {
+            const modal = document.getElementById('rppModal');
+            const content = document.getElementById('rppContent');
+
+            content.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Memuat data verifikasi RPP...</p>
+                </div>
+            `;
+
+            modal.classList.add('show');
+
+            fetch(`/verifikasirpp/${verifikasiRppId}/detail`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        content.innerHTML = generateRppHtml(data.data);
+                    } else {
+                        content.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${data.error || 'Gagal memuat data verifikasi RPP'}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    content.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> Gagal memuat data verifikasi RPP. Silakan coba lagi.</div>`;
+                });
+        }
+
+        function generateRppHtml(data) {
+            const bulanIndonesia = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            const dibuatPada = data.created_at ? new Date(data.created_at) : new Date();
+            const tanggalCetak = `${dibuatPada.getDate()} ${bulanIndonesia[dibuatPada.getMonth()]} ${dibuatPada.getFullYear()}`;
+
+            const c = data.components;
+            const mark = (value, target) => (value == target ? 'v' : '');
+
+            const rowsA = [
+                { label: 'Identitas', desc: 'Memuat: nama satuan pendidikan, nama guru, nama mata pelajaran, kelas/program keahlian, alokasi waktu.', value: c.identitas },
+            ];
+            const rowsB = [
+                { no: 1, label: 'Tujuan Pembelajaran', desc: 'Memuat Tujuan Pembelajaran sesuai dengan Alur Tujuan Pembelajaran (ATP)', value: c.tp },
+                { no: 2, label: 'Kegiatan Pembelajaran', desc: 'Memuat (1) Kegiatan awal, meliputi assesmen awal, dan pemberian apersepsi, (2) Kegiatan inti, yang memuat Pendekatan Pembelajaran Mendalam untuk merefleksikan 8 Dimensi Profil Lulusan, rancangan assesmen proses, (3) Kegiatan akhir/ penutup, yang meliputi kegiatan refleksi, umpan balik, dan rancangan asesmen akhir.', value: c.pembelajaran },
+                { no: 3, label: 'Assesmen', desc: 'Memuat jenis asesmen yang dilaksanakan, yaitu asesmen formatif, dan asesmen sumatif. Menerapkan prinsip asesmen, jenis dan teknik penilaian yang sesuai dan relevan dengan tujuan pembelajaran yang ditetapkan. Menggunakan perangkat asesmen yang sesuai dengan jenis dan teknik asesmen yang dilakukan dilengkapi dengan rubrik.', value: c.assesmen },
+            ];
+            const rowsC = [
+                { label: 'Lampiran', desc: 'Meliputi Lembar Kerja Murid, ringkasan materi, lembar penilaian/ jobsheet, Glosarium dan daftar pustaka.', value: c.lampiran },
+            ];
+
+            const renderRow = (row) => `
+                <tr>
+                    <td>${row.no || ''}</td>
+                    <td><strong>${row.label}</strong>${row.desc ? `<br>${row.desc}` : ''}</td>
+                    <td class="skor-col">${mark(row.value, 0)}</td>
+                    <td class="skor-col">${mark(row.value, 1)}</td>
+                    <td class="skor-col">${mark(row.value, 2)}</td>
+                    <td class="catatan-col"></td>
+                </tr>
+            `;
+
+            const tahunPelajaran = (data.semester || '').replace(/ganjil|genap/gi, '').trim();
+
+            const allValues = Object.values(c);
+            const count0 = allValues.filter(v => v == 0).length;
+            const count1 = allValues.filter(v => v == 1).length;
+            const count2 = allValues.filter(v => v == 2).length;
+
+            return `
+                <div class="atp-template rpp-template">
+                    <div class="center title">INSTRUMEN VERIFIKASI/ VALIDASI</div>
+                    <div class="center title">RENCANA PELAKSANAAN PEMBELAJARAN (RPP)</div>
+                    <div class="center title">TAHUN PELAJARAN ${tahunPelajaran}</div>
+
+                    <table class="identitas-table">
+                        <tr><td>Nama Sekolah</td><td>:</td><td><strong>SMK Negeri 2 Semarang</strong></td></tr>
+                        <tr><td>Nama Guru</td><td>:</td><td><strong>${data.nama_guru}</strong></td></tr>
+                        <tr><td>Mata Pelajaran</td><td>:</td><td><strong>${data.mapel}</strong></td></tr>
+                        <tr><td>Kelas/ Program Keahlian/ Konsentrasi Keahlian</td><td>:</td><td><strong>${data.tingkat} / ${data.jurusan}</strong></td></tr>
+                    </table>
+
+                    <table class="skor-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">No</th>
+                                <th rowspan="2">Komponen/Indikator</th>
+                                <th colspan="3">Hasil Telaah/ Skor</th>
+                                <th rowspan="2">Catatan</th>
+                            </tr>
+                            <tr>
+                                <th class="skor-col">Tidak ada/ tidak sesuai<br>0</th>
+                                <th class="skor-col">Kurang lengkap/ Kurang sesuai<br>1</th>
+                                <th class="skor-col">Sudah lengkap/ sudah sesuai<br>2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="group-header"><td>A</td><td colspan="5">BAGIAN AWAL</td></tr>
+                            ${rowsA.map(renderRow).join('')}
+                            <tr class="group-header"><td>B</td><td colspan="5">BAGIAN ISI/ KOMPONEN</td></tr>
+                            ${rowsB.map(renderRow).join('')}
+                            <tr class="group-header"><td>C</td><td colspan="5">LAMPIRAN</td></tr>
+                            ${rowsC.map(renderRow).join('')}
+                            <tr>
+                                <td colspan="2"><strong>JUMLAH SKOR</strong></td>
+                                <td class="skor-col">${count0 * 0}</td>
+                                <td class="skor-col">${count1 * 1}</td>
+                                <td class="skor-col">${count2 * 2}</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>NILAI</strong></td>
+                                <td colspan="2" class="center"><strong>${data.nilai}</strong></td>
+                                <td colspan="2"><strong>PREDIKAT : ${data.predikat.toUpperCase()}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="keterangan">
+                        Keterangan:<br>
+                        1. Nilai = (Skor perolehan : skor maksimal) x 100<br>
+                        2. Predikat:<br>
+                        &nbsp;&nbsp;Nilai 91 - 100 = Amat baik<br>
+                        &nbsp;&nbsp;Nilai 81 - 90 = Baik<br>
+                        &nbsp;&nbsp;Nilai 71 - 80 = Cukup<br>
+                        &nbsp;&nbsp;Nilai &le; 70 = Kurang
+                    </div>
+
+                    <div>
+                        <strong>Review Kepala Sekolah</strong>
+                        <div class="review-box">${escapeHtml(data.catatan).replace(/\n/g, '<br>')}</div>
+                    </div>
+
+                    <div class="ttd">
+                        Semarang, ${tanggalCetak}<br>
+                        Kepala Sekolah,<br><br><br><br>
+                        Nana Mulyana, S.P., M.Si.<br>
+                        Pembina Tk.I, IV/b<br>
+                        NIP. 19690601 199203 1 012
+                    </div>
+                    <div class="clear"></div>
+
+                    <div class="atp-modal-actions">
+                        <button class="btn-atp-print" onclick="printRppModal()">
+                            <i class="fa fa-print"></i> Cetak / Print
+                        </button>
+                        <button class="btn-atp-close" onclick="closeRppModal()">
+                            <i class="fa fa-times"></i> Tutup
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function closeRppModal() {
+            document.getElementById('rppModal').classList.remove('show');
+        }
+
+        function printRppModal() {
+            window.print();
+        }
+
         window.addEventListener('click', function (event) {
-            const modal = document.getElementById('atpModal');
-            if (event.target === modal) {
+            const atpModal = document.getElementById('atpModal');
+            const rppModal = document.getElementById('rppModal');
+            if (event.target === atpModal) {
                 closeAtpModal();
+            }
+            if (event.target === rppModal) {
+                closeRppModal();
             }
         });
 
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 closeAtpModal();
+                closeRppModal();
             }
         });
     </script>
