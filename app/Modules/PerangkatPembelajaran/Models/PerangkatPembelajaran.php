@@ -55,6 +55,25 @@ public function jenisPerangkat(){
 		return $data;
 	}
 
+	public static function cek_upload_perangkat_by_jenis($id, $slug_jenis_perangkat)
+	{
+		$cek = DB::table('jam_mengajar as a')
+					->join('kelas as b', 'a.id_kelas', '=', 'b.id')
+					->where('a.id', $id)
+					->first();
+
+		$data = DB::table('perangkat_pembelajaran as a')
+					->join('jenis_perangkat as b', 'a.id_jenis_perangkat', '=', 'b.id')
+					->where('a.id_guru', $cek->id_guru)
+					->where('a.id_semester', $cek->id_semester)
+					->where('a.id_mapel', $cek->id_mapel)
+					->where('a.id_tingkat', $cek->id_tingkat)
+					->where('b.slug', $slug_jenis_perangkat)
+					->count();
+
+		return $data;
+	}
+
 	public static function get_kelas_by_data($data)
 	{
 		$cari = DB::table('jam_mengajar as a')

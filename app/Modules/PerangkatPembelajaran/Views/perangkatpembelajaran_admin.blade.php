@@ -38,7 +38,8 @@
                                     <td>Guru</td>
                                     <td>Mapel</td>
                                     <td>Tingkat</td>
-                                    <td>Upload</td>
+                                    <td>Upload ATP</td>
+                                    <td>Upload Modul</td>
                                     <td>Link ATP</td>
                                     <td>Link Modul</td>
                                     {{-- <td>Jenis Perangkat</td>
@@ -58,10 +59,21 @@
                                         <td>{{ $item->tingkat }}</td>
                                         <td>
                                             @php
-                                                $cek = App\Modules\PerangkatPembelajaran\Models\PerangkatPembelajaran::cek_upload_perangkat($item->id);
+                                                $cekAtp = App\Modules\PerangkatPembelajaran\Models\PerangkatPembelajaran::cek_upload_perangkat_by_jenis($item->id, 'atp');
                                             @endphp
 
-                                            @if ($cek > 0)
+                                            @if ($cekAtp > 0)
+                                                <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                            @else
+                                                <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @php
+                                                $cekModul = App\Modules\PerangkatPembelajaran\Models\PerangkatPembelajaran::cek_upload_perangkat_by_jenis($item->id, 'modul');
+                                            @endphp
+
+                                            @if ($cekModul > 0)
                                                 <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
                                             @else
                                                 <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
@@ -87,7 +99,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center"><i>No data.</i></td>
+                                        <td colspan="9" class="text-center"><i>No data.</i></td>
                                     </tr>
                                 @endforelse
                             </tbody>
