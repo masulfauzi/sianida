@@ -91,7 +91,7 @@
                         <div class="card border mb-3">
                             <div class="card-body">
                                 <h6 class="mb-1">Identitas</h6>
-                                <p class="text-muted small mb-3">Memuat: nama satuan pendidikan, nama guru, nama mata pelajaran, kelas/program keahlian, alokasi waktu.</p>
+                                <p class="text-muted small mb-3">ATP/Silabus memuat nama sekolah, nama mata pelajaran, kelas/fase.</p>
                                 <div class="btn-group" role="group" aria-label="Skor Identitas">
                                     <input type="radio" class="btn-check" name="identitas" id="identitas_0" value="0" autocomplete="off" {{ old('identitas', $verifikasiatp->identitas) == 0 ? 'checked' : '' }}>
                                     <label class="btn btn-outline-primary" for="identitas_0">0</label>
@@ -99,6 +99,10 @@
                                     <label class="btn btn-outline-primary" for="identitas_1">1</label>
                                     <input type="radio" class="btn-check" name="identitas" id="identitas_2" value="2" autocomplete="off" {{ old('identitas', $verifikasiatp->identitas) == 2 ? 'checked' : '' }}>
                                     <label class="btn btn-outline-primary" for="identitas_2">2</label>
+                                    <input type="radio" class="btn-check" name="identitas" id="identitas_3" value="3" autocomplete="off" {{ old('identitas', $verifikasiatp->identitas) == 3 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="identitas_3">3</label>
+                                    <input type="radio" class="btn-check" name="identitas" id="identitas_4" value="4" autocomplete="off" {{ old('identitas', $verifikasiatp->identitas) == 4 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="identitas_4">4</label>
                                 </div>
                                 @error('identitas')
                                     <div class="text-danger small mt-2">{{ $message }}</div>
@@ -108,52 +112,21 @@
 
                         <div class="card border mb-3">
                             <div class="card-body">
-                                <h6 class="mb-1">Alur Tujuan Pembelajaran bisa berbentuk infografis</h6>
-                                <div class="btn-group mt-2" role="group" aria-label="Skor Infografis">
-                                    <input type="radio" class="btn-check" name="infografis" id="infografis_0" value="0" autocomplete="off" {{ old('infografis', $verifikasiatp->infografis) == 0 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="infografis_0">0</label>
-                                    <input type="radio" class="btn-check" name="infografis" id="infografis_1" value="1" autocomplete="off" {{ old('infografis', $verifikasiatp->infografis) == 1 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="infografis_1">1</label>
-                                    <input type="radio" class="btn-check" name="infografis" id="infografis_2" value="2" autocomplete="off" {{ old('infografis', $verifikasiatp->infografis) == 2 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="infografis_2">2</label>
-                                </div>
-                                @error('infografis')
-                                    <div class="text-danger small mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <h6 class="mb-1">Elemen</h6>
-                                <p class="text-muted small mb-3">Memuat elemen yang terdapat pada Capaian Pembelajaran.</p>
-                                <div class="btn-group" role="group" aria-label="Skor Elemen">
-                                    <input type="radio" class="btn-check" name="elemen" id="elemen_0" value="0" autocomplete="off" {{ old('elemen', $verifikasiatp->elemen) == 0 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="elemen_0">0</label>
-                                    <input type="radio" class="btn-check" name="elemen" id="elemen_1" value="1" autocomplete="off" {{ old('elemen', $verifikasiatp->elemen) == 1 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="elemen_1">1</label>
-                                    <input type="radio" class="btn-check" name="elemen" id="elemen_2" value="2" autocomplete="off" {{ old('elemen', $verifikasiatp->elemen) == 2 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="elemen_2">2</label>
-                                </div>
-                                @error('elemen')
-                                    <div class="text-danger small mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <h6 class="mb-1">CP Elemen</h6>
-                                <p class="text-muted small mb-3">Memuat Capaian Pembelajaran per-elemen sesuai pada elemen yang ada pada kolom sebelumnya.</p>
+                                <h6 class="mb-1">Capaian Pembelajaran</h6>
+                                <p class="text-muted small mb-3">Memuat Capaian Pembelajaran secara lengkap sesuai dengan Keputusan Kepala BSKAP Nomor 0446/H/KR/2025.</p>
                                 <div class="btn-group" role="group" aria-label="Skor CP Elemen">
-                                    <input type="radio" class="btn-check" name="cp_elemen" id="cp_elemen_0" value="0" autocomplete="off" {{ old('cp_elemen', $verifikasiatp->cp_elemen) == 0 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="cp_elemen_0">0</label>
-                                    <input type="radio" class="btn-check" name="cp_elemen" id="cp_elemen_1" value="1" autocomplete="off" {{ old('cp_elemen', $verifikasiatp->cp_elemen) == 1 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="cp_elemen_1">1</label>
-                                    <input type="radio" class="btn-check" name="cp_elemen" id="cp_elemen_2" value="2" autocomplete="off" {{ old('cp_elemen', $verifikasiatp->cp_elemen) == 2 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="cp_elemen_2">2</label>
+                                    <input type="radio" class="btn-check" name="cp" id="cp_0" value="0" autocomplete="off" {{ old('cp', $verifikasiatp->cp) == 0 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="cp_0">0</label>
+                                    <input type="radio" class="btn-check" name="cp" id="cp_1" value="1" autocomplete="off" {{ old('cp', $verifikasiatp->cp) == 1 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="cp_1">1</label>
+                                    <input type="radio" class="btn-check" name="cp" id="cp_2" value="2" autocomplete="off" {{ old('cp', $verifikasiatp->cp) == 2 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="cp_2">2</label>
+                                    <input type="radio" class="btn-check" name="cp" id="cp_3" value="3" autocomplete="off" {{ old('cp', $verifikasiatp->cp) == 3 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="cp_3">3</label>
+                                    <input type="radio" class="btn-check" name="cp" id="cp_4" value="4" autocomplete="off" {{ old('cp', $verifikasiatp->cp) == 4 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="cp_4">4</label>
                                 </div>
-                                @error('cp_elemen')
+                                @error('cp')
                                     <div class="text-danger small mt-2">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -162,7 +135,7 @@
                         <div class="card border mb-3">
                             <div class="card-body">
                                 <h6 class="mb-1">Tujuan Pembelajaran</h6>
-                                <p class="text-muted small mb-3">Merupakan tujuan yang lebih umum bukan tujuan pembelajaran harian (goal bukan objectives) disertai indikator ketercapaian tujuan pembelajaran.</p>
+                                <p class="text-muted small mb-3">Tujuan pembelajaran memuat koempetensi sikap, pengetahuan, dan keterampilan dan memuat konten sesuai dengan capaian pembelajaran.</p>
                                 <div class="btn-group" role="group" aria-label="Skor Tujuan Pembelajaran">
                                     <input type="radio" class="btn-check" name="tp" id="tp_0" value="0" autocomplete="off" {{ old('tp', $verifikasiatp->tp) == 0 ? 'checked' : '' }}>
                                     <label class="btn btn-outline-primary" for="tp_0">0</label>
@@ -170,6 +143,10 @@
                                     <label class="btn btn-outline-primary" for="tp_1">1</label>
                                     <input type="radio" class="btn-check" name="tp" id="tp_2" value="2" autocomplete="off" {{ old('tp', $verifikasiatp->tp) == 2 ? 'checked' : '' }}>
                                     <label class="btn btn-outline-primary" for="tp_2">2</label>
+                                    <input type="radio" class="btn-check" name="tp" id="tp_3" value="3" autocomplete="off" {{ old('tp', $verifikasiatp->tp) == 3 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="tp_3">3</label>
+                                    <input type="radio" class="btn-check" name="tp" id="tp_4" value="4" autocomplete="off" {{ old('tp', $verifikasiatp->tp) == 4 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="tp_4">4</label>
                                 </div>
                                 @error('tp')
                                     <div class="text-danger small mt-2">{{ $message }}</div>
@@ -179,25 +156,8 @@
 
                         <div class="card border mb-3">
                             <div class="card-body">
-                                <h6 class="mb-1">Alur Tujuan Pembelajaran</h6>
-                                <p class="text-muted small mb-3">Menggambarkan urutan pengembangan kompetensi yang harus dikuasai murid yang tersusun secara berkesinambungan dan urut secara berjenjang.</p>
-                                <div class="btn-group" role="group" aria-label="Skor Alur Tujuan Pembelajaran">
-                                    <input type="radio" class="btn-check" name="atp" id="atp_0" value="0" autocomplete="off" {{ old('atp', $verifikasiatp->atp) == 0 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="atp_0">0</label>
-                                    <input type="radio" class="btn-check" name="atp" id="atp_1" value="1" autocomplete="off" {{ old('atp', $verifikasiatp->atp) == 1 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="atp_1">1</label>
-                                    <input type="radio" class="btn-check" name="atp" id="atp_2" value="2" autocomplete="off" {{ old('atp', $verifikasiatp->atp) == 2 ? 'checked' : '' }}>
-                                    <label class="btn btn-outline-primary" for="atp_2">2</label>
-                                </div>
-                                @error('atp')
-                                    <div class="text-danger small mt-2">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="card border mb-3">
-                            <div class="card-body">
-                                <h6 class="mb-1">Alokasi Waktu (JP)</h6>
+                                <h6 class="mb-1">Alokasi Waktu</h6>
+                                <p class="text-muted small mb-3">Memuat alokasi waktu dengan jumlah sama dengan jumlah jam intrakurikuler pertahun.</p>
                                 <div class="btn-group mt-2" role="group" aria-label="Skor Alokasi Waktu">
                                     <input type="radio" class="btn-check" name="alokasi_waktu" id="alokasi_waktu_0" value="0" autocomplete="off" {{ old('alokasi_waktu', $verifikasiatp->alokasi_waktu) == 0 ? 'checked' : '' }}>
                                     <label class="btn btn-outline-primary" for="alokasi_waktu_0">0</label>
@@ -205,8 +165,56 @@
                                     <label class="btn btn-outline-primary" for="alokasi_waktu_1">1</label>
                                     <input type="radio" class="btn-check" name="alokasi_waktu" id="alokasi_waktu_2" value="2" autocomplete="off" {{ old('alokasi_waktu', $verifikasiatp->alokasi_waktu) == 2 ? 'checked' : '' }}>
                                     <label class="btn btn-outline-primary" for="alokasi_waktu_2">2</label>
+                                    <input type="radio" class="btn-check" name="alokasi_waktu" id="alokasi_waktu_3" value="3" autocomplete="off" {{ old('alokasi_waktu', $verifikasiatp->alokasi_waktu) == 3 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="alokasi_waktu_3">3</label>
+                                    <input type="radio" class="btn-check" name="alokasi_waktu" id="alokasi_waktu_4" value="4" autocomplete="off" {{ old('alokasi_waktu', $verifikasiatp->alokasi_waktu) == 4 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="alokasi_waktu_4">4</label>
                                 </div>
                                 @error('alokasi_waktu')
+                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="card border mb-3">
+                            <div class="card-body">
+                                <h6 class="mb-1">Materi Pembelajaran</h6>
+                                <p class="text-muted small mb-3">Memuat materi pembelajaran yang esensial sesuai dengan capaian pembelajaran.</p>
+                                <div class="btn-group" role="group" aria-label="Skor Materi">
+                                    <input type="radio" class="btn-check" name="materi" id="materi_0" value="0" autocomplete="off" {{ old('materi', $verifikasiatp->materi) == 0 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="materi_0">0</label>
+                                    <input type="radio" class="btn-check" name="materi" id="materi_1" value="1" autocomplete="off" {{ old('materi', $verifikasiatp->materi) == 1 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="materi_1">1</label>
+                                    <input type="radio" class="btn-check" name="materi" id="materi_2" value="2" autocomplete="off" {{ old('materi', $verifikasiatp->materi) == 2 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="materi_2">2</label>
+                                    <input type="radio" class="btn-check" name="materi" id="materi_3" value="3" autocomplete="off" {{ old('materi', $verifikasiatp->materi) == 3 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="materi_3">3</label>
+                                    <input type="radio" class="btn-check" name="materi" id="materi_4" value="4" autocomplete="off" {{ old('materi', $verifikasiatp->materi) == 4 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="materi_4">4</label>
+                                </div>
+                                @error('materi')
+                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="card border mb-3">
+                            <div class="card-body">
+                                <h6 class="mb-1">Lain-lain</h6>
+                                <p class="text-muted small mb-3">Memuat metode/model pembelajaran penilaian/asesmen yang dapat menilai sikap, pengetahuan, dan keterampilan.</p>
+                                <div class="btn-group" role="group" aria-label="Skor Lain-Lain">
+                                    <input type="radio" class="btn-check" name="metode" id="metode_0" value="0" autocomplete="off" {{ old('metode', $verifikasiatp->metode) == 0 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="metode_0">0</label>
+                                    <input type="radio" class="btn-check" name="metode" id="metode_1" value="1" autocomplete="off" {{ old('metode', $verifikasiatp->metode) == 1 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="metode_1">1</label>
+                                    <input type="radio" class="btn-check" name="metode" id="metode_2" value="2" autocomplete="off" {{ old('metode', $verifikasiatp->metode) == 2 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="metode_2">2</label>
+                                    <input type="radio" class="btn-check" name="metode" id="metode_3" value="3" autocomplete="off" {{ old('metode', $verifikasiatp->metode) == 3 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="metode_3">3</label>
+                                    <input type="radio" class="btn-check" name="metode" id="metode_4" value="4" autocomplete="off" {{ old('metode', $verifikasiatp->metode) == 4 ? 'checked' : '' }}>
+                                    <label class="btn btn-outline-primary" for="metode_4">4</label>
+                                </div>
+                                @error('metode')
                                     <div class="text-danger small mt-2">{{ $message }}</div>
                                 @enderror
                             </div>

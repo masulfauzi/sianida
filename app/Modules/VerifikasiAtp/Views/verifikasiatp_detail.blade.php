@@ -33,7 +33,7 @@
                         <div class="row">
                             <div class='col-lg-2'><p>Alokasi Waktu</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $verifikasiatp->alokasi_waktu }}</p></div>
 									<div class='col-lg-2'><p>Atp</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $verifikasiatp->atp }}</p></div>
-									<div class='col-lg-2'><p>Cp Elemen</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $verifikasiatp->cp_elemen }}</p></div>
+									<div class='col-lg-2'><p>Cp Elemen</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $verifikasiatp->cp }}</p></div>
 									<div class='col-lg-2'><p>Elemen</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $verifikasiatp->elemen }}</p></div>
 									<div class='col-lg-2'><p>Guru</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $verifikasiatp->guru->id }}</p></div>
 									<div class='col-lg-2'><p>Jurusan</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $verifikasiatp->jurusan->id }}</p></div>

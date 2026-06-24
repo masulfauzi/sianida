@@ -600,24 +600,23 @@
             const mark = (value, target) => (value == target ? 'v' : '');
 
             const rows = [
-                { no: 1, label: 'Identitas', desc: 'Memuat: nama satuan pendidikan, nama guru, nama mata pelajaran, kelas/program keahlian, alokasi waktu.', value: c.identitas },
-                { no: 2, label: 'Alur Tujuan Pembelajaran bisa berbentuk infografis', desc: '', value: c.infografis },
+                { no: 1, desc: 'ATP/Silabus memuat nama sekolah, nama mata pelajaran, kelas/fase.', value: c.identitas },
             ];
-            const rowsB = [
-                { no: 1, label: 'Elemen', desc: 'Memuat elemen yang terdapat pada Capaian Pembelajaran', value: c.elemen },
-                { no: 2, label: 'CP Elemen', desc: 'Memuat Capaian Pembelajaran per-elemen sesuai pada elemen yang ada pada kolom sebelumnya', value: c.cp_elemen },
-                { no: 3, label: 'Tujuan Pembelajaran', desc: 'Merupakan tujuan yang lebih umum bukan tujuan pembelajaran harian (goal bukan objectives) disertai indikator ketercapaian tujuan pembelajaran', value: c.tp },
-                { no: 4, label: 'Alur Tujuan Pembelajaran', desc: 'Menggambarkan urutan pengembangan kompetensi yang harus dikuasai murid yang tersusun secara berkesinambungan dan urut secara berjenjang', value: c.atp },
-                { no: 5, label: 'Alokasi Waktu (JP)', desc: '', value: c.alokasi_waktu },
-            ];
+            const rowsB1 = { no: 2, label: 'Capaian Pembelajaran', desc: 'Memuat Capaian Pembelajaran secara lengkap sesuai dengan Keputusan Kepala BSKAP Nomor 0446/H/KR/2025.', value: c.cp };
+            const rowsB2 = { no: 3, label: 'Tujuan Pembelajaran', desc: 'Tujuan pembelajaran memuat koempetensi sikap, pengetahuan, dan keterampilan dan memuat konten sesuai dengan capaian pembelajaran.', value: c.tp };
+            const rowsB3 = { no: 4, label: 'Alokasi Waktu', desc: 'Memuat alokasi waktu dengan jumlah sama dengan jumlah jam intrakurikuler pertahun.', value: c.alokasi_waktu };
+            const rowsB4 = { no: 5, label: 'Materi Pembelajaran', desc: 'Memuat materi pembelajaran yang esensial sesuai dengan capaian pembelajaran.', value: c.materi };
+            const rowsB5 = { no: 6, label: 'Lain-lain', desc: 'Memuat metode/model pembelajaran penilaian/asesmen yang dapat menilai sikap, pengetahuan, dan keterampilan.', value: c.metode };
 
             const renderRow = (row) => `
                 <tr>
                     <td>${row.no}</td>
-                    <td><strong>${row.label}</strong>${row.desc ? `<br>${row.desc}` : ''}</td>
+                    <td>${row.desc ? `${row.desc}` : ''}</td>
                     <td class="skor-col">${mark(row.value, 0)}</td>
                     <td class="skor-col">${mark(row.value, 1)}</td>
                     <td class="skor-col">${mark(row.value, 2)}</td>
+                    <td class="skor-col">${mark(row.value, 3)}</td>
+                    <td class="skor-col">${mark(row.value, 4)}</td>
                     <td class="catatan-col"></td>
                 </tr>
             `;
@@ -628,6 +627,8 @@
             const count0 = allValues.filter(v => v == 0).length;
             const count1 = allValues.filter(v => v == 1).length;
             const count2 = allValues.filter(v => v == 2).length;
+            const count3 = allValues.filter(v => v == 3).length;
+            const count4 = allValues.filter(v => v == 4).length;
 
             return `
                 <div class="atp-template">
@@ -647,56 +648,70 @@
                             <tr>
                                 <th rowspan="2">No</th>
                                 <th rowspan="2">Komponen/Indikator</th>
-                                <th colspan="3">Hasil Telaah/ Skor</th>
+                                <th colspan="5">Hasil Telaah/ Skor</th>
                                 <th rowspan="2">Catatan</th>
                             </tr>
                             <tr>
-                                <th class="skor-col">Tidak ada/ tidak sesuai<br>0</th>
-                                <th class="skor-col">Kurang lengkap/ Kurang sesuai<br>1</th>
-                                <th class="skor-col">Sudah lengkap/ sudah sesuai<br>2</th>
+                                <th class="skor-col">Tidak ada<br>0</th>
+                                <th class="skor-col">Kurang<br>1</th>
+                                <th class="skor-col">Cukup<br>2</th>
+                                <th class="skor-col">Baik<br>3</th>
+                                <th class="skor-col">Amat Baik<br>4</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="group-header"><td>A</td><td colspan="5">BAGIAN AWAL</td></tr>
+                            <tr class="group-header"><td>I</td><td colspan="7">Identitas</td></tr>
                             ${rows.map(renderRow).join('')}
-                            <tr class="group-header"><td>B</td><td colspan="5">BAGIAN ISI/ KOMPONEN</td></tr>
-                            ${rowsB.map(renderRow).join('')}
+                            <tr class="group-header"><td>II</td><td colspan="7">Capaian Pembelajaran</td></tr>
+                            ${renderRow(rowsB1)}
+                            <tr class="group-header"><td>III</td><td colspan="7">Tujuan Pembelajaran</td></tr>
+                            ${renderRow(rowsB2)}
+                            <tr class="group-header"><td>IV</td><td colspan="7">Alokasi Waktu</td></tr>
+                            ${renderRow(rowsB3)}
+                            <tr class="group-header"><td>V</td><td colspan="7">Materi Pembelajaran</td></tr>
+                            ${renderRow(rowsB4)}
+                            <tr class="group-header"><td>VI</td><td colspan="7">Lain-lain</td></tr>
+                            ${renderRow(rowsB5)}
                             <tr>
                                 <td colspan="2"><strong>JUMLAH SKOR</strong></td>
                                 <td class="skor-col">${count0 * 0}</td>
                                 <td class="skor-col">${count1 * 1}</td>
                                 <td class="skor-col">${count2 * 2}</td>
+                                <td class="skor-col">${count3 * 3}</td>
+                                <td class="skor-col">${count4 * 4}</td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td colspan="2"><strong>NILAI</strong></td>
-                                <td colspan="2" class="center"><strong>${data.nilai}</strong></td>
-                                <td colspan="2"><strong>PREDIKAT : ${data.predikat.toUpperCase()}</strong></td>
+                                <td colspan="3" class="center"><strong>${data.nilai}</strong></td>
+                                <td colspan="3"><strong>PREDIKAT : ${data.predikat.toUpperCase()}</strong></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <div class="keterangan">
-                        Keterangan:<br>
-                        1. Nilai = (Skor perolehan : skor maksimal) x 100<br>
-                        2. Predikat:<br>
-                        &nbsp;&nbsp;Nilai 91 - 100 = Amat baik<br>
-                        &nbsp;&nbsp;Nilai 81 - 90 = Baik<br>
-                        &nbsp;&nbsp;Nilai 71 - 80 = Cukup<br>
-                        &nbsp;&nbsp;Nilai &le; 70 = Kurang
-                    </div>
-
                     <div>
-                        <strong>Review Kepala Sekolah</strong>
+                        <strong>Rekomendasi</strong>
                         <div class="review-box">${escapeHtml(data.catatan).replace(/\n/g, '<br>')}</div>
                     </div>
 
-                    <div class="ttd">
-                        Semarang, ${tanggalCetak}<br>
-                        Kepala Sekolah,<br><br><br><br>
-                        Nana Mulyana, S.P., M.Si.<br>
-                        Pembina Tk.I, IV/b<br>
-                        NIP. 19690601 199203 1 012
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="keterangan" style="margin-top: 16px; border: 1px solid #000; padding: 6px;">
+                            Keterangan:<br>
+                            1. Nilai = (Skor perolehan : skor maksimal) x 100<br>
+                            2. Predikat:<br>
+                            &nbsp;&nbsp;Nilai 91 - 100 = Amat baik<br>
+                            &nbsp;&nbsp;Nilai 81 - 90 = Baik<br>
+                            &nbsp;&nbsp;Nilai 71 - 80 = Cukup<br>
+                            &nbsp;&nbsp;Nilai &le; 70 = Kurang
+                        </div>
+
+                        <div class="ttd" style="float: none; margin-top: 16px;">
+                            Semarang, ${tanggalCetak}<br>
+                            Kepala Sekolah,<br><br><br><br>
+                            Nana Mulyana, S.P., M.Si.<br>
+                            Pembina Tk.I, IV/b<br>
+                            NIP. 19690601 199203 1 012
+                        </div>
                     </div>
                     <div class="clear"></div>
 

@@ -70,16 +70,15 @@ class VerifikasiAtpController extends Controller
 	{
 		$this->validate($request, [
 			'alokasi_waktu' => 'required',
-			'atp' => 'required',
-			'cp_elemen' => 'required',
-			'elemen' => 'required',
+			'cp' => 'required',
 			'id_guru' => 'required',
 			'id_jurusan' => 'required',
 			'id_mapel' => 'required',
 			'id_semester' => 'required',
 			'id_tingkat' => 'required',
 			'identitas' => 'required',
-			'infografis' => 'required',
+			'materi' => 'required',
+			'metode' => 'required',
 			'tp' => 'required',
 			'catatan' => 'nullable',
 
@@ -87,16 +86,15 @@ class VerifikasiAtpController extends Controller
 
 		$verifikasiatp = new VerifikasiAtp();
 		$verifikasiatp->alokasi_waktu = $request->input("alokasi_waktu");
-		$verifikasiatp->atp = $request->input("atp");
-		$verifikasiatp->cp_elemen = $request->input("cp_elemen");
-		$verifikasiatp->elemen = $request->input("elemen");
+		$verifikasiatp->cp = $request->input("cp");
 		$verifikasiatp->id_guru = $request->input("id_guru");
 		$verifikasiatp->id_jurusan = $request->input("id_jurusan");
 		$verifikasiatp->id_mapel = $request->input("id_mapel");
 		$verifikasiatp->id_semester = $request->input("id_semester");
 		$verifikasiatp->id_tingkat = $request->input("id_tingkat");
 		$verifikasiatp->identitas = $request->input("identitas");
-		$verifikasiatp->infografis = $request->input("infografis");
+		$verifikasiatp->materi = $request->input("materi");
+		$verifikasiatp->metode = $request->input("metode");
 		$verifikasiatp->tp = $request->input("tp");
 		$verifikasiatp->catatan = $request->input("catatan");
 
@@ -114,16 +112,15 @@ class VerifikasiAtpController extends Controller
 
 		$components = [
 			'identitas' => (int) $verifikasiatp->identitas,
-			'infografis' => (int) $verifikasiatp->infografis,
-			'elemen' => (int) $verifikasiatp->elemen,
-			'cp_elemen' => (int) $verifikasiatp->cp_elemen,
+			'cp' => (int) $verifikasiatp->cp,
 			'tp' => (int) $verifikasiatp->tp,
-			'atp' => (int) $verifikasiatp->atp,
 			'alokasi_waktu' => (int) $verifikasiatp->alokasi_waktu,
+			'materi' => (int) $verifikasiatp->materi,
+			'metode' => (int) $verifikasiatp->metode,
 		];
 
 		$totalSkor = array_sum($components);
-		$maxSkor = count($components) * 2;
+		$maxSkor = count($components) * 4;
 		$nilai = $maxSkor > 0 ? round(($totalSkor / $maxSkor) * 100) : 0;
 
 		if ($nilai >= 91) {
@@ -204,16 +201,15 @@ class VerifikasiAtpController extends Controller
 	{
 		$this->validate($request, [
 			'alokasi_waktu' => 'required',
-			'atp' => 'required',
-			'cp_elemen' => 'required',
-			'elemen' => 'required',
+			'cp' => 'required',
 			'id_guru' => 'required',
 			'id_jurusan' => 'required',
 			'id_mapel' => 'required',
 			'id_semester' => 'required',
 			'id_tingkat' => 'required',
 			'identitas' => 'required',
-			'infografis' => 'required',
+			'materi' => 'required',
+			'metode' => 'required',
 			'tp' => 'required',
 			'catatan' => 'nullable',
 
@@ -221,16 +217,15 @@ class VerifikasiAtpController extends Controller
 
 		$verifikasiatp = VerifikasiAtp::find($id);
 		$verifikasiatp->alokasi_waktu = $request->input("alokasi_waktu");
-		$verifikasiatp->atp = $request->input("atp");
-		$verifikasiatp->cp_elemen = $request->input("cp_elemen");
-		$verifikasiatp->elemen = $request->input("elemen");
+		$verifikasiatp->cp = $request->input("cp");
 		$verifikasiatp->id_guru = $request->input("id_guru");
 		$verifikasiatp->id_jurusan = $request->input("id_jurusan");
 		$verifikasiatp->id_mapel = $request->input("id_mapel");
 		$verifikasiatp->id_semester = $request->input("id_semester");
 		$verifikasiatp->id_tingkat = $request->input("id_tingkat");
 		$verifikasiatp->identitas = $request->input("identitas");
-		$verifikasiatp->infografis = $request->input("infografis");
+		$verifikasiatp->materi = $request->input("materi");
+		$verifikasiatp->metode = $request->input("metode");
 		$verifikasiatp->tp = $request->input("tp");
 		$verifikasiatp->catatan = $request->input("catatan");
 

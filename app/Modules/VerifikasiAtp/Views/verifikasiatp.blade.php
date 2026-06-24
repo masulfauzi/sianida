@@ -69,7 +69,7 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->alokasi_waktu }}</td>
 									<td>{{ $item->atp }}</td>
-									<td>{{ $item->cp_elemen }}</td>
+									<td>{{ $item->cp }}</td>
 									<td>{{ $item->elemen }}</td>
 									<td>{{ $item->guru->nama ?? '-' }}</td>
 									<td>{{ $item->jurusan->jurusan ?? '-' }}</td>
