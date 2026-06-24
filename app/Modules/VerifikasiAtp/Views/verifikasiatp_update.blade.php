@@ -86,7 +86,7 @@
                         <hr>
 
                         <h6 class="mb-1">Survey Verifikasi ATP</h6>
-                        <p class="text-muted small mb-3">Pilih skor <strong>0</strong> (tidak ada), <strong>1</strong> (Kurang Lengkap), atau <strong>2</strong> (Sudah Lengkap).</p>
+                        <p class="text-muted small mb-3">Pilih skor <strong>0</strong> (tidak ada), <strong>1</strong> (Kurang), <strong>2</strong> (Cukup), <strong>3</strong> (Baik), <strong>4</strong> (Amat Baik).</p>
 
                         <div class="card border mb-3">
                             <div class="card-body">
