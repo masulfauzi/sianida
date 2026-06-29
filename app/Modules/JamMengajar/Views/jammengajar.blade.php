@@ -544,6 +544,9 @@
 
 @section('inline-js')
     <script>
+        let lastAtpData = null;
+        let lastRppData = null;
+
         function showAtpModal(verifikasiAtpId) {
             const modal = document.getElementById('atpModal');
             const content = document.getElementById('atpContent');
@@ -568,6 +571,7 @@
                 })
                 .then(data => {
                     if (data.success) {
+                        lastAtpData = data.data;
                         content.innerHTML = generateAtpHtml(data.data);
                     } else {
                         content.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${data.error || 'Gagal memuat data verifikasi ATP'}</div>`;
@@ -707,7 +711,8 @@
 
                         <div class="ttd" style="float: none; margin-top: 16px;">
                             Semarang, ${tanggalCetak}<br>
-                            Kepala Sekolah,<br><br><br><br>
+                            Kepala Sekolah,<br>
+                            <img src="{{ asset('assets/images/ttd/ttd_stempel.png') }}" alt="Tanda Tangan dan Stempel" style="height: 140px; display: block; margin-left: -80px; margin-top: -20px; position: relative; top: 20px;">
                             Nana Mulyana, S.P., M.Si.<br>
                             Pembina Tk.I, IV/b<br>
                             NIP. 19690601 199203 1 012
@@ -732,6 +737,14 @@
         }
 
         function printAtpModal() {
+            const originalTitle = document.title;
+            if (lastAtpData) {
+                document.title = `Verifikasi ATP - ${lastAtpData.nama_guru} - ${lastAtpData.mapel}`;
+            }
+            window.onafterprint = () => {
+                document.title = originalTitle;
+                window.onafterprint = null;
+            };
             window.print();
         }
 
@@ -759,6 +772,7 @@
                 })
                 .then(data => {
                     if (data.success) {
+                        lastRppData = data.data;
                         content.innerHTML = generateRppHtml(data.data);
                     } else {
                         content.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${data.error || 'Gagal memuat data verifikasi RPP'}</div>`;
@@ -901,6 +915,14 @@
         }
 
         function printRppModal() {
+            const originalTitle = document.title;
+            if (lastRppData) {
+                document.title = `Verifikasi RPP - ${lastRppData.nama_guru} - ${lastRppData.mapel}`;
+            }
+            window.onafterprint = () => {
+                document.title = originalTitle;
+                window.onafterprint = null;
+            };
             window.print();
         }
 
