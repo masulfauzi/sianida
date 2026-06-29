@@ -29,9 +29,10 @@ class VerifikasiAtpController extends Controller
 	{
 		return VerifikasiAtp::query()
 			->join('guru', 'verifikasi_atp.id_guru', '=', 'guru.id')
+			->join('mapel', 'verifikasi_atp.id_mapel', '=', 'mapel.id')
 			->where('verifikasi_atp.id_semester', session('active_semester')['id'])
 			->orderBy('guru.nama')
-			->select('verifikasi_atp.*', 'guru.nama as nama_guru');
+			->select('verifikasi_atp.*', 'guru.nama as nama_guru', 'mapel.mapel as nama_mapel');
 	}
 
 	public function index(Request $request)
@@ -48,8 +49,18 @@ class VerifikasiAtpController extends Controller
 
 	public function exportPdf(Request $request)
 	{
-		$data['data'] = $this->queryAktif()->get();
+		$data['data'] = $this->queryAktif()->get()->map(function ($item) {
+			$item->predikat = $this->tentukanPredikat($item->nilai);
+			return $item;
+		});
 		$data['semester'] = session('active_semester')['semester'] ?? '-';
+
+		$bulanIndonesia = [
+			'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+			'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+		];
+		$sekarang = now();
+		$data['tanggalCetak'] = $sekarang->day.' '.$bulanIndonesia[$sekarang->month - 1].' '.$sekarang->year;
 
 		$this->log($request, 'mengekspor data '.$this->title.' ke PDF');
 

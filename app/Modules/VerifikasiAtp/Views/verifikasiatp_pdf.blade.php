@@ -36,14 +36,32 @@
             background-color: #d9e2f3;
         }
 
-        td.nilai {
+        td.nilai,
+        td.predikat {
             text-align: center;
-            width: 15%;
+            width: 12%;
         }
 
         td.no {
             text-align: center;
             width: 5%;
+        }
+
+        .ttd-table {
+            width: 100%;
+            border: none;
+            margin-top: 30px;
+        }
+
+        .ttd-table td {
+            border: none;
+            vertical-align: top;
+            width: 50%;
+            text-align: center;
+        }
+
+        .ttd-space {
+            height: 70px;
         }
     </style>
 </head>
@@ -56,7 +74,9 @@
             <tr>
                 <th>No</th>
                 <th>Nama Guru</th>
+                <th>Mata Pelajaran</th>
                 <th>Nilai</th>
+                <th>Tingkat Kelayakan</th>
             </tr>
         </thead>
         <tbody>
@@ -64,14 +84,36 @@
                 <tr>
                     <td class="no">{{ $loop->iteration }}</td>
                     <td>{{ $item->nama_guru }}</td>
+                    <td>{{ $item->nama_mapel }}</td>
                     <td class="nilai">{{ $item->nilai }}</td>
+                    <td class="predikat">{{ $item->predikat }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="3" class="center"><i>Tidak ada data.</i></td>
+                    <td colspan="5" class="center"><i>Tidak ada data.</i></td>
                 </tr>
             @endforelse
         </tbody>
+    </table>
+
+    <table class="ttd-table">
+        <tr>
+            <td>
+                Mengetahui,<br>
+                Kepala Sekolah
+                <div class="ttd-space"></div>
+                <strong>Nana Mulyana, S.P., M.Si.</strong><br>
+                {{-- Pembina Tk.I, IV/b<br> --}}
+                NIP. 19690601 199203 1 012
+            </td>
+            <td>
+                Semarang, {{ $tanggalCetak }}<br>
+                Pengawas Sekolah
+                <div class="ttd-space"></div>
+                <strong>Dra. Hj. Sri Maryati, M.T.</strong><br>
+                NIP. 19670319 199003 2 008
+            </td>
+        </tr>
     </table>
 </body>
 </html>
