@@ -106,7 +106,7 @@
                 Mengetahui,<br>
                 Pengawas Sekolah
                 <div class="ttd-space"></div>
-                <strong>Dra. Hj. Sri Maryati, M.T.</strong><br>
+                <strong>Dra. Sri Maryati, M.T.</strong><br>
                 NIP. 19670319 199003 2 008
             </td>
             <td>
