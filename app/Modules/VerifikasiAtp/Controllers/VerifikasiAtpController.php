@@ -10,6 +10,9 @@ use App\Modules\Guru\Models\Guru;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class VerifikasiAtpController extends Controller
 {
@@ -22,17 +25,32 @@ class VerifikasiAtpController extends Controller
 		$this->log = $log;
 	}
 
+	private function queryAktif()
+	{
+		return VerifikasiAtp::query()
+			->join('guru', 'verifikasi_atp.id_guru', '=', 'guru.id')
+			->where('verifikasi_atp.id_semester', session('active_semester')['id'])
+			->orderBy('guru.nama')
+			->select('verifikasi_atp.*', 'guru.nama as nama_guru');
+	}
+
 	public function index(Request $request)
 	{
-		$query = VerifikasiAtp::query();
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$data['data'] = $this->queryAktif()->paginate(10)->withQueryString();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('VerifikasiAtp::verifikasiatp', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function exportPdf(Request $request)
+	{
+		$data['data'] = $this->queryAktif()->get();
+		$data['semester'] = session('active_semester')['semester'] ?? '-';
+
+		$this->log($request, 'mengekspor data '.$this->title.' ke PDF');
+
+		$pdf = Pdf::loadView('VerifikasiAtp::verifikasiatp_pdf', array_merge($data, ['title' => $this->title]));
+		return $pdf->download('Verifikasi ATP.pdf');
 	}
 
 	public function create(Request $request)
@@ -102,6 +120,8 @@ class VerifikasiAtpController extends Controller
 		$verifikasiatp->created_by = Auth::id();
 		$verifikasiatp->save();
 
+		$this->simpanPdfCetak($verifikasiatp);
+
 		$text = 'membuat '.$this->title; //' baru '.$verifikasiatp->what;
 		$this->log($request, $text, ['verifikasiatp.id' => $verifikasiatp->id]);
 		return redirect()->route('jammengajar.index')->with('message_success', 'Verifikasi Atp berhasil ditambahkan!');
@@ -128,6 +148,67 @@ class VerifikasiAtpController extends Controller
 		return $maxSkor > 0 ? round(($totalSkor / $maxSkor) * 100) : 0;
 	}
 
+	private function tentukanPredikat($nilai)
+	{
+		if ($nilai >= 91) {
+			return 'Amat Baik';
+		} elseif ($nilai >= 81) {
+			return 'Baik';
+		} elseif ($nilai >= 71) {
+			return 'Cukup';
+		}
+
+		return 'Kurang';
+	}
+
+	private function simpanPdfCetak(VerifikasiAtp $verifikasiatp)
+	{
+		$verifikasiatp->load('guru', 'mapel', 'tingkat', 'jurusan', 'semester');
+
+		$components = $this->komponenSkor($verifikasiatp);
+		$nilai = $this->hitungNilai($verifikasiatp);
+		$predikat = $this->tentukanPredikat($nilai);
+
+		$counts = [];
+		foreach ([0, 1, 2, 3, 4] as $target) {
+			$counts[$target] = count(array_filter($components, fn($value) => $value == $target));
+		}
+
+		$tahunPelajaran = trim(preg_replace('/ganjil|genap/i', '', $verifikasiatp->semester->semester ?? ''));
+
+		$bulanIndonesia = [
+			'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+			'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+		];
+		$dibuatPada = $verifikasiatp->created_at ?? now();
+		$tanggalCetak = $dibuatPada->day.' '.$bulanIndonesia[$dibuatPada->month - 1].' '.$dibuatPada->year;
+
+		$pdf = Pdf::loadView('VerifikasiAtp::verifikasiatp_cetak', [
+			'verifikasiatp' => $verifikasiatp,
+			'components' => $components,
+			'counts' => $counts,
+			'nilai' => $nilai,
+			'predikat' => $predikat,
+			'tahunPelajaran' => $tahunPelajaran,
+			'tanggalCetak' => $tanggalCetak,
+		]);
+
+		$folder = public_path('download/ksp/verifikasi_atp');
+		if (! File::isDirectory($folder)) {
+			File::makeDirectory($folder, 0755, true);
+		}
+
+		$namaGuru = Str::slug($verifikasiatp->guru->nama ?? 'guru');
+		$filename = $namaGuru.'-'.$verifikasiatp->id.'.pdf';
+
+		$pdf->save($folder.'/'.$filename);
+
+		$verifikasiatp->file_penilaian = $filename;
+		$verifikasiatp->save();
+
+		return $filename;
+	}
+
 	public function detail(Request $request, VerifikasiAtp $verifikasiatp)
 	{
 		$verifikasiatp->load('guru', 'mapel', 'tingkat', 'jurusan', 'semester');
@@ -136,16 +217,7 @@ class VerifikasiAtpController extends Controller
 		$totalSkor = array_sum($components);
 		$maxSkor = count($components) * 4;
 		$nilai = $this->hitungNilai($verifikasiatp);
-
-		if ($nilai >= 91) {
-			$predikat = 'Amat Baik';
-		} elseif ($nilai >= 81) {
-			$predikat = 'Baik';
-		} elseif ($nilai >= 71) {
-			$predikat = 'Cukup';
-		} else {
-			$predikat = 'Kurang';
-		}
+		$predikat = $this->tentukanPredikat($nilai);
 
 		$this->log($request, 'melihat detail '.$this->title, ['verifikasiatp.id' => $verifikasiatp->id]);
 
@@ -247,6 +319,7 @@ class VerifikasiAtpController extends Controller
 		$verifikasiatp->updated_by = Auth::id();
 		$verifikasiatp->save();
 
+		$this->simpanPdfCetak($verifikasiatp);
 
 		$text = 'mengedit '.$this->title;//.' '.$verifikasiatp->what;
 		$this->log($request, $text, ['verifikasiatp.id' => $verifikasiatp->id]);

@@ -36,8 +36,9 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-3">  
-						{!! button('verifikasiatp.create', $title) !!}  
+                    <div class="col-3 text-end">
+						<a href="{{ route('verifikasiatp.export.pdf.show') }}" class="btn btn-sm icon icon-left btn-outline-dark"><i class="fa fa-file-pdf"></i> Export PDF</a>
+						{!! button('verifikasiatp.create', $title) !!}
                     </div>
                 </div>
                 @include('include.flash')
@@ -46,19 +47,9 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-                                <td>Alokasi Waktu</td>
-								<td>Atp</td>
-								<td>Cp Elemen</td>
-								<td>Elemen</td>
-								<td>Guru</td>
-								<td>Jurusan</td>
-								<td>Mapel</td>
-								<td>Semester</td>
-								<td>Tingkat</td>
-								<td>Identitas</td>
-								<td>Infografis</td>
-								<td>Tp</td>
-								
+                                <td>Guru</td>
+								<td>Nilai</td>
+
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -67,19 +58,9 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->alokasi_waktu }}</td>
-									<td>{{ $item->atp }}</td>
-									<td>{{ $item->cp }}</td>
-									<td>{{ $item->elemen }}</td>
-									<td>{{ $item->guru->nama ?? '-' }}</td>
-									<td>{{ $item->jurusan->jurusan ?? '-' }}</td>
-									<td>{{ $item->mapel->mapel ?? '-' }}</td>
-									<td>{{ $item->semester->semester ?? '-' }}</td>
-									<td>{{ $item->tingkat->tingkat ?? '-' }}</td>
-									<td>{{ $item->identitas }}</td>
-									<td>{{ $item->infografis }}</td>
-									<td>{{ $item->tp }}</td>
-									
+                                    <td>{{ $item->nama_guru }}</td>
+									<td>{{ $item->nilai }}</td>
+
                                     <td>
 										{!! button('verifikasiatp.show','', $item->id) !!}
 										{!! button('verifikasiatp.edit', $title, $item->id) !!}
@@ -88,7 +69,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="14" class="text-center"><i>No data.</i></td>
+                                    <td colspan="4" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

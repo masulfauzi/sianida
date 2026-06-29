@@ -18,6 +18,7 @@ yarn-error.log
 public/tmp/*
 /public/download_sertifikat/*
 /public/file_pesan/*
+/public/download/ksp/*
 .DS_Store
 
 prompt.txt

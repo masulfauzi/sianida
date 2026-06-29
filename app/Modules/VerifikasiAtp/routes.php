@@ -7,6 +7,7 @@ Route::controller(VerifikasiAtpController::class)->middleware(['web','auth'])->n
 	Route::get('/verifikasiatp', 'index')->name('index');
 	Route::get('/verifikasiatp/data', 'data')->name('data.index');
 	Route::get('/verifikasiatp/create', 'create')->name('create');
+	Route::get('/verifikasiatp/export/pdf', 'exportPdf')->name('export.pdf.show');
 	Route::post('/verifikasiatp', 'store')->name('store');
 	Route::get('/verifikasiatp/{verifikasiatp}/detail', 'detail')->name('detail.show');
 	Route::get('/verifikasiatp/{verifikasiatp}', 'show')->name('show');
