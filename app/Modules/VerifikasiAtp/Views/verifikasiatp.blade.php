@@ -49,6 +49,9 @@
                                 <th width="15">No</th>
                                 <td>Guru</td>
 								<td>Nilai</td>
+								<td>Predikat</td>
+								<td>File Penilaian</td>
+								<td>URL File</td>
 
                                 <th width="20%">Aksi</th>
                             </tr>
@@ -60,6 +63,23 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->nama_guru }}</td>
 									<td>{{ $item->nilai }}</td>
+									<td>{{ $item->predikat }}</td>
+									<td>
+										@if ($item->file_penilaian)
+											<a href="{{ asset('download/ksp/verifikasi_atp/'.$item->file_penilaian) }}" target="_blank">
+												<i class="fa fa-file-pdf"></i> Download
+											</a>
+										@else
+											<span class="text-muted"><i>Belum ada</i></span>
+										@endif
+									</td>
+									<td>
+										@if ($item->file_penilaian)
+											{{ asset('download/ksp/verifikasi_atp/'.$item->file_penilaian) }}
+										@else
+											<span class="text-muted">-</span>
+										@endif
+									</td>
 
                                     <td>
 										{!! button('verifikasiatp.show','', $item->id) !!}
@@ -69,7 +89,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center"><i>No data.</i></td>
+                                    <td colspan="7" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

@@ -37,6 +37,10 @@ class VerifikasiAtpController extends Controller
 	public function index(Request $request)
 	{
 		$data['data'] = $this->queryAktif()->paginate(10)->withQueryString();
+		$data['data']->getCollection()->transform(function ($item) {
+			$item->predikat = $this->tentukanPredikat($item->nilai);
+			return $item;
+		});
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('VerifikasiAtp::verifikasiatp', array_merge($data, ['title' => $this->title]));
