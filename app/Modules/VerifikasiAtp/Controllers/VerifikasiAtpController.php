@@ -97,6 +97,7 @@ class VerifikasiAtpController extends Controller
 		$verifikasiatp->metode = $request->input("metode");
 		$verifikasiatp->tp = $request->input("tp");
 		$verifikasiatp->catatan = $request->input("catatan");
+		$verifikasiatp->nilai = $this->hitungNilai($verifikasiatp);
 
 		$verifikasiatp->created_by = Auth::id();
 		$verifikasiatp->save();
@@ -106,11 +107,9 @@ class VerifikasiAtpController extends Controller
 		return redirect()->route('jammengajar.index')->with('message_success', 'Verifikasi Atp berhasil ditambahkan!');
 	}
 
-	public function detail(Request $request, VerifikasiAtp $verifikasiatp)
+	private function komponenSkor(VerifikasiAtp $verifikasiatp)
 	{
-		$verifikasiatp->load('guru', 'mapel', 'tingkat', 'jurusan', 'semester');
-
-		$components = [
+		return [
 			'identitas' => (int) $verifikasiatp->identitas,
 			'cp' => (int) $verifikasiatp->cp,
 			'tp' => (int) $verifikasiatp->tp,
@@ -118,10 +117,25 @@ class VerifikasiAtpController extends Controller
 			'materi' => (int) $verifikasiatp->materi,
 			'metode' => (int) $verifikasiatp->metode,
 		];
+	}
 
+	private function hitungNilai(VerifikasiAtp $verifikasiatp)
+	{
+		$components = $this->komponenSkor($verifikasiatp);
 		$totalSkor = array_sum($components);
 		$maxSkor = count($components) * 4;
-		$nilai = $maxSkor > 0 ? round(($totalSkor / $maxSkor) * 100) : 0;
+
+		return $maxSkor > 0 ? round(($totalSkor / $maxSkor) * 100) : 0;
+	}
+
+	public function detail(Request $request, VerifikasiAtp $verifikasiatp)
+	{
+		$verifikasiatp->load('guru', 'mapel', 'tingkat', 'jurusan', 'semester');
+
+		$components = $this->komponenSkor($verifikasiatp);
+		$totalSkor = array_sum($components);
+		$maxSkor = count($components) * 4;
+		$nilai = $this->hitungNilai($verifikasiatp);
 
 		if ($nilai >= 91) {
 			$predikat = 'Amat Baik';
@@ -228,6 +242,7 @@ class VerifikasiAtpController extends Controller
 		$verifikasiatp->metode = $request->input("metode");
 		$verifikasiatp->tp = $request->input("tp");
 		$verifikasiatp->catatan = $request->input("catatan");
+		$verifikasiatp->nilai = $this->hitungNilai($verifikasiatp);
 
 		$verifikasiatp->updated_by = Auth::id();
 		$verifikasiatp->save();

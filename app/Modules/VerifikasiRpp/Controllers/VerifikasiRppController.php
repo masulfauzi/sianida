@@ -76,7 +76,9 @@ class VerifikasiRppController extends Controller
 			'id_jurusan' => 'required',
 			'identitas' => 'required',
 			'tp' => 'required',
-			'pembelajaran' => 'required',
+			'pendahuluan' => 'required',
+			'inti' => 'required',
+			'penutup' => 'required',
 			'assesmen' => 'required',
 			'lampiran' => 'required',
 			'catatan' => 'nullable',
@@ -91,7 +93,9 @@ class VerifikasiRppController extends Controller
 		$verifikasirpp->id_jurusan = $request->input("id_jurusan");
 		$verifikasirpp->identitas = $request->input("identitas");
 		$verifikasirpp->tp = $request->input("tp");
-		$verifikasirpp->pembelajaran = $request->input("pembelajaran");
+		$verifikasirpp->pendahuluan = $request->input("pendahuluan");
+		$verifikasirpp->inti = $request->input("inti");
+		$verifikasirpp->penutup = $request->input("penutup");
 		$verifikasirpp->assesmen = $request->input("assesmen");
 		$verifikasirpp->lampiran = $request->input("lampiran");
 		$verifikasirpp->catatan = $request->input("catatan");
@@ -203,7 +207,9 @@ class VerifikasiRppController extends Controller
 			'id_jurusan' => 'required',
 			'identitas' => 'required',
 			'tp' => 'required',
-			'pembelajaran' => 'required',
+			'pendahuluan' => 'required',
+			'inti' => 'required',
+			'penutup' => 'required',
 			'assesmen' => 'required',
 			'lampiran' => 'required',
 			'catatan' => 'nullable',
@@ -218,7 +224,9 @@ class VerifikasiRppController extends Controller
 		$verifikasirpp->id_jurusan = $request->input("id_jurusan");
 		$verifikasirpp->identitas = $request->input("identitas");
 		$verifikasirpp->tp = $request->input("tp");
-		$verifikasirpp->pembelajaran = $request->input("pembelajaran");
+		$verifikasirpp->pendahuluan = $request->input("pendahuluan");
+		$verifikasirpp->inti = $request->input("inti");
+		$verifikasirpp->penutup = $request->input("penutup");
 		$verifikasirpp->assesmen = $request->input("assesmen");
 		$verifikasirpp->lampiran = $request->input("lampiran");
 		$verifikasirpp->catatan = $request->input("catatan");
