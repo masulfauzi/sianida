@@ -104,18 +104,19 @@
         <tr>
             <td>
                 Mengetahui,<br>
+                Pengawas Sekolah
+                <div class="ttd-space"></div>
+                <strong>Dra. Hj. Sri Maryati, M.T.</strong><br>
+                NIP. 19670319 199003 2 008
+            </td>
+            <td>
+                
+                Semarang, {{ $tanggalCetak }}<br>
                 Kepala Sekolah
                 <div class="ttd-space"></div>
                 <strong>Nana Mulyana, S.P., M.Si.</strong><br>
                 {{-- Pembina Tk.I, IV/b<br> --}}
                 NIP. 19690601 199203 1 012
-            </td>
-            <td>
-                Semarang, {{ $tanggalCetak }}<br>
-                Pengawas Sekolah
-                <div class="ttd-space"></div>
-                <strong>Dra. Hj. Sri Maryati, M.T.</strong><br>
-                NIP. 19670319 199003 2 008
             </td>
         </tr>
     </table>
