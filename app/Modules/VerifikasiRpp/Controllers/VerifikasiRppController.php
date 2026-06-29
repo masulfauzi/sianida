@@ -25,14 +25,22 @@ class VerifikasiRppController extends Controller
 		$this->log = $log;
 	}
 
+	private function queryAktif()
+	{
+		return VerifikasiRpp::query()
+			->join('guru', 'verifikasi_rpp.id_guru', '=', 'guru.id')
+			->where('verifikasi_rpp.id_semester', session('active_semester')['id'])
+			->orderBy('guru.nama')
+			->select('verifikasi_rpp.*', 'guru.nama as nama_guru');
+	}
+
 	public function index(Request $request)
 	{
-		$query = VerifikasiRpp::query();
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$data['data'] = $this->queryAktif()->paginate(10)->withQueryString();
+		$data['data']->getCollection()->transform(function ($item) {
+			$item->predikat = $this->tentukanPredikat($item->nilai);
+			return $item;
+		});
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('VerifikasiRpp::verifikasirpp', array_merge($data, ['title' => $this->title]));

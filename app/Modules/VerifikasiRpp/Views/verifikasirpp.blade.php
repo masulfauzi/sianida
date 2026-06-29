@@ -47,16 +47,11 @@
                             <tr>
                                 <th width="15">No</th>
                                 <td>Guru</td>
-								<td>Semester</td>
-								<td>Mapel</td>
-								<td>Tingkat</td>
-								<td>Jurusan</td>
-								<td>Identitas</td>
-								<td>Tp</td>
-								<td>Pembelajaran</td>
-								<td>Assesmen</td>
-								<td>Lampiran</td>
-								
+								<td>Nilai</td>
+								<td>Predikat</td>
+								<td>File Penilaian</td>
+								<td>URL File</td>
+
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -65,17 +60,26 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
-                                    <td>{{ $item->guru->nama ?? '-' }}</td>
-									<td>{{ $item->semester->semester ?? '-' }}</td>
-									<td>{{ $item->mapel->mapel ?? '-' }}</td>
-									<td>{{ $item->tingkat->tingkat ?? '-' }}</td>
-									<td>{{ $item->jurusan->jurusan ?? '-' }}</td>
-									<td>{{ $item->identitas }}</td>
-									<td>{{ $item->tp }}</td>
-									<td>{{ $item->pembelajaran }}</td>
-									<td>{{ $item->assesmen }}</td>
-									<td>{{ $item->lampiran }}</td>
-									
+                                    <td>{{ $item->nama_guru }}</td>
+									<td>{{ $item->nilai }}</td>
+									<td>{{ $item->predikat }}</td>
+									<td>
+										@if ($item->file_penilaian)
+											<a href="{{ asset('download/ksp/verifikasi_rpp/'.$item->file_penilaian) }}" class="btn btn-sm btn-outline-dark" target="_blank">
+												<i class="fa fa-file-pdf"></i> Download
+											</a>
+										@else
+											<span class="text-muted"><i>Belum ada</i></span>
+										@endif
+									</td>
+									<td>
+										@if ($item->file_penilaian)
+											{{ asset('download/ksp/verifikasi_rpp/'.$item->file_penilaian) }}
+										@else
+											<span class="text-muted">-</span>
+										@endif
+									</td>
+
                                     <td>
 										{!! button('verifikasirpp.show','', $item->id) !!}
 										{!! button('verifikasirpp.edit', $title, $item->id) !!}
@@ -84,7 +88,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="12" class="text-center"><i>No data.</i></td>
+                                    <td colspan="7" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>
