@@ -69,8 +69,9 @@
     </style>
 </head>
 <body>
-    <div class="center title">DAFTAR NILAI {{ strtoupper($title) }}</div>
-    <div class="center">Semester {{ $semester }}</div>
+    <div class="center title">REKAPITULASI HASIL VERIFIKASI MODUL</div>
+    <div class="center title">SMK NEGERI 2 SEMARANG</div>
+    <div class="center title">TAHUN {{ date('Y') }}</div>
 
     <table>
         <thead>
