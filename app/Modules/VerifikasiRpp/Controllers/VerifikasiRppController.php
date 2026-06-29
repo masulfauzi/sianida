@@ -29,9 +29,10 @@ class VerifikasiRppController extends Controller
 	{
 		return VerifikasiRpp::query()
 			->join('guru', 'verifikasi_rpp.id_guru', '=', 'guru.id')
+			->join('mapel', 'verifikasi_rpp.id_mapel', '=', 'mapel.id')
 			->where('verifikasi_rpp.id_semester', session('active_semester')['id'])
 			->orderBy('guru.nama')
-			->select('verifikasi_rpp.*', 'guru.nama as nama_guru');
+			->select('verifikasi_rpp.*', 'guru.nama as nama_guru', 'mapel.mapel as nama_mapel');
 	}
 
 	public function index(Request $request)
@@ -44,6 +45,27 @@ class VerifikasiRppController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('VerifikasiRpp::verifikasirpp', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function exportPdf(Request $request)
+	{
+		$data['data'] = $this->queryAktif()->get()->map(function ($item) {
+			$item->predikat = $this->tentukanPredikat($item->nilai);
+			return $item;
+		});
+		$data['semester'] = session('active_semester')['semester'] ?? '-';
+
+		$bulanIndonesia = [
+			'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+			'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+		];
+		$sekarang = now();
+		$data['tanggalCetak'] = $sekarang->day.' '.$bulanIndonesia[$sekarang->month - 1].' '.$sekarang->year;
+
+		$this->log($request, 'mengekspor data '.$this->title.' ke PDF');
+
+		$pdf = Pdf::loadView('VerifikasiRpp::verifikasirpp_pdf', array_merge($data, ['title' => $this->title]));
+		return $pdf->download('Verifikasi RPP.pdf');
 	}
 
 	public function create(Request $request)

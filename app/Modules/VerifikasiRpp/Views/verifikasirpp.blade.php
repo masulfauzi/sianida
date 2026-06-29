@@ -36,8 +36,9 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col-3">  
-						{!! button('verifikasirpp.create', $title) !!}  
+                    <div class="col-3 text-end">
+						<a href="{{ route('verifikasirpp.export.pdf.show') }}" class="btn btn-sm icon icon-left btn-outline-dark"><i class="fa fa-file-pdf"></i> Export PDF</a>
+						{!! button('verifikasirpp.create', $title) !!}
                     </div>
                 </div>
                 @include('include.flash')

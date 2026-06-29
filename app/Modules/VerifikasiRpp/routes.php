@@ -7,6 +7,7 @@ Route::controller(VerifikasiRppController::class)->middleware(['web','auth'])->n
 	Route::get('/verifikasirpp', 'index')->name('index');
 	Route::get('/verifikasirpp/data', 'data')->name('data.index');
 	Route::get('/verifikasirpp/create', 'create')->name('create');
+	Route::get('/verifikasirpp/export/pdf', 'exportPdf')->name('export.pdf.show');
 	Route::post('/verifikasirpp', 'store')->name('store');
 	Route::get('/verifikasirpp/{verifikasirpp}/detail', 'detail')->name('detail.show');
 	Route::get('/verifikasirpp/{verifikasirpp}', 'show')->name('show');
