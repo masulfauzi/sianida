@@ -7,6 +7,7 @@
         body {
             font-family: "Times New Roman", serif;
             font-size: 13px;
+            line-height: 1.05;
             color: #000;
         }
 
@@ -23,12 +24,13 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 16px;
+            margin-top: 8px;
         }
 
         th, td {
             border: 1px solid #000;
-            padding: 5px;
+            padding: 3px;
+            line-height: 1.05;
         }
 
         th {
@@ -50,7 +52,7 @@
         .ttd-table {
             width: 100%;
             border: none;
-            margin-top: 30px;
+            margin-top: 16px;
         }
 
         .ttd-table td {
@@ -58,10 +60,11 @@
             vertical-align: top;
             width: 50%;
             text-align: center;
+            line-height: 1.05;
         }
 
         .ttd-space {
-            height: 70px;
+            height: 50px;
         }
     </style>
 </head>
