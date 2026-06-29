@@ -49,6 +49,7 @@
 								<td>Nama Ksp</td>
                                 <td>Semester</td>
 								<td>Link Publik</td>
+								<td>URL</td>
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -60,6 +61,7 @@
 									<td>{{ $item->nama_ksp }}</td>
                                     <td>{{ $item->semester->semester }}</td>
 									<td><a target="_blank" href="{{ route('ksp.public.show', $item->id) }}" class="btn btn-sm icon icon-left btn-outline-dark"><i class="fa fa-link"></i> Buka</a></td>
+                                    <td>{{ route('ksp.public.show', $item->id) }}</td>
                                     <td>
 										{!! button('ksp.show','', $item->id) !!}
 										{!! button('ksp.edit', $title, $item->id) !!}
@@ -68,7 +70,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center"><i>No data.</i></td>
+                                    <td colspan="6" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>
