@@ -99,6 +99,7 @@ class VerifikasiRppController extends Controller
 		$verifikasirpp->assesmen = $request->input("assesmen");
 		$verifikasirpp->lampiran = $request->input("lampiran");
 		$verifikasirpp->catatan = $request->input("catatan");
+		$verifikasirpp->nilai = $this->hitungNilai($verifikasirpp);
 
 		$verifikasirpp->created_by = Auth::id();
 		$verifikasirpp->save();
@@ -108,21 +109,36 @@ class VerifikasiRppController extends Controller
 		return redirect()->route('jammengajar.index')->with('message_success', 'Verifikasi Rpp berhasil ditambahkan!');
 	}
 
+	private function komponenSkor(VerifikasiRpp $verifikasirpp)
+	{
+		return [
+			'identitas' => (int) $verifikasirpp->identitas,
+			'tp' => (int) $verifikasirpp->tp,
+			'pendahuluan' => (int) $verifikasirpp->pendahuluan,
+			'inti' => (int) $verifikasirpp->inti,
+			'penutup' => (int) $verifikasirpp->penutup,
+			'assesmen' => (int) $verifikasirpp->assesmen,
+			'lampiran' => (int) $verifikasirpp->lampiran,
+		];
+	}
+
+	private function hitungNilai(VerifikasiRpp $verifikasirpp)
+	{
+		$components = $this->komponenSkor($verifikasirpp);
+		$totalSkor = array_sum($components);
+		$maxSkor = count($components) * 4;
+
+		return $maxSkor > 0 ? round(($totalSkor / $maxSkor) * 100) : 0;
+	}
+
 	public function detail(Request $request, VerifikasiRpp $verifikasirpp)
 	{
 		$verifikasirpp->load('guru', 'mapel', 'tingkat', 'jurusan', 'semester');
 
-		$components = [
-			'identitas' => (int) $verifikasirpp->identitas,
-			'tp' => (int) $verifikasirpp->tp,
-			'pembelajaran' => (int) $verifikasirpp->pembelajaran,
-			'assesmen' => (int) $verifikasirpp->assesmen,
-			'lampiran' => (int) $verifikasirpp->lampiran,
-		];
-
+		$components = $this->komponenSkor($verifikasirpp);
 		$totalSkor = array_sum($components);
-		$maxSkor = count($components) * 2;
-		$nilai = $maxSkor > 0 ? round(($totalSkor / $maxSkor) * 100) : 0;
+		$maxSkor = count($components) * 4;
+		$nilai = $this->hitungNilai($verifikasirpp);
 
 		if ($nilai >= 91) {
 			$predikat = 'Amat Baik';
@@ -230,6 +246,7 @@ class VerifikasiRppController extends Controller
 		$verifikasirpp->assesmen = $request->input("assesmen");
 		$verifikasirpp->lampiran = $request->input("lampiran");
 		$verifikasirpp->catatan = $request->input("catatan");
+		$verifikasirpp->nilai = $this->hitungNilai($verifikasirpp);
 
 		$verifikasirpp->updated_by = Auth::id();
 		$verifikasirpp->save();

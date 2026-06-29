@@ -796,24 +796,32 @@
             const mark = (value, target) => (value == target ? 'v' : '');
 
             const rowsA = [
-                { label: 'Identitas', desc: 'Memuat: nama satuan pendidikan, nama guru, nama mata pelajaran, kelas/program keahlian, alokasi waktu.', value: c.identitas },
+                { no: 1, desc: 'Memuat nama sekolah, nama mata pelajaran, kelas/fase.', value: c.identitas },
             ];
             const rowsB = [
-                { no: 1, label: 'Tujuan Pembelajaran', desc: 'Memuat Tujuan Pembelajaran sesuai dengan Alur Tujuan Pembelajaran (ATP)', value: c.tp },
-                { no: 2, label: 'Kegiatan Pembelajaran', desc: 'Memuat (1) Kegiatan awal, meliputi assesmen awal, dan pemberian apersepsi, (2) Kegiatan inti, yang memuat Pendekatan Pembelajaran Mendalam untuk merefleksikan 8 Dimensi Profil Lulusan, rancangan assesmen proses, (3) Kegiatan akhir/ penutup, yang meliputi kegiatan refleksi, umpan balik, dan rancangan asesmen akhir.', value: c.pembelajaran },
-                { no: 3, label: 'Assesmen', desc: 'Memuat jenis asesmen yang dilaksanakan, yaitu asesmen formatif, dan asesmen sumatif. Menerapkan prinsip asesmen, jenis dan teknik penilaian yang sesuai dan relevan dengan tujuan pembelajaran yang ditetapkan. Menggunakan perangkat asesmen yang sesuai dengan jenis dan teknik asesmen yang dilakukan dilengkapi dengan rubrik.', value: c.assesmen },
+                { no: 2, desc: 'Memuat Tujuan pembelajaran sesuai yang ada di ATP / Silabus.', value: c.tp },
+            ];
+            const KP = [
+                { no: 3, desc: 'Berisi kegiatan untuk mengkondisikan siswa agar siap mengikuti pembelajaran, termasuk adanya pertanyaan pemantik (berkesadaran, bermakna, dan.atau menggembirakan).', value: c.pendahuluan },
+                { no: 4, desc: 'Kegiatan pembelajaran memperhatikan kesiapan, minat dan karakter belajar siswa (pembelajaran berdiferensiasai), pembelajan berpusat pada siswa dengan menggunakan metode atau model yang merangsang siswa untuk memiliki keterampilan berpikir tingkat tinggi (HOTS dan 4C), mengembangkan literasi dan numerasi, menguatkan delapan dimensi profil lulusan, pendidikan perubahan iklim, sekolah sehat, branding sekolah dilaksanakan secara menyenangkan, berkesadaran, dan bermakna siswa mempunyai pengalaman belajar memahami, mengaplikasi, dan merefleksi.', value: c.inti },
+                { no: 5, desc: 'Kegiatan refleksi siswa dan guru, mengajak siswa merancang pembelajaran berikutnya, dan mengatur unsur pembelajaran mendalam (menyenangkan, berkesadaran, dan/atau bermakna)', value: c.penutup },
+            ];
+            const asesmen = [
+                { desc: 'Ada kegiatan asesmen awal, asesmen formatif, asesmen sumatif. Kegiatan asesmen memuat kompetensi sikap, pengetahuan, dan keterampilan. Ada kegiatan remedial dan pengayaan.', value: c.assesmen },
             ];
             const rowsC = [
-                { label: 'Lampiran', desc: 'Meliputi Lembar Kerja Murid, ringkasan materi, lembar penilaian/ jobsheet, Glosarium dan daftar pustaka.', value: c.lampiran },
+                { desc: 'Memuat materi pembelajaran dan contoh asesmen, remedial, dan pengayaan.', value: c.lampiran },
             ];
 
             const renderRow = (row) => `
                 <tr>
                     <td>${row.no || ''}</td>
-                    <td><strong>${row.label}</strong>${row.desc ? `<br>${row.desc}` : ''}</td>
+                    <td>${row.desc ? `${row.desc}` : ''}</td>
                     <td class="skor-col">${mark(row.value, 0)}</td>
                     <td class="skor-col">${mark(row.value, 1)}</td>
                     <td class="skor-col">${mark(row.value, 2)}</td>
+                    <td class="skor-col">${mark(row.value, 3)}</td>
+                    <td class="skor-col">${mark(row.value, 4)}</td>
                     <td class="catatan-col"></td>
                 </tr>
             `;
@@ -824,12 +832,14 @@
             const count0 = allValues.filter(v => v == 0).length;
             const count1 = allValues.filter(v => v == 1).length;
             const count2 = allValues.filter(v => v == 2).length;
+            const count3 = allValues.filter(v => v == 3).length;
+            const count4 = allValues.filter(v => v == 4).length;
 
             return `
                 <div class="atp-template rpp-template">
-                    <div class="center title">INSTRUMEN VERIFIKASI/ VALIDASI</div>
+                    <div class="center title">INSTRUMEN VERIFIKASI DAN VALIDASI</div>
                     <div class="center title">RENCANA PELAKSANAAN PEMBELAJARAN (RPP)</div>
-                    <div class="center title">TAHUN PELAJARAN ${tahunPelajaran}</div>
+                    <div class="center title">TAHUN AJARAN ${tahunPelajaran}</div>
 
                     <table class="identitas-table">
                         <tr><td>Nama Sekolah</td><td>:</td><td><strong>SMK Negeri 2 Semarang</strong></td></tr>
@@ -843,58 +853,69 @@
                             <tr>
                                 <th rowspan="2">No</th>
                                 <th rowspan="2">Komponen/Indikator</th>
-                                <th colspan="3">Hasil Telaah/ Skor</th>
+                                <th colspan="5">Hasil Telaah/ Skor</th>
                                 <th rowspan="2">Catatan</th>
                             </tr>
                             <tr>
-                                <th class="skor-col">Tidak ada/ tidak sesuai<br>0</th>
-                                <th class="skor-col">Kurang lengkap/ Kurang sesuai<br>1</th>
-                                <th class="skor-col">Sudah lengkap/ sudah sesuai<br>2</th>
+                                <th class="skor-col">Tidak ada<br>0</th>
+                                <th class="skor-col">Kurang<br>1</th>
+                                <th class="skor-col">Cukup<br>2</th>
+                                <th class="skor-col">Baik<br>3</th>
+                                <th class="skor-col">Amat Baik<br>4</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="group-header"><td>A</td><td colspan="5">BAGIAN AWAL</td></tr>
+                            <tr class="group-header"><td>I</td><td colspan="7">Identitas</td></tr>
                             ${rowsA.map(renderRow).join('')}
-                            <tr class="group-header"><td>B</td><td colspan="5">BAGIAN ISI/ KOMPONEN</td></tr>
+                            <tr class="group-header"><td>II</td><td colspan="7">Tujuan Pembelajaran</td></tr>
                             ${rowsB.map(renderRow).join('')}
-                            <tr class="group-header"><td>C</td><td colspan="5">LAMPIRAN</td></tr>
+                            <tr class="group-header"><td>III</td><td colspan="7">Kegiatan Pembelajaran</td></tr>
+                            ${KP.map(renderRow).join('')}
+                            <tr class="group-header"><td>IV</td><td colspan="7">Asesmen</td></tr>
+                            ${asesmen.map(renderRow).join('')}
+                            <tr class="group-header" style="page-break-before: always; break-before: page;"><td>V</td><td colspan="7">Lampiran</td></tr>
                             ${rowsC.map(renderRow).join('')}
                             <tr>
                                 <td colspan="2"><strong>JUMLAH SKOR</strong></td>
                                 <td class="skor-col">${count0 * 0}</td>
                                 <td class="skor-col">${count1 * 1}</td>
                                 <td class="skor-col">${count2 * 2}</td>
+                                <td class="skor-col">${count3 * 3}</td>
+                                <td class="skor-col">${count4 * 4}</td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td colspan="2"><strong>NILAI</strong></td>
-                                <td colspan="2" class="center"><strong>${data.nilai}</strong></td>
-                                <td colspan="2"><strong>PREDIKAT : ${data.predikat.toUpperCase()}</strong></td>
+                                <td colspan="3" class="center"><strong>${data.nilai}</strong></td>
+                                <td colspan="3"><strong>PREDIKAT : ${data.predikat.toUpperCase()}</strong></td>
                             </tr>
                         </tbody>
                     </table>
-
-                    <div class="keterangan">
-                        Keterangan:<br>
-                        1. Nilai = (Skor perolehan : skor maksimal) x 100<br>
-                        2. Predikat:<br>
-                        &nbsp;&nbsp;Nilai 91 - 100 = Amat baik<br>
-                        &nbsp;&nbsp;Nilai 81 - 90 = Baik<br>
-                        &nbsp;&nbsp;Nilai 71 - 80 = Cukup<br>
-                        &nbsp;&nbsp;Nilai &le; 70 = Kurang
-                    </div>
-
+                    
                     <div>
                         <strong>Review Kepala Sekolah</strong>
                         <div class="review-box">${escapeHtml(data.catatan).replace(/\n/g, '<br>')}</div>
                     </div>
 
-                    <div class="ttd">
-                        Semarang, ${tanggalCetak}<br>
-                        Kepala Sekolah,<br><br><br><br>
-                        Nana Mulyana, S.P., M.Si.<br>
-                        Pembina Tk.I, IV/b<br>
-                        NIP. 19690601 199203 1 012
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="keterangan" style="margin-top: 16px; border: 1px solid #000; padding: 6px;">
+                            Keterangan:<br>
+                            1. Nilai = (Skor perolehan : skor maksimal) x 100<br>
+                            2. Predikat:<br>
+                            &nbsp;&nbsp;Nilai 91 - 100 = Amat baik<br>
+                            &nbsp;&nbsp;Nilai 81 - 90 = Baik<br>
+                            &nbsp;&nbsp;Nilai 71 - 80 = Cukup<br>
+                            &nbsp;&nbsp;Nilai &le; 70 = Kurang
+                        </div>
+
+                        <div class="ttd" style="float: none; margin-top: 16px;">
+                            Semarang, ${tanggalCetak}<br>
+                            Kepala Sekolah,<br>
+                            <img src="{{ asset('assets/images/ttd/ttd_stempel.png') }}" alt="Tanda Tangan dan Stempel" style="height: 140px; display: block; margin-left: -80px; margin-top: -20px; position: relative; top: 20px;">
+                            Nana Mulyana, S.P., M.Si.<br>
+                            Pembina Tk.I, IV/b<br>
+                            NIP. 19690601 199203 1 012
+                        </div>
                     </div>
                     <div class="clear"></div>
 
