@@ -10,6 +10,9 @@ use App\Modules\Guru\Models\Guru;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class VerifikasiRppController extends Controller
 {
@@ -104,6 +107,8 @@ class VerifikasiRppController extends Controller
 		$verifikasirpp->created_by = Auth::id();
 		$verifikasirpp->save();
 
+		$this->simpanPdfCetak($verifikasirpp);
+
 		$text = 'membuat '.$this->title; //' baru '.$verifikasirpp->what;
 		$this->log($request, $text, ['verifikasirpp.id' => $verifikasirpp->id]);
 		return redirect()->route('jammengajar.index')->with('message_success', 'Verifikasi Rpp berhasil ditambahkan!');
@@ -131,6 +136,67 @@ class VerifikasiRppController extends Controller
 		return $maxSkor > 0 ? round(($totalSkor / $maxSkor) * 100) : 0;
 	}
 
+	private function tentukanPredikat($nilai)
+	{
+		if ($nilai >= 91) {
+			return 'Amat Baik';
+		} elseif ($nilai >= 81) {
+			return 'Baik';
+		} elseif ($nilai >= 71) {
+			return 'Cukup';
+		}
+
+		return 'Kurang';
+	}
+
+	private function simpanPdfCetak(VerifikasiRpp $verifikasirpp)
+	{
+		$verifikasirpp->load('guru', 'mapel', 'tingkat', 'jurusan', 'semester');
+
+		$components = $this->komponenSkor($verifikasirpp);
+		$nilai = $this->hitungNilai($verifikasirpp);
+		$predikat = $this->tentukanPredikat($nilai);
+
+		$counts = [];
+		foreach ([0, 1, 2, 3, 4] as $target) {
+			$counts[$target] = count(array_filter($components, fn($value) => $value == $target));
+		}
+
+		$tahunPelajaran = trim(preg_replace('/ganjil|genap/i', '', $verifikasirpp->semester->semester ?? ''));
+
+		$bulanIndonesia = [
+			'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+			'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+		];
+		$dibuatPada = $verifikasirpp->created_at ?? now();
+		$tanggalCetak = $dibuatPada->day.' '.$bulanIndonesia[$dibuatPada->month - 1].' '.$dibuatPada->year;
+
+		$pdf = Pdf::loadView('VerifikasiRpp::verifikasirpp_cetak', [
+			'verifikasirpp' => $verifikasirpp,
+			'components' => $components,
+			'counts' => $counts,
+			'nilai' => $nilai,
+			'predikat' => $predikat,
+			'tahunPelajaran' => $tahunPelajaran,
+			'tanggalCetak' => $tanggalCetak,
+		]);
+
+		$folder = public_path('download/ksp/verifikasi_rpp');
+		if (! File::isDirectory($folder)) {
+			File::makeDirectory($folder, 0755, true);
+		}
+
+		$namaGuru = Str::slug($verifikasirpp->guru->nama ?? 'guru');
+		$filename = $namaGuru.'-'.$verifikasirpp->id.'.pdf';
+
+		$pdf->save($folder.'/'.$filename);
+
+		$verifikasirpp->file_penilaian = $filename;
+		$verifikasirpp->save();
+
+		return $filename;
+	}
+
 	public function detail(Request $request, VerifikasiRpp $verifikasirpp)
 	{
 		$verifikasirpp->load('guru', 'mapel', 'tingkat', 'jurusan', 'semester');
@@ -139,16 +205,7 @@ class VerifikasiRppController extends Controller
 		$totalSkor = array_sum($components);
 		$maxSkor = count($components) * 4;
 		$nilai = $this->hitungNilai($verifikasirpp);
-
-		if ($nilai >= 91) {
-			$predikat = 'Amat Baik';
-		} elseif ($nilai >= 81) {
-			$predikat = 'Baik';
-		} elseif ($nilai >= 71) {
-			$predikat = 'Cukup';
-		} else {
-			$predikat = 'Kurang';
-		}
+		$predikat = $this->tentukanPredikat($nilai);
 
 		$this->log($request, 'melihat detail '.$this->title, ['verifikasirpp.id' => $verifikasirpp->id]);
 
@@ -251,6 +308,7 @@ class VerifikasiRppController extends Controller
 		$verifikasirpp->updated_by = Auth::id();
 		$verifikasirpp->save();
 
+		$this->simpanPdfCetak($verifikasirpp);
 
 		$text = 'mengedit '.$this->title;//.' '.$verifikasirpp->what;
 		$this->log($request, $text, ['verifikasirpp.id' => $verifikasirpp->id]);
