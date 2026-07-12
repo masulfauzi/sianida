@@ -39,6 +39,19 @@ class PresensiHarianController extends Controller
 		return view('PresensiHarian::presensiharian', array_merge($data, ['title' => $this->title]));
 	}
 
+	public function monitoring(Request $request)
+	{
+		$id_semester = get_semester('active_semester_id');
+		$tgl = $request->get('tgl', today()->format('Y-m-d'));
+
+		$data['tgl']       = $tgl;
+		$data['chart_x']   = $this->buildChartData('X', $id_semester, $tgl);
+		$data['chart_xi']  = $this->buildChartData('XI', $id_semester, $tgl);
+		$data['chart_xii'] = $this->buildChartData('XII', $id_semester, $tgl);
+
+		return view('PresensiHarian::presensiharian_monitoring', array_merge($data, ['title' => $this->title]));
+	}
+
 	private function buildChartData($tingkat, $id_semester, $tgl = null)
 	{
 		$rows = PresensiHarian::rekap_kehadiran_per_kelas($tingkat, $id_semester, $tgl);
