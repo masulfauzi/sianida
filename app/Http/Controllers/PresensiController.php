@@ -20,7 +20,7 @@ class PresensiController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'siswaId' => 'required',
-                'image'   => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'image'   => 'nullable|mimes:jpeg,png,jpg,gif,webp,heic,heif|max:10240',
             ]);
 
             if ($validator->fails()) {
@@ -78,7 +78,7 @@ class PresensiController extends Controller
 
             if ($request->hasFile('image')) {
                 $image           = $request->file('image');
-                $imageName       = time() . '_' . $image->getClientOriginalName();
+                $imageName       = time() . '_' . $siswaId . '.' . $image->extension();
                 $destinationPath = public_path('presensi_harian');
                 $image->move($destinationPath, $imageName);
                 $data['gambar'] = $imageName;
