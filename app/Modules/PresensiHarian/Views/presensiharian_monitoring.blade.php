@@ -197,7 +197,7 @@
 <div class="monitoring-body">
     <div class="filter-bar">
         <label for="tgl">Pilih Tanggal:</label>
-        <form action="{{ route('presensiharian.monitoring') }}" method="get" style="display:flex;gap:8px;align-items:center;">
+        <form action="{{ route('monitoring.presensiharian') }}" method="get" style="display:flex;gap:8px;align-items:center;">
             <input type="date" id="tgl" name="tgl" value="{{ $tgl }}" required>
             <button type="submit" class="btn-filter">Tampilkan</button>
             <a href="{{ route('presensiharian.monitoring') }}" class="btn-reset">Hari Ini</a>
