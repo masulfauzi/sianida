@@ -17,7 +17,7 @@
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('siswa.index') }}">{{ $title }}</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">{{ $siswa->nama }}</li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ $siswa->nama_siswa }}</li>
                         </ol>
                     </nav>
                 </div>
@@ -55,18 +55,85 @@
 
                                 <div class="tab-pane fade  m-3 @if ($tab == 'biodata') show active @endif"
                                     id="home" role="tabpanel" aria-labelledby="home-tab">
-                                    <table class="table">
-                                        <tr>
-                                            <td>Nama</td>
-                                            <td>:</td>
-                                            <td>{{ $siswa->nama_siswa }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>NISN</td>
-                                            <td>:</td>
-                                            <td>{{ $siswa->nisn }}</td>
-                                        </tr>
-                                    </table>
+                                    <div class="row">
+                                        @if ($siswa->foto)
+                                            <div class="col-md-3 mb-3">
+                                                <img src="{{ asset($siswa->foto) }}" alt="Foto {{ $siswa->nama_siswa }}"
+                                                    class="img-fluid rounded">
+                                            </div>
+                                        @endif
+                                        <div class="col-md-{{ $siswa->foto ? '9' : '12' }}">
+                                            <table class="table">
+                                                <tr>
+                                                    <td width="200">Nama</td>
+                                                    <td width="10">:</td>
+                                                    <td>{{ $siswa->nama_siswa }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>NIS</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->nis }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>NISN</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->nisn }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>NIK</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->nik }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jenis Kelamin</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->jeniskelamin->jeniskelamin ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Agama</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->agama->agama ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tempat, Tanggal Lahir</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->tempat_lahir }},
+                                                        {{ $siswa->tgl_lahir ? date('d-m-Y', strtotime($siswa->tgl_lahir)) : '-' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tahun Masuk</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->tahun_masuk }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nama Ayah</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->nama_ayah }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nama Ibu</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->nama_ibu }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Alamat</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->alamat }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Sekolah Asal</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->sekolah_asal }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>No. HP</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->no_hp }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="tab-pane fade m-3 @if ($tab == 'transkrip') show active @endif"
                                     id="profile" role="tabpanel" aria-labelledby="profile-tab">

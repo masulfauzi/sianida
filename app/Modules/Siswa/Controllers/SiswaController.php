@@ -288,7 +288,7 @@ class SiswaController extends Controller
         }
 
         $data['tab']   = $tab;
-        $data['siswa'] = $siswa;
+        $data['siswa'] = $siswa->load(['jeniskelamin', 'agama']);
         $data['nilai'] = Nilai::query()->whereIdSiswa($siswa->id)->get();
 
         $this->log($request, 'melihat halaman detail siswa ' . $this->title);
