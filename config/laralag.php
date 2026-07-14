@@ -18,7 +18,7 @@ return [
         'kebijakan-privasi',
         'app-ads.txt',
         'support',
-        'presensiharian',
+        'monitoring',
     ],
 
     'translate_action' => [

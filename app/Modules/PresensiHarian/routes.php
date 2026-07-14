@@ -3,10 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Modules\PresensiHarian\Controllers\PresensiHarianController;
 
-Route::controller(PresensiHarianController::class)->middleware(['web'])->name('presensiharian.')->group(function(){
-	Route::get('/presensiharian/monitoring', 'monitoring')->name('monitoring');
-});
-
 Route::controller(PresensiHarianController::class)->middleware(['web','auth'])->name('presensiharian.')->group(function(){
 	Route::get('/presensiharian', 'index')->name('index');
 	Route::get('/presensiharian/data', 'data')->name('data.index');

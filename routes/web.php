@@ -3,6 +3,7 @@
 use App\Http\Controllers\AktivasiController;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\SnbpController;
 use App\Http\Controllers\SupportController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,9 @@ Route::get('/aktivasi/radius', [AktivasiController::class, 'radius'])->name('akt
 Route::post('/registrasi', [AktivasiController::class, 'registrasi'])->name('registrasi')->middleware(['guest']);
 Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemail')->middleware(['guest']);
 Route::get('/skanida-mobile/kebijakan-privasi', [AktivasiController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi')->middleware(['guest']);
+
+// Monitoring (tanpa login)
+Route::get('/monitoring/presensiharian', [MonitoringController::class, 'monitoring_1'])->name('monitoring.presensiharian');
 
 // Support & Bantuan Routes
 Route::get('/support', [SupportController::class, 'index'])->name('support.index');

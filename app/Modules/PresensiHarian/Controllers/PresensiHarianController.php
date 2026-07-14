@@ -13,7 +13,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
-use App\Modules\Semester\Models\Semester;
 
 class PresensiHarianController extends Controller
 {
@@ -38,20 +37,6 @@ class PresensiHarianController extends Controller
 
 		$this->log($request, 'melihat halaman grafik '.$this->title);
 		return view('PresensiHarian::presensiharian', array_merge($data, ['title' => $this->title]));
-	}
-
-	public function monitoring(Request $request)
-	{
-		$semester    = Semester::get_semester_aktif();
-		$id_semester = $semester?->id;
-		$tgl = $request->get('tgl', today()->format('Y-m-d'));
-
-		$data['tgl']       = $tgl;
-		$data['chart_x']   = $this->buildChartData('X', $id_semester, $tgl);
-		$data['chart_xi']  = $this->buildChartData('XI', $id_semester, $tgl);
-		$data['chart_xii'] = $this->buildChartData('XII', $id_semester, $tgl);
-
-		return view('PresensiHarian::presensiharian_monitoring', array_merge($data, ['title' => $this->title]));
 	}
 
 	private function buildChartData($tingkat, $id_semester, $tgl = null)
