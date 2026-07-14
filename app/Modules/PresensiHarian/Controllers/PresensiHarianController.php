@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
+use App\Modules\Semester\Models\Semester;
 
 class PresensiHarianController extends Controller
 {
@@ -41,7 +42,8 @@ class PresensiHarianController extends Controller
 
 	public function monitoring(Request $request)
 	{
-		$id_semester = get_semester('active_semester_id');
+		$semester    = Semester::get_semester_aktif();
+		$id_semester = $semester?->id;
 		$tgl = $request->get('tgl', today()->format('Y-m-d'));
 
 		$data['tgl']       = $tgl;
