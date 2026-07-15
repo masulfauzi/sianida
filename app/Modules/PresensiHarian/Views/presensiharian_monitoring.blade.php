@@ -258,7 +258,7 @@
             chart: {
                 type: 'bar',
                 height: 320,
-                stacked: false,
+                stacked: true,
                 background: 'transparent',
                 toolbar: { show: false },
                 animations: { enabled: true, speed: 600 }
@@ -274,7 +274,7 @@
                 labels: { style: { colors: '#8b949e', fontSize: '11px' } }
             },
             plotOptions: {
-                bar: { horizontal: false, columnWidth: '60%', borderRadius: 4 }
+                bar: { horizontal: false, columnWidth: '45%', borderRadius: 4 }
             },
             dataLabels: {
                 enabled: true,
