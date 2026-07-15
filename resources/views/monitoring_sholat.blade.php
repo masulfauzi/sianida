@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="60;url={{ route('monitoring.presensisholat', request()->has('tgl') ? ['tgl' => $tgl] : []) }}">
+    <meta http-equiv="refresh" content="60;url={{ route('monitoring.presensiharian', request()->has('tgl') ? ['tgl' => $tgl] : []) }}">
     <title>Monitoring {{ $title }} | {{ config('app.name') }}</title>
 
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
@@ -190,69 +190,43 @@
     </div>
     <div class="clock">
         <div class="time-display" id="clock">--:--:--</div>
-        <div class="refresh-info">Berganti ke Presensi Sholat setiap 1 menit</div>
+        <div class="refresh-info">Berganti ke Presensi Harian setiap 1 menit</div>
     </div>
 </div>
 
 <div class="monitoring-body">
     <div class="filter-bar">
         <label for="tgl">Pilih Tanggal:</label>
-        <form action="{{ route('monitoring.presensiharian') }}" method="get" style="display:flex;gap:8px;align-items:center;">
+        <form action="{{ route('monitoring.presensisholat') }}" method="get" style="display:flex;gap:8px;align-items:center;">
             <input type="date" id="tgl" name="tgl" value="{{ $tgl }}" required>
             <button type="submit" class="btn-filter">Tampilkan</button>
-            <a href="{{ route('monitoring.presensiharian') }}" class="btn-reset">Hari Ini</a>
+            <a href="{{ route('monitoring.presensisholat') }}" class="btn-reset">Hari Ini</a>
         </form>
     </div>
 
     <div class="charts-grid">
-        <div class="chart-card">
-            <div class="chart-card-header">Grafik Kehadiran Kelas X</div>
-            <div class="chart-card-body">
-                @if(count($chart_x['series']) > 0)
-                    <div id="chart-x"></div>
-                @else
-                    <div class="no-data">Tidak ada data kehadiran</div>
-                @endif
+        @forelse($charts as $i => $chart)
+            <div class="chart-card">
+                <div class="chart-card-header">Sholat Dzuhur Angkatan {{ $chart['angkatan'] }}</div>
+                <div class="chart-card-body">
+                    @if(count($chart['series']) > 0)
+                        <div id="chart-{{ $i }}"></div>
+                    @else
+                        <div class="no-data">Tidak ada data presensi sholat</div>
+                    @endif
+                </div>
             </div>
-        </div>
-
-        <div class="chart-card">
-            <div class="chart-card-header">Grafik Kehadiran Kelas XI</div>
-            <div class="chart-card-body">
-                @if(count($chart_xi['series']) > 0)
-                    <div id="chart-xi"></div>
-                @else
-                    <div class="no-data">Tidak ada data kehadiran</div>
-                @endif
+        @empty
+            <div class="chart-card">
+                <div class="chart-card-body">
+                    <div class="no-data">Tidak ada data presensi sholat</div>
+                </div>
             </div>
-        </div>
-
-        <div class="chart-card">
-            <div class="chart-card-header">Grafik Kehadiran Kelas XII</div>
-            <div class="chart-card-body">
-                @if(count($chart_xii['series']) > 0)
-                    <div id="chart-xii"></div>
-                @else
-                    <div class="no-data">Tidak ada data kehadiran</div>
-                @endif
-            </div>
-        </div>
+        @endforelse
     </div>
 </div>
 
 <script>
-    var statusColors = {
-        'Hadir':       '#3fb950',
-        'Terlambat':   '#d29922',
-        'Tidak Hadir': '#f85149',
-    };
-
-    function getSeriesColors(series) {
-        return series.map(function (s) {
-            return statusColors[s.name] || '#58a6ff';
-        });
-    }
-
     function renderBarChart(selector, chartData) {
         var options = {
             chart: {
@@ -265,7 +239,7 @@
             },
             theme: { mode: 'dark' },
             series: chartData.series,
-            colors: getSeriesColors(chartData.series),
+            colors: ['#3fb950'],
             xaxis: {
                 categories: chartData.categories,
                 labels: { style: { colors: '#8b949e', fontSize: '11px' } }
@@ -297,15 +271,11 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        @if(count($chart_x['series']) > 0)
-            renderBarChart('#chart-x', @json($chart_x));
-        @endif
-        @if(count($chart_xi['series']) > 0)
-            renderBarChart('#chart-xi', @json($chart_xi));
-        @endif
-        @if(count($chart_xii['series']) > 0)
-            renderBarChart('#chart-xii', @json($chart_xii));
-        @endif
+        @foreach($charts as $i => $chart)
+            @if(count($chart['series']) > 0)
+                renderBarChart('#chart-{{ $i }}', @json(['categories' => $chart['categories'], 'series' => $chart['series']]));
+            @endif
+        @endforeach
 
         function updateClock() {
             var now = new Date();

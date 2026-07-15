@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\PresensiSholat;
 use App\Modules\PresensiHarian\Models\PresensiHarian;
 use App\Modules\Semester\Models\Semester;
 
@@ -20,6 +21,44 @@ class MonitoringController extends Controller
         $data['chart_xii'] = $this->buildChartData('XII', $id_semester, $tgl);
 
         return view('PresensiHarian::presensiharian_monitoring', array_merge($data, ['title' => 'Presensi Harian']));
+    }
+
+    public function monitoring_2(Request $request)
+    {
+        $tgl = $request->get('tgl', today()->format('Y-m-d'));
+
+        $angkatan = PresensiSholat::where('jenis_presensi', 'Sholat Dzuhur')
+            ->distinct()
+            ->orderBy('Angkatan', 'desc')
+            ->limit(3)
+            ->pluck('Angkatan');
+
+        $rows = PresensiSholat::selectRaw('Angkatan, Kelas, COUNT(*) as jumlah')
+            ->where('jenis_presensi', 'Sholat Dzuhur')
+            ->whereDate('Waktu_Presensi', $tgl)
+            ->groupBy('Angkatan', 'Kelas')
+            ->orderBy('Kelas')
+            ->get();
+
+        $charts = [];
+        foreach ($angkatan as $tahun) {
+            $perAngkatan = $rows->where('Angkatan', $tahun)->values();
+            $categories  = $perAngkatan->pluck('Kelas')->values();
+
+            $charts[] = [
+                'angkatan'   => $tahun,
+                'categories' => $categories,
+                'series'     => $categories->isEmpty() ? [] : [[
+                    'name' => 'Sholat Dzuhur',
+                    'data' => $perAngkatan->pluck('jumlah')->map(fn ($j) => (int) $j)->values(),
+                ]],
+            ];
+        }
+
+        $data['tgl']    = $tgl;
+        $data['charts'] = $charts;
+
+        return view('monitoring_sholat', array_merge($data, ['title' => 'Presensi Sholat Dzuhur']));
     }
 
     private function buildChartData($tingkat, $id_semester, $tgl = null)
