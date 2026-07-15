@@ -227,19 +227,30 @@
 </div>
 
 <script>
+    var statusColors = {
+        'Hadir': '#3fb950',
+        'Ijin':  '#f85149',
+    };
+
+    function getSeriesColors(series) {
+        return series.map(function (s) {
+            return statusColors[s.name] || '#58a6ff';
+        });
+    }
+
     function renderBarChart(selector, chartData) {
         var options = {
             chart: {
                 type: 'bar',
                 height: 320,
-                stacked: false,
+                stacked: true,
                 background: 'transparent',
                 toolbar: { show: false },
                 animations: { enabled: true, speed: 600 }
             },
             theme: { mode: 'dark' },
             series: chartData.series,
-            colors: ['#3fb950'],
+            colors: getSeriesColors(chartData.series),
             xaxis: {
                 categories: chartData.categories,
                 labels: { style: { colors: '#8b949e', fontSize: '11px' } }

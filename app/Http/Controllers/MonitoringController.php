@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\IjinSholat;
 use App\Models\PresensiSholat;
 use App\Modules\PresensiHarian\Models\PresensiHarian;
 use App\Modules\Semester\Models\Semester;
@@ -33,25 +34,44 @@ class MonitoringController extends Controller
             ->limit(3)
             ->pluck('Angkatan');
 
-        $rows = PresensiSholat::selectRaw('Angkatan, Kelas, COUNT(*) as jumlah')
+        $hadirRows = PresensiSholat::selectRaw('Angkatan, Kelas, COUNT(*) as jumlah')
             ->where('jenis_presensi', 'Sholat Dzuhur')
             ->whereDate('Waktu_Presensi', $tgl)
             ->groupBy('Angkatan', 'Kelas')
-            ->orderBy('Kelas')
+            ->get();
+
+        $ijinRows = IjinSholat::join('siswa', 'siswa.NISN', '=', 'ijin_sholat.nisn')
+            ->whereDate('ijin_sholat.tanggal', $tgl)
+            ->selectRaw('siswa.Angkatan as Angkatan, siswa.Kelas as Kelas, COUNT(*) as jumlah')
+            ->groupBy('siswa.Angkatan', 'siswa.Kelas')
             ->get();
 
         $charts = [];
         foreach ($angkatan as $tahun) {
-            $perAngkatan = $rows->where('Angkatan', $tahun)->values();
-            $categories  = $perAngkatan->pluck('Kelas')->values();
+            $hadirPerAngkatan = $hadirRows->where('Angkatan', $tahun)->values();
+            $ijinPerAngkatan  = $ijinRows->where('Angkatan', $tahun)->values();
+
+            $categories = $hadirPerAngkatan->pluck('Kelas')
+                ->merge($ijinPerAngkatan->pluck('Kelas'))
+                ->unique()
+                ->sort()
+                ->values();
+
+            $dataHadir = $categories->map(function ($kelas) use ($hadirPerAngkatan) {
+                return (int) optional($hadirPerAngkatan->firstWhere('Kelas', $kelas))->jumlah;
+            })->values();
+
+            $dataIjin = $categories->map(function ($kelas) use ($ijinPerAngkatan) {
+                return (int) optional($ijinPerAngkatan->firstWhere('Kelas', $kelas))->jumlah;
+            })->values();
 
             $charts[] = [
                 'angkatan'   => $tahun,
                 'categories' => $categories,
-                'series'     => $categories->isEmpty() ? [] : [[
-                    'name' => 'Sholat Dzuhur',
-                    'data' => $perAngkatan->pluck('jumlah')->map(fn ($j) => (int) $j)->values(),
-                ]],
+                'series'     => $categories->isEmpty() ? [] : [
+                    ['name' => 'Hadir', 'data' => $dataHadir],
+                    ['name' => 'Ijin', 'data' => $dataIjin],
+                ],
             ];
         }
 
