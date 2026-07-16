@@ -14,11 +14,17 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             background: #0d1117;
             color: #e6edf3;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .monitoring-header {
@@ -28,6 +34,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .monitoring-header .brand {
@@ -74,12 +81,15 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            flex: 1;
+            min-height: 0;
         }
 
         .filter-bar {
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-shrink: 0;
         }
 
         .filter-bar label {
@@ -131,6 +141,8 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+            flex: 1;
+            min-height: 0;
         }
 
         @media (max-width: 1024px) {
@@ -142,6 +154,9 @@
             border: 1px solid #30363d;
             border-radius: 10px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
 
         .chart-card-header {
@@ -153,6 +168,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .chart-card-header::before {
@@ -166,6 +182,12 @@
 
         .chart-card-body {
             padding: 12px 8px 8px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .chart-card-body > div {
+            height: 100%;
         }
 
         .no-data {
@@ -257,7 +279,7 @@
         var options = {
             chart: {
                 type: 'bar',
-                height: 320,
+                height: '100%',
                 stacked: true,
                 background: 'transparent',
                 toolbar: { show: false },
