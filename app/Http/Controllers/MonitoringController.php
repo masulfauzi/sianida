@@ -83,10 +83,17 @@ class MonitoringController extends Controller
 
     private function buildChartData($tingkat, $id_semester, $tgl = null)
     {
+        $urutanStatus = ['Tidak Hadir', 'Hadir', 'Sakit', 'Ijin'];
+
         $rows = PresensiHarian::rekap_kehadiran_per_kelas($tingkat, $id_semester, $tgl);
 
         $categories = $rows->pluck('nama_kelas')->unique()->values();
-        $statuses   = $rows->pluck('status_kehadiran')->unique()->values();
+        $statuses   = $rows->pluck('status_kehadiran')->unique()
+            ->sortBy(function ($status) use ($urutanStatus) {
+                $index = array_search($status, $urutanStatus);
+                return $index === false ? count($urutanStatus) : $index;
+            })
+            ->values();
 
         $series = [];
         foreach ($statuses as $status) {
