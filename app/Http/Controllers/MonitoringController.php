@@ -83,7 +83,7 @@ class MonitoringController extends Controller
 
     private function buildChartData($tingkat, $id_semester, $tgl = null)
     {
-        $urutanStatus = ['Tidak Hadir', 'Hadir', 'Sakit', 'Ijin'];
+        $urutanStatus = ['Tidak Hadir', 'Hadir', 'Terlambat', 'Sakit', 'Ijin'];
 
         $rows = PresensiHarian::rekap_kehadiran_per_kelas($tingkat, $id_semester, $tgl);
 
