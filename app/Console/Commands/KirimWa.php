@@ -54,58 +54,72 @@ class KirimWa extends Command
 
                 $file = FilePesan::find($kirim->id_file);
 
-                $url  = "http://112.78.37.70:3000/api/sendFile";
-                $data = [
-                    "session" => "default",
-                    "chatId"  => $kirim->nomor . "@c.us",
-                    "caption" => $kirim->isi_pesan,
-                    "file"    => [
-                        "mimetype" => "application/pdf",
-                        "filename" => "document.pdf",
-                        "url"      => 'https://apps.smkn2semarang.sch.id/file_pesan/' . $file->nama_file,
+                $curl = curl_init();
+
+                curl_setopt_array($curl, [
+                    CURLOPT_URL            => 'https://app.saungwa.com/api/create-message',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING       => '',
+                    CURLOPT_MAXREDIRS      => 10,
+                    CURLOPT_TIMEOUT        => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST  => 'POST',
+                    CURLOPT_POSTFIELDS     => [
+                        'appkey'  => $device->app_key,
+                        'authkey' => $device->auth_key,
+                        'to'      => $kirim->nomor,
+                        'message' => $kirim->isi_pesan,
+                        'file'    => 'https://apps.smkn2semarang.sch.id/file_pesan/' . $file->nama_file,
+                        'sandbox' => 'false',
                     ],
-                ];
-
-                $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'X-Api-Key: ' . $device->auth_key,
-                    'Content-Type: application/json',
                 ]);
-                $response = curl_exec($ch);
-                curl_close($ch);
-            } else {
-                $url  = "http://112.78.37.70:3000/api/sendText";
-                $data = [
-                    "session" => "default",
-                    "chatId"  => $kirim->nomor . "@c.us",
-                    "text"    => $kirim->isi_pesan,
-                ];
 
-                $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'X-Api-Key: ' . $device->auth_key,
-                    'Content-Type: application/json',
+                $response = json_decode(curl_exec($curl));
+                curl_close($curl);
+
+                if (isset($response->message_status) && $response->message_status == 'Success') {
+                    $update         = Pesan::find($kirim->id);
+                    $update->status = 1;
+                    $update->save();
+                } elseif (isset($response->error) && $response->error == 'Request Failed') {
+                    $update             = Pesan::find($kirim->id);
+                    $update->created_at = date('Y-m-d H:i:s');
+                    $update->save();
+                }
+            } else {
+                $curl = curl_init();
+
+                curl_setopt_array($curl, [
+                    CURLOPT_URL            => 'https://app.saungwa.com/api/create-message',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING       => '',
+                    CURLOPT_MAXREDIRS      => 10,
+                    CURLOPT_TIMEOUT        => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST  => 'POST',
+                    CURLOPT_POSTFIELDS     => [
+                        'appkey'  => $device->app_key,
+                        'authkey' => $device->auth_key,
+                        'to'      => $kirim->nomor,
+                        'message' => $kirim->isi_pesan,
+                        'sandbox' => 'false',
+                    ],
                 ]);
-                $response = curl_exec($ch);
-                curl_close($ch);
-            }
 
-            $response = json_decode($response);
+                $response = json_decode(curl_exec($curl));
+                curl_close($curl);
 
-            if (isset($response->id)) {
-                $update         = Pesan::find($kirim->id);
-                $update->status = 1;
-                $update->save();
-            } else {
-                $update             = Pesan::find($kirim->id);
-                $update->created_at = date('Y-m-d H:i:s');
-                $update->save();
+                if (isset($response->message_status) && $response->message_status == 'Success') {
+                    $update         = Pesan::find($kirim->id);
+                    $update->status = 1;
+                    $update->save();
+                } elseif (isset($response->error) && $response->error == 'Request Failed') {
+                    $update             = Pesan::find($kirim->id);
+                    $update->created_at = date('Y-m-d H:i:s');
+                    $update->save();
+                }
             }
 
             // Increment counter dan update last_used device
