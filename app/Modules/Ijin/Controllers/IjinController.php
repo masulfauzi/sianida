@@ -41,7 +41,9 @@ class IjinController extends Controller
                 'ijin.lama_ijin',
                 'ijin.tgl_mulai',
                 'ijin.tgl_selesai'
-            );
+            )
+            ->orderBy('created_at')
+            ->orderBy('id_status_ijin');
 
         if ($request->filled('search')) {
             $search = $request->get('search');
@@ -49,7 +51,7 @@ class IjinController extends Controller
         }
 
         $data['data'] = $query->orderBy('ijin.created_at', 'desc')
-            ->paginate(10)
+            ->paginate(20)
             ->withQueryString();
 
         $this->log($request, 'melihat halaman manajemen data ' . $this->title);
