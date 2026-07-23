@@ -75,8 +75,12 @@ class KirimWa extends Command
                     ],
                 ]);
 
-                $response = json_decode(curl_exec($curl));
+                $rawResponse = curl_exec($curl);
                 curl_close($curl);
+
+                $this->info("[Device #{$device->id}] Response kirim file ke {$kirim->nomor}: {$rawResponse}");
+
+                $response = json_decode($rawResponse);
 
                 if (isset($response->message_status) && $response->message_status == 'Success') {
                     $update         = Pesan::find($kirim->id);
@@ -108,8 +112,12 @@ class KirimWa extends Command
                     ],
                 ]);
 
-                $response = json_decode(curl_exec($curl));
+                $rawResponse = curl_exec($curl);
                 curl_close($curl);
+
+                $this->info("[Device #{$device->id}] Response kirim teks ke {$kirim->nomor}: {$rawResponse}");
+
+                $response = json_decode($rawResponse);
 
                 if (isset($response->message_status) && $response->message_status == 'Success') {
                     $update         = Pesan::find($kirim->id);
