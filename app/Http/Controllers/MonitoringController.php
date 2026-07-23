@@ -30,7 +30,7 @@ class MonitoringController extends Controller
 
         $angkatan = PresensiSholat::where('jenis_presensi', 'Sholat Dzuhur')
             ->distinct()
-            ->orderBy('Angkatan', 'asc')
+            ->orderBy('Angkatan', 'desc')
             ->limit(3)
             ->pluck('Angkatan');
 
