@@ -42,7 +42,7 @@ class IjinController extends Controller
                 'ijin.tgl_mulai',
                 'ijin.tgl_selesai'
             )
-            ->orderBy('created_at')
+            ->orderBy('ijin.created_at')
             ->orderBy('id_status_ijin');
 
         if ($request->filled('search')) {
