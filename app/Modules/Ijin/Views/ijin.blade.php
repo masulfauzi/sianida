@@ -48,6 +48,7 @@
                                 <th width="15">No</th>
                                 <td>Nama Siswa</td>
                                 <td>NISN</td>
+                                <td>Kelas</td>
                                 <td>Jenis Ijin</td>
                                 <td>Tgl Mulai</td>
                                 <td>Tgl Selesai</td>
@@ -63,6 +64,7 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->nama_siswa }}</td>
                                     <td>{{ $item->nisn }}</td>
+                                    <td>{{ $item->kelas }}</td>
                                     <td>{{ $item->jenis_ijin }}</td>
                                     <td>{{ $item->tgl_mulai }}</td>
                                     <td>{{ $item->tgl_selesai }}</td>
@@ -84,7 +86,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center"><i>No data.</i></td>
+                                    <td colspan="10" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

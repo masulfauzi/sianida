@@ -32,10 +32,16 @@ class IjinController extends Controller
             ->join('siswa', 'ijin.id_siswa', '=', 'siswa.id')
             ->join('status_ijin', 'ijin.id_status_ijin', '=', 'status_ijin.id')
             ->join('jenis_ijin', 'ijin.id_jenis_ijin', '=', 'jenis_ijin.id')
+            ->leftJoin('pesertadidik', function ($join) {
+                $join->on('pesertadidik.id_siswa', '=', 'siswa.id')
+                    ->where('pesertadidik.id_semester', '=', get_semester('active_semester_id'));
+            })
+            ->leftJoin('kelas', 'kelas.id', '=', 'pesertadidik.id_kelas')
             ->select(
                 'ijin.id',
                 'siswa.nama_siswa',
                 'siswa.nisn',
+                'kelas.kelas',
                 'jenis_ijin.jenis_ijin',
                 'status_ijin.status_ijin',
                 'ijin.lama_ijin',
