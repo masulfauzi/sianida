@@ -32,6 +32,8 @@
                     <div class="col-lg-10 offset-lg-2">
                         <div class="row">
                             <div class='col-lg-2'><p>Nama Siswa</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->siswa->nama_siswa }}</p></div>
+                            <div class='col-lg-2'><p>Kelas</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $kelas }}</p></div>
+                            <div class='col-lg-2'><p>No. HP</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->siswa->no_hp }}</p></div>
                             <div class='col-lg-2'><p>Jenis Ijin</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->jenisIjin->jenis_ijin }}</p></div>
                             <div class='col-lg-2'><p>Lama Ijin</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->lama_ijin }} hari</p></div>
                             <div class='col-lg-2'><p>Tgl Mulai</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->tgl_mulai }}</p></div>

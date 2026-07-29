@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class IjinController extends Controller
 {
@@ -114,7 +115,12 @@ class IjinController extends Controller
 
     public function show(Request $request, Ijin $ijin)
     {
-        $data['ijin'] = $ijin;
+        $data['ijin']  = $ijin;
+        $data['kelas'] = DB::table('pesertadidik')
+            ->join('kelas', 'kelas.id', '=', 'pesertadidik.id_kelas')
+            ->where('pesertadidik.id_siswa', $ijin->id_siswa)
+            ->where('pesertadidik.id_semester', get_semester('active_semester_id'))
+            ->value('kelas.kelas');
 
         $text = 'melihat detail ' . $this->title; //.' '.$ijin->what;
         $this->log($request, $text, ['ijin.id' => $ijin->id]);
