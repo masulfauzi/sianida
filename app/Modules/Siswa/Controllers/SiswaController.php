@@ -329,6 +329,7 @@ class SiswaController extends Controller
             'nis'             => ['Nis', Form::text("nis", old("nis"), ["class" => "form-control", "placeholder" => ""])],
             'nisn'            => ['Nisn', Form::text("nisn", old("nisn"), ["class" => "form-control", "placeholder" => ""])],
             'nik'             => ['Nik', Form::text("nik", old("nik"), ["class" => "form-control", "placeholder" => ""])],
+            'uid'             => ['UID RFID', Form::text("uid", old("uid"), ["class" => "form-control", "placeholder" => ""])],
             'id_jeniskelamin' => ['Jeniskelamin', Form::select("id_jeniskelamin", $ref_jeniskelamin, null, ["class" => "form-control select2"])],
             'id_agama'        => ['Agama', Form::select("id_agama", $ref_agama, null, ["class" => "form-control select2"])],
             'tahun_masuk'     => ['Tahun Masuk', Form::text("tahun_masuk", old("tahun_masuk"), ["class" => "form-control", "placeholder" => ""])],
@@ -360,6 +361,7 @@ class SiswaController extends Controller
             'nis'             => 'required',
             'nisn'            => 'required',
             'nik'             => 'required',
+            'uid'             => 'nullable|string|max:50|unique:siswa,uid',
             'id_jeniskelamin' => 'required',
             'id_agama'        => 'required',
             'tahun_masuk'     => 'required',
@@ -385,6 +387,7 @@ class SiswaController extends Controller
         $siswa->nis             = $request->input("nis");
         $siswa->nisn            = $request->input("nisn");
         $siswa->nik             = $request->input("nik");
+        $siswa->uid             = $request->input("uid");
         $siswa->id_jeniskelamin = $request->input("id_jeniskelamin");
         $siswa->id_agama        = $request->input("id_agama");
         $siswa->tahun_masuk     = $request->input("tahun_masuk");
@@ -432,6 +435,7 @@ class SiswaController extends Controller
             'nis'             => ['Nis', Form::text("nis", $siswa->nis, ["class" => "form-control", "placeholder" => "", "id" => "nis"])],
             'nisn'            => ['Nisn', Form::text("nisn", $siswa->nisn, ["class" => "form-control", "placeholder" => "", "id" => "nisn"])],
             'nik'             => ['Nik', Form::text("nik", $siswa->nik, ["class" => "form-control", "placeholder" => "", "id" => "nik"])],
+            'uid'             => ['UID RFID', Form::text("uid", $siswa->uid, ["class" => "form-control", "placeholder" => "", "id" => "uid"])],
             'id_jeniskelamin' => ['Jeniskelamin', Form::select("id_jeniskelamin", $ref_jeniskelamin, null, ["class" => "form-control select2"])],
             'id_agama'        => ['Agama', Form::select("id_agama", $ref_agama, null, ["class" => "form-control select2"])],
             'tahun_masuk'     => ['Tahun Masuk', Form::text("tahun_masuk", $siswa->tahun_masuk, ["class" => "form-control", "placeholder" => "", "id" => "tahun_masuk"])],
@@ -464,6 +468,7 @@ class SiswaController extends Controller
             'nis'             => 'required',
             'nisn'            => 'required',
             'nik'             => 'required',
+            'uid'             => 'nullable|string|max:50|unique:siswa,uid,' . $id,
             'id_jeniskelamin' => 'required',
             'id_agama'        => 'required',
             'tahun_masuk'     => 'required',
@@ -489,6 +494,7 @@ class SiswaController extends Controller
         $siswa->nis             = $request->input("nis");
         $siswa->nisn            = $request->input("nisn");
         $siswa->nik             = $request->input("nik");
+        $siswa->uid             = $request->input("uid");
         $siswa->id_jeniskelamin = $request->input("id_jeniskelamin");
         $siswa->id_agama        = $request->input("id_agama");
         $siswa->tahun_masuk     = $request->input("tahun_masuk");

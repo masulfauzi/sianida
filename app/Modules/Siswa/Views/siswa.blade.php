@@ -51,10 +51,11 @@
 								<td>Nis</td>
 								<td>Nisn</td>
 								<td>Nik</td>
+								<td>UID</td>
 								<td>Jeniskelamin</td>
 								<td>Agama</td>
 								<td>Tahun Masuk</td>
-								
+
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -67,10 +68,11 @@
 									<td>{{ $item->nis }}</td>
 									<td>{{ $item->nisn }}</td>
 									<td>{{ $item->nik }}</td>
+									<td>{{ $item->uid }}</td>
 									<td>{{ $item->jeniskelamin->jeniskelamin }}</td>
 									<td>{{ $item->agama->agama }}</td>
 									<td>{{ $item->tahun_masuk }}</td>
-									
+
                                     <td>
 										{{-- {!! button('siswa.show','', $item->id) !!}
 										{!! button('siswa.edit', $title, $item->id) !!}
@@ -81,7 +83,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center"><i>No data.</i></td>
+                                    <td colspan="10" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

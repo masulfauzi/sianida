@@ -85,6 +85,11 @@
                                                     <td>{{ $siswa->nik }}</td>
                                                 </tr>
                                                 <tr>
+                                                    <td>UID RFID</td>
+                                                    <td>:</td>
+                                                    <td>{{ $siswa->uid ?? '-' }}</td>
+                                                </tr>
+                                                <tr>
                                                     <td>Jenis Kelamin</td>
                                                     <td>:</td>
                                                     <td>{{ $siswa->jeniskelamin->jeniskelamin ?? '-' }}</td>
