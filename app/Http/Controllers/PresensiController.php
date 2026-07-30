@@ -232,6 +232,22 @@ class PresensiController extends Controller
      */
     public function presensiKartu(Request $request)
     {
+        // DEBUG: hapus blok ini setelah selesai testing alat
+        return response()->json([
+            'success' => true,
+            'message' => 'Presensi kartu berhasil disimpan',
+            'data'    => [
+                'nama_siswa'     => 'Siswa Dummy',
+                'waktu_presensi' => now(),
+                'presensi'       => [
+                    'id'                  => 'dummy-id',
+                    'id_siswa'            => 'dummy-siswa-id',
+                    'tgl'                 => date('Y-m-d'),
+                    'id_status_kehadiran' => 'dummy-status-id',
+                ],
+            ],
+        ], 201);
+
         try {
             $validator = Validator::make($request->all(), [
                 'username' => 'required',
