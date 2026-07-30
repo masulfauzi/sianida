@@ -74,8 +74,8 @@
 									<td>{{ $item->tahun_masuk }}</td>
 
                                     <td>
-										{{-- {!! button('siswa.show','', $item->id) !!}
 										{!! button('siswa.edit', $title, $item->id) !!}
+										{{-- {!! button('siswa.show','', $item->id) !!}
                                         {!! button('siswa.destroy', $title, $item->id) !!} --}}
 
                                         <a href="{{ route('siswa.detail.index', $item->id) }}" class="btn btn-outline-primary">Detail Siswa</a>
