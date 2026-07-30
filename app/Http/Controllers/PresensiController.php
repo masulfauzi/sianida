@@ -302,7 +302,11 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Presensi kartu berhasil disimpan',
-                'data'    => $presensi,
+                'data'    => [
+                    'nama_siswa'     => $siswa->nama_siswa,
+                    'waktu_presensi' => $presensi->created_at,
+                    'presensi'       => $presensi,
+                ],
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
