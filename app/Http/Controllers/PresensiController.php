@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Validator;
 
 class PresensiController extends Controller
 {
+    // TODO: ganti dengan credential asli
+    private const KARTU_USERNAME = '4l4T';
+    private const KARTU_PASSWORD = '4bs3n';
+
     /**
      * Store presensi harian data with image
      *
@@ -215,6 +219,95 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update presensi',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Presensi menggunakan kartu (RFID)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function presensiKartu(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'username' => 'required',
+                'password' => 'required',
+                'kode'     => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            if ($request->input('username') !== self::KARTU_USERNAME || $request->input('password') !== self::KARTU_PASSWORD) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Username atau password salah',
+                ], 401);
+            }
+
+            $siswa = DB::table('siswa')
+                ->where('uid', $request->input('kode'))
+                ->first();
+
+            if (! $siswa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kartu tidak terdaftar',
+                ], 404);
+            }
+
+            $data = [
+                'id_siswa' => $siswa->id,
+                'tgl'      => date('Y-m-d'),
+            ];
+
+            // Get status kehadiran based on current time
+            $statusPendek    = now()->format('H:i:s') < '07:00:00' ? 'H' : 'T';
+            $statusKehadiran = DB::table('statuskehadiran')
+                ->where('status_kehadiran_pendek', $statusPendek)
+                ->first();
+
+            if (! $statusKehadiran) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Status kehadiran H not found',
+                ], 404);
+            }
+
+            $data['id_status_kehadiran'] = $statusKehadiran->id;
+
+            // Check if student already has presensi today
+            $existingPresensi = PresensiHarian::where('id_siswa', $data['id_siswa'])
+                ->where('tgl', $data['tgl'])
+                ->first();
+
+            if ($existingPresensi) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sudah melakukan presensi',
+                ], 422);
+            }
+
+            $presensi = PresensiHarian::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Presensi kartu berhasil disimpan',
+                'data'    => $presensi,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save presensi kartu',
                 'error'   => $e->getMessage(),
             ], 500);
         }

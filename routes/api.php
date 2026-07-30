@@ -34,6 +34,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/login-guru', [AuthController::class, 'login_guru']);
 
+// Presensi kartu (RFID) - tanpa middleware, otentikasi via username/password di body
+Route::post('/presensi-kartu', [PresensiController::class, 'presensiKartu']);
+
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
