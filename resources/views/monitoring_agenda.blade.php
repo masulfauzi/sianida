@@ -110,7 +110,7 @@
         }
 
         .slide .nama-kegiatan {
-            font-size: 2.4rem;
+            font-size: 4rem;
             font-weight: 700;
             color: #f0f6fc;
             margin-bottom: 24px;
@@ -118,7 +118,7 @@
         }
 
         .slide .tanggal {
-            font-size: 1.2rem;
+            font-size: 2rem;
             color: #8b949e;
             display: flex;
             align-items: center;
@@ -129,9 +129,9 @@
             background: #1f6feb33;
             border: 1px solid #1f6feb;
             color: #58a6ff;
-            padding: 4px 14px;
+            padding: 8px 22px;
             border-radius: 999px;
-            font-size: 1rem;
+            font-size: 1.6rem;
             font-weight: 600;
         }
 
