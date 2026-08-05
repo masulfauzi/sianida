@@ -60,7 +60,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h6 class="mb-0">Hasil Rekap</h6>
-                <a href="{{ route('presensiharian.rekap.bulanan.export', ['id_kelas' => $id_kelas, 'bulan' => $bulan, 'tahun' => $tahun]) }}" class="btn btn-success btn-sm">
+                <a href="{{ route('presensiharian.rekap.bulanan.export.show', ['id_kelas' => $id_kelas, 'bulan' => $bulan, 'tahun' => $tahun]) }}" class="btn btn-success btn-sm">
                     <i class="fa fa-file-excel"></i> Download Excel
                 </a>
             </div>
