@@ -33,6 +33,7 @@ Route::get('/skanida-mobile/kebijakan-privasi', [AktivasiController::class, 'keb
 // Monitoring (tanpa login)
 Route::get('/monitoring/presensiharian', [MonitoringController::class, 'monitoring_1'])->name('monitoring.presensiharian');
 Route::get('/monitoring/presensisholat', [MonitoringController::class, 'monitoring_2'])->name('monitoring.presensisholat');
+Route::get('/monitoring/agenda', [MonitoringController::class, 'monitoring_3'])->name('monitoring.agenda');
 
 // Support & Bantuan Routes
 Route::get('/support', [SupportController::class, 'index'])->name('support.index');

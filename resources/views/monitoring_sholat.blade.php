@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="60;url={{ route('monitoring.presensiharian', request()->has('tgl') ? ['tgl' => $tgl] : []) }}">
+    <meta http-equiv="refresh" content="60;url={{ route('monitoring.agenda') }}">
     <title>Monitoring {{ $title }} | {{ config('app.name') }}</title>
 
     <link rel="shortcut icon" href="{{ asset('assets/images/logo/favicon.svg') }}" type="image/x-icon">
@@ -190,7 +190,7 @@
     </div>
     <div class="clock">
         <div class="time-display" id="clock">--:--:--</div>
-        <div class="refresh-info">Berganti ke Presensi Harian setiap 1 menit</div>
+        <div class="refresh-info">Berganti ke Agenda setiap 1 menit</div>
     </div>
 </div>
 

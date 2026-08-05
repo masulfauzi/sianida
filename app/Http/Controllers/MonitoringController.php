@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\IjinSholat;
 use App\Models\PresensiSholat;
+use App\Modules\Agenda\Models\Agenda;
 use App\Modules\PresensiHarian\Models\PresensiHarian;
 use App\Modules\Semester\Models\Semester;
 
@@ -79,6 +80,17 @@ class MonitoringController extends Controller
         $data['charts'] = $charts;
 
         return view('monitoring_sholat', array_merge($data, ['title' => 'Presensi Sholat Dzuhur']));
+    }
+
+    public function monitoring_3(Request $request)
+    {
+        $agenda = Agenda::where('tgl_selesai', '>', now())
+            ->orderBy('tgl_mulai')
+            ->get();
+
+        $data['agenda'] = $agenda;
+
+        return view('monitoring_agenda', array_merge($data, ['title' => 'Agenda']));
     }
 
     private function buildChartData($tingkat, $id_semester, $tgl = null)
