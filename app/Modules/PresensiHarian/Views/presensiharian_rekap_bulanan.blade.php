@@ -68,16 +68,19 @@
                 <table class="table table-bordered table-sm text-center">
                     <thead>
                         <tr>
-                            <th style="white-space:nowrap">No</th>
-                            <th class="text-start" style="min-width:180px">Nama Siswa</th>
+                            <th rowspan="2" style="white-space:nowrap">No</th>
+                            <th rowspan="2" class="text-start" style="min-width:180px">Nama Siswa</th>
+                            <th colspan="{{ $jumlah_hari }}">Tanggal</th>
+                            <th rowspan="2" class="table-success">Hadir</th>
+                            <th rowspan="2" class="table-warning">Sakit</th>
+                            <th rowspan="2" class="table-info">Ijin</th>
+                            <th rowspan="2" class="table-danger">Alfa</th>
+                        </tr>
+                        <tr>
                             @for ($d = 1; $d <= $jumlah_hari; $d++)
                                 @php $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]); @endphp
                                 <th @class(['table-secondary' => $isWeekend])>{{ $d }}</th>
                             @endfor
-                            <th class="table-success">Hadir</th>
-                            <th class="table-warning">Sakit</th>
-                            <th class="table-info">Ijin</th>
-                            <th class="table-danger">Alfa</th>
                         </tr>
                     </thead>
                     <tbody>
