@@ -110,28 +110,28 @@
         }
 
         .slide .nama-kegiatan {
-            font-size: 6.5rem;
+            font-size: 9rem;
             font-weight: 700;
             color: #f0f6fc;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
             line-height: 1.3;
         }
 
         .slide .tanggal {
-            font-size: 3rem;
+            font-size: 4rem;
             color: #8b949e;
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 20px;
         }
 
         .slide .tanggal .badge {
             background: #1f6feb33;
             border: 1px solid #1f6feb;
             color: #58a6ff;
-            padding: 12px 32px;
+            padding: 16px 40px;
             border-radius: 999px;
-            font-size: 2.4rem;
+            font-size: 3.2rem;
             font-weight: 600;
         }
 
