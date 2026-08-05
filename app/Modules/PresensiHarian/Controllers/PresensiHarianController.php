@@ -13,6 +13,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class PresensiHarianController extends Controller
 {
@@ -66,6 +69,86 @@ class PresensiHarianController extends Controller
 
 	public function rekap_bulanan(Request $request)
 	{
+		$data = $this->build_rekap_bulanan_data($request);
+
+		$this->log($request, 'melihat rekap bulanan '.$this->title);
+		return view('PresensiHarian::presensiharian_rekap_bulanan', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function rekap_bulanan_export(Request $request)
+	{
+		$this->validate($request, [
+			'id_kelas' => 'required',
+			'bulan'    => 'required',
+			'tahun'    => 'required',
+		]);
+
+		$data = $this->build_rekap_bulanan_data($request);
+
+		$spreadsheet = new Spreadsheet();
+		$sheet = $spreadsheet->getActiveSheet();
+
+		$sheet->setCellValue('A1', 'No');
+		$sheet->setCellValue('B1', 'Nama Siswa');
+
+		$col = 3;
+		for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col) . '1', $d);
+			$col++;
+		}
+		foreach (['Hadir', 'Sakit', 'Ijin', 'Alfa'] as $label) {
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col) . '1', $label);
+			$col++;
+		}
+		$lastColIndex = $col - 1;
+		$sheet->getStyle('A1:' . Coordinate::stringFromColumnIndex($lastColIndex) . '1')->getFont()->setBold(true);
+
+		$row = 2;
+		foreach ($data['siswa'] as $i => $s) {
+			$col = 1;
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $i + 1);
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $s->nama_siswa);
+
+			for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
+				$isWeekend = in_array(date('N', mktime(0, 0, 0, (int) $data['bulan'], $d, (int) $data['tahun'])), [6, 7]);
+				$value = $isWeekend ? 'OFF' : ($data['rekap'][$s->id_siswa][$d] ?? 'A');
+				$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $value);
+			}
+
+			$hadir = $data['summary'][$s->id_siswa]['hadir'] ?? 0;
+			$sakit = $data['summary'][$s->id_siswa]['sakit'] ?? 0;
+			$ijin  = $data['summary'][$s->id_siswa]['ijin'] ?? 0;
+			$alfa  = max(0, $data['hari_efektif'] - $hadir - $sakit - $ijin);
+
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $hadir);
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $sakit);
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $ijin);
+			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $alfa);
+
+			$row++;
+		}
+
+		for ($colIndex = 1; $colIndex <= $lastColIndex; $colIndex++) {
+			$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($colIndex))->setAutoSize(true);
+		}
+
+		$namaBulanList = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+		$namaKelas = $data['ref_kelas'][$data['id_kelas']] ?? 'Kelas';
+		$namaBulan = $namaBulanList[(int) $data['bulan']] ?? $data['bulan'];
+		$filename  = 'Rekap Presensi Harian - ' . $namaKelas . ' - ' . $namaBulan . ' ' . $data['tahun'] . '.xlsx';
+
+		$this->log($request, 'export excel rekap bulanan '.$this->title);
+
+		return response()->streamDownload(function () use ($spreadsheet) {
+			$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+			$writer->save('php://output');
+		}, $filename, [
+			'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		]);
+	}
+
+	private function build_rekap_bulanan_data(Request $request)
+	{
 		$id_semester = get_semester('active_semester_id');
 
 		$data['ref_kelas'] = Kelas::orderBy('kelas')->get()->pluck('kelas', 'id');
@@ -117,8 +200,7 @@ class PresensiHarianController extends Controller
 			$data['summary'] = $summary;
 		}
 
-		$this->log($request, 'melihat rekap bulanan '.$this->title);
-		return view('PresensiHarian::presensiharian_rekap_bulanan', array_merge($data, ['title' => $this->title]));
+		return $data;
 	}
 
 	public function create(Request $request)
