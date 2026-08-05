@@ -16,6 +16,9 @@ use App\Modules\Pesertadidik\Models\Pesertadidik;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class PresensiHarianController extends Controller
 {
@@ -85,25 +88,72 @@ class PresensiHarianController extends Controller
 
 		$data = $this->build_rekap_bulanan_data($request);
 
+		// Warna disamakan dengan kelas Bootstrap table-* yang dipakai di tampilan web
+		$bgSecondary = 'E2E3E5';
+		$bgSuccess   = 'D1E7DD';
+		$bgWarning   = 'FFF3CD';
+		$bgInfo      = 'CFF4FC';
+		$bgDanger    = 'F8D7DA';
+
+		$namaBulanList = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+		$namaKelas = $data['ref_kelas'][$data['id_kelas']] ?? 'Kelas';
+		$namaBulan = $namaBulanList[(int) $data['bulan']] ?? $data['bulan'];
+
+		$lastColIndex = 2 + $data['jumlah_hari'] + 4; // No, Nama Siswa, kolom tanggal, Hadir/Sakit/Ijin/Alfa
+		$lastColLetter = Coordinate::stringFromColumnIndex($lastColIndex);
+
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
 
-		$sheet->setCellValue('A1', 'No');
-		$sheet->setCellValue('B1', 'Nama Siswa');
+		// Judul & keterangan kelas/bulan, tabel diturunkan agar tidak tertimpa
+		$sheet->setCellValue('A1', 'Rekap Presensi Harian Bulanan');
+		$sheet->mergeCells('A1:' . $lastColLetter . '1');
+		$sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+		$sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-		$col = 3;
+		$sheet->setCellValue('A2', 'Kelas: ' . $namaKelas . '     Bulan: ' . $namaBulan . ' ' . $data['tahun']);
+		$sheet->mergeCells('A2:' . $lastColLetter . '2');
+		$sheet->getStyle('A2')->getFont()->setBold(true);
+		$sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+		$offset = 3;
+		$headerRow1 = $offset + 1;
+		$headerRow2 = $offset + 2;
+
+		$sheet->setCellValue('A' . $headerRow1, 'No');
+		$sheet->setCellValue('B' . $headerRow1, 'Nama Siswa');
+		$sheet->mergeCells('A' . $headerRow1 . ':A' . $headerRow2);
+		$sheet->mergeCells('B' . $headerRow1 . ':B' . $headerRow2);
+
+		$tanggalStartCol = 3;
+		$col = $tanggalStartCol;
 		for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
-			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col) . '1', $d);
+			$isWeekend = in_array(date('N', mktime(0, 0, 0, (int) $data['bulan'], $d, (int) $data['tahun'])), [6, 7]);
+			$cell = Coordinate::stringFromColumnIndex($col) . $headerRow2;
+			$sheet->setCellValue($cell, $d);
+			if ($isWeekend) {
+				$sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($bgSecondary);
+			}
 			$col++;
 		}
-		foreach (['Hadir', 'Sakit', 'Ijin', 'Alfa'] as $label) {
-			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col) . '1', $label);
-			$col++;
-		}
-		$lastColIndex = $col - 1;
-		$sheet->getStyle('A1:' . Coordinate::stringFromColumnIndex($lastColIndex) . '1')->getFont()->setBold(true);
+		$tanggalEndCol = $col - 1;
+		$sheet->setCellValue(Coordinate::stringFromColumnIndex($tanggalStartCol) . $headerRow1, 'Tanggal');
+		$sheet->mergeCells(Coordinate::stringFromColumnIndex($tanggalStartCol) . $headerRow1 . ':' . Coordinate::stringFromColumnIndex($tanggalEndCol) . $headerRow1);
+		$sheet->getStyle(Coordinate::stringFromColumnIndex($tanggalStartCol) . $headerRow1)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-		$row = 2;
+		$summaryColors = ['Hadir' => $bgSuccess, 'Sakit' => $bgWarning, 'Ijin' => $bgInfo, 'Alfa' => $bgDanger];
+		foreach ($summaryColors as $label => $bgColor) {
+			$cell = Coordinate::stringFromColumnIndex($col) . $headerRow1;
+			$range = $cell . ':' . Coordinate::stringFromColumnIndex($col) . $headerRow2;
+			$sheet->setCellValue($cell, $label);
+			$sheet->mergeCells($range);
+			$sheet->getStyle($range)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($bgColor);
+			$col++;
+		}
+		$sheet->getStyle('A' . $headerRow1 . ':' . $lastColLetter . $headerRow2)->getFont()->setBold(true);
+		$sheet->getStyle('A' . $headerRow1 . ':' . $lastColLetter . $headerRow2)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+
+		$row = $offset + 3;
 		foreach ($data['siswa'] as $i => $s) {
 			$col = 1;
 			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $i + 1);
@@ -112,7 +162,13 @@ class PresensiHarianController extends Controller
 			for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
 				$isWeekend = in_array(date('N', mktime(0, 0, 0, (int) $data['bulan'], $d, (int) $data['tahun'])), [6, 7]);
 				$value = $isWeekend ? 'OFF' : ($data['rekap'][$s->id_siswa][$d] ?? 'A');
-				$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $value);
+				$cell = Coordinate::stringFromColumnIndex($col) . $row;
+				$sheet->setCellValue($cell, $value);
+				if ($isWeekend) {
+					$sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($bgSecondary);
+					$sheet->getStyle($cell)->getFont()->getColor()->setRGB('6C757D');
+				}
+				$col++;
 			}
 
 			$hadir = $data['summary'][$s->id_siswa]['hadir'] ?? 0;
@@ -120,22 +176,30 @@ class PresensiHarianController extends Controller
 			$ijin  = $data['summary'][$s->id_siswa]['ijin'] ?? 0;
 			$alfa  = max(0, $data['hari_efektif'] - $hadir - $sakit - $ijin);
 
-			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $hadir);
-			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $sakit);
-			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $ijin);
-			$sheet->setCellValue(Coordinate::stringFromColumnIndex($col++) . $row, $alfa);
+			foreach ([$hadir, $sakit, $ijin, $alfa] as $index => $value) {
+				$bgColor = [$bgSuccess, $bgWarning, $bgInfo, $bgDanger][$index];
+				$cell = Coordinate::stringFromColumnIndex($col) . $row;
+				$sheet->setCellValue($cell, $value);
+				$sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($bgColor);
+				$sheet->getStyle($cell)->getFont()->setBold(true);
+				$col++;
+			}
 
 			$row++;
 		}
+
+		$lastRow = $row - 1;
+
+		$tableRange = 'A' . $headerRow1 . ':' . $lastColLetter . $lastRow;
+		$sheet->getStyle($tableRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+		$sheet->getStyle($tableRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+		$sheet->getStyle('B' . ($offset + 3) . ':B' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
 		for ($colIndex = 1; $colIndex <= $lastColIndex; $colIndex++) {
 			$sheet->getColumnDimension(Coordinate::stringFromColumnIndex($colIndex))->setAutoSize(true);
 		}
 
-		$namaBulanList = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
-		$namaKelas = $data['ref_kelas'][$data['id_kelas']] ?? 'Kelas';
-		$namaBulan = $namaBulanList[(int) $data['bulan']] ?? $data['bulan'];
-		$filename  = 'Rekap Presensi Harian - ' . $namaKelas . ' - ' . $namaBulan . ' ' . $data['tahun'] . '.xlsx';
+		$filename = 'Rekap Presensi Bulanan - ' . $namaKelas . ' - ' . $namaBulan . ' ' . $data['tahun'] . '.xlsx';
 
 		$this->log($request, 'export excel rekap bulanan '.$this->title);
 
