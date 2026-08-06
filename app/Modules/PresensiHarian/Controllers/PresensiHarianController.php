@@ -6,6 +6,7 @@ use App\Helpers\Logger;
 use Illuminate\Http\Request;
 use App\Modules\Log\Models\Log;
 use App\Modules\PresensiHarian\Models\PresensiHarian;
+use App\Modules\HariLibur\Models\HariLibur;
 use App\Modules\Siswa\Models\Siswa;
 use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 
@@ -129,9 +130,10 @@ class PresensiHarianController extends Controller
 		$col = $tanggalStartCol;
 		for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
 			$isWeekend = in_array(date('N', mktime(0, 0, 0, (int) $data['bulan'], $d, (int) $data['tahun'])), [6, 7]);
+			$isLibur   = in_array($d, $data['hari_libur']);
 			$cell = Coordinate::stringFromColumnIndex($col) . $headerRow2;
 			$sheet->setCellValue($cell, $d);
-			if ($isWeekend) {
+			if ($isWeekend || $isLibur) {
 				$sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($bgSecondary);
 			}
 			$col++;
@@ -161,10 +163,12 @@ class PresensiHarianController extends Controller
 
 			for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
 				$isWeekend = in_array(date('N', mktime(0, 0, 0, (int) $data['bulan'], $d, (int) $data['tahun'])), [6, 7]);
-				$value = $isWeekend ? 'OFF' : ($data['rekap'][$s->id_siswa][$d] ?? 'A');
+				$isLibur   = in_array($d, $data['hari_libur']);
+				$isOff     = $isWeekend || $isLibur;
+				$value = $isOff ? 'OFF' : ($data['rekap'][$s->id_siswa][$d] ?? 'A');
 				$cell = Coordinate::stringFromColumnIndex($col) . $row;
 				$sheet->setCellValue($cell, $value);
-				if ($isWeekend) {
+				if ($isOff) {
 					$sheet->getStyle($cell)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($bgSecondary);
 					$sheet->getStyle($cell)->getFont()->getColor()->setRGB('6C757D');
 				}
@@ -225,6 +229,7 @@ class PresensiHarianController extends Controller
 		$data['summary']      = [];
 		$data['jumlah_hari']  = 0;
 		$data['hari_efektif'] = 0;
+		$data['hari_libur']   = [];
 
 		if ($data['id_kelas'] && $data['bulan']) {
 			$tahun = $data['tahun'];
@@ -232,9 +237,19 @@ class PresensiHarianController extends Controller
 
 			$data['jumlah_hari'] = (int) date('t', mktime(0, 0, 0, (int) $bulan, 1, (int) $tahun));
 
+			$data['hari_libur'] = HariLibur::whereYear('tanggal', $tahun)
+				->whereMonth('tanggal', $bulan)
+				->pluck('tanggal')
+				->map(fn ($tanggal) => (int) date('j', strtotime($tanggal)))
+				->unique()
+				->values()
+				->all();
+
 			$hari_efektif = 0;
 			for ($d = 1; $d <= $data['jumlah_hari']; $d++) {
-				if (!in_array(date('N', mktime(0, 0, 0, (int) $bulan, $d, (int) $tahun)), [6, 7])) {
+				$isWeekend = in_array(date('N', mktime(0, 0, 0, (int) $bulan, $d, (int) $tahun)), [6, 7]);
+				$isLibur   = in_array($d, $data['hari_libur']);
+				if (!$isWeekend && !$isLibur) {
 					$hari_efektif++;
 				}
 			}

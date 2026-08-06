@@ -78,8 +78,11 @@
                         </tr>
                         <tr>
                             @for ($d = 1; $d <= $jumlah_hari; $d++)
-                                @php $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]); @endphp
-                                <th @class(['table-secondary' => $isWeekend])>{{ $d }}</th>
+                                @php
+                                    $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]);
+                                    $isLibur = in_array($d, $hari_libur);
+                                @endphp
+                                <th @class(['table-secondary' => $isWeekend || $isLibur])>{{ $d }}</th>
                             @endfor
                         </tr>
                     </thead>
@@ -89,8 +92,11 @@
                                 <td>{{ $i + 1 }}</td>
                                 <td class="text-start">{{ $s->nama_siswa }}</td>
                                 @for ($d = 1; $d <= $jumlah_hari; $d++)
-                                    @php $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]); @endphp
-                                    @if ($isWeekend)
+                                    @php
+                                        $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]);
+                                        $isLibur = in_array($d, $hari_libur);
+                                    @endphp
+                                    @if ($isWeekend || $isLibur)
                                         <td class="table-secondary text-muted">OFF</td>
                                     @else
                                         <td>{{ $rekap[$s->id_siswa][$d] ?? 'A' }}</td>
