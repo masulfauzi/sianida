@@ -1,17 +1,17 @@
 <?php
 namespace App\Modules\AnggotaEkskul\Controllers;
 
-use Form;
 use App\Helpers\Logger;
-use Illuminate\Http\Request;
-use App\Modules\Log\Models\Log;
-use App\Modules\AnggotaEkskul\Models\AnggotaEkskul;
-use App\Modules\Pesertadidik\Models\Pesertadidik;
-use App\Modules\Ekskul\Models\Ekskul;
-use App\Modules\Semester\Models\Semester;
-
 use App\Http\Controllers\Controller;
+use App\Modules\AnggotaEkskul\Models\AnggotaEkskul;
+use App\Modules\Ekskul\Models\Ekskul;
+use App\Modules\Log\Models\Log;
+use App\Modules\Pesertadidik\Models\Pesertadidik;
+use App\Modules\Semester\Models\Semester;
+use Form;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AnggotaEkskulController extends Controller
 {
@@ -33,9 +33,9 @@ class AnggotaEkskulController extends Controller
 		}
 
         $id_ekskul = $request->get('id_ekskul');
+        $data['ekskul'] = Ekskul::find($id_ekskul);
 
 		$data['data'] = $query->paginate(10)->withQueryString();
-        $data['ekskul'] = Ekskul::find($id_ekskul);
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('AnggotaEkskul::anggotaekskul', array_merge($data, ['title' => $this->title]));
@@ -59,6 +59,9 @@ class AnggotaEkskulController extends Controller
 			'id_semester' => ['', Form::hidden("id_semester", get_semester('active_semester_id')) ],
 
 		);
+
+        $id_ekskul = $request->get('id_ekskul');
+        $data['ekskul'] = Ekskul::find($id_ekskul);
 
 		$this->log($request, 'membuka form tambah '.$this->title);
 		return view('AnggotaEkskul::anggotaekskul_create', array_merge($data, ['title' => $this->title]));
@@ -90,6 +93,8 @@ class AnggotaEkskulController extends Controller
 	public function show(Request $request, AnggotaEkskul $anggotaekskul)
 	{
 		$data['anggotaekskul'] = $anggotaekskul;
+        $id_ekskul = $request->get('id_ekskul');
+        $data['ekskul'] = Ekskul::find($id_ekskul);
 
 		$text = 'melihat detail '.$this->title;//.' '.$anggotaekskul->what;
 		$this->log($request, $text, ['anggotaekskul.id' => $anggotaekskul->id]);
@@ -111,6 +116,8 @@ class AnggotaEkskulController extends Controller
 			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
 
 		);
+        $id_ekskul = $request->get('id_ekskul');
+        $data['ekskul'] = Ekskul::find($id_ekskul);
 
 		$text = 'membuka form edit '.$this->title;//.' '.$anggotaekskul->what;
 		$this->log($request, $text, ['anggotaekskul.id' => $anggotaekskul->id]);
@@ -139,7 +146,7 @@ class AnggotaEkskulController extends Controller
 
 		$text = 'mengedit '.$this->title;//.' '.$anggotaekskul->what;
 		$this->log($request, $text, ['anggotaekskul.id' => $anggotaekskul->id]);
-		return redirect()->route('anggotaekskul.index')->with('message_success', 'Anggota Ekskul berhasil diubah!');
+		return redirect()->route('anggotaekskul.index',['id_ekskul' => $request->get('id_ekskul')])->with('message_success', 'Anggota Ekskul berhasil diubah!');
 	}
 
 	public function destroy(Request $request, $id)
@@ -153,5 +160,50 @@ class AnggotaEkskulController extends Controller
 		$this->log($request, $text, ['anggotaekskul.id' => $anggotaekskul->id]);
 		return back()->with('message_success', 'Anggota Ekskul berhasil dihapus!');
 	}
+
+    public function penilaian(Request $request)
+	{
+		$query = AnggotaEkskul::query()->where('id_ekskul', '=', $request->get('id_ekskul'));
+		if($request->has('search')){
+			$search = $request->get('search');
+			// $query->where('name', 'like', "%$search%");
+		}
+
+        $id_ekskul = $request->get('id_ekskul');
+
+		$data['data'] = $query->paginate(10)->withQueryString();
+        $data['ekskul'] = Ekskul::find($id_ekskul);
+
+		$this->log($request, 'melihat halaman manajemen data '.$this->title);
+		return view('AnggotaEkskul::anggotaekskul_nilai', array_merge($data, ['title' => $this->title]));
+	}
+
+    public function simpanNilai(Request $request)
+	{
+		$request->validate([
+        'id_ekskul' => ['required'],
+        'nilai' => ['required', 'array'],
+        'nilai.*' => ['nullable', 'in:A,B,C,D'],
+        ]);
+
+        DB::transaction(function () use ($request) {
+
+            foreach ($request->nilai as $id => $nilai) {
+
+                AnggotaEkskul::where('id', $id)
+                    ->where('id_ekskul', $request->id_ekskul)
+                    ->update([
+                        'nilai' => $nilai,
+                        'updated_by' => Auth::id()
+                    ]);
+            }
+        });
+
+
+		$text = 'mengedit '.$this->title;//.' '.$anggotaekskul->what;
+		$this->log($request, $text, ['anggotaekskul.id' => $request->id_ekskul]);
+		return redirect()->route('anggotaekskul.nilai.edit',['id_ekskul' => $request->get('id_ekskul')])->with('message_success', 'Anggota Ekskul berhasil diubah!');
+	}
+
 
 }

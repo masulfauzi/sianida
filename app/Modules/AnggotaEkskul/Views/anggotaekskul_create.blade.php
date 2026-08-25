@@ -28,7 +28,7 @@
                 @include('include.flash')
                 <form class="form form-horizontal" action="{{ route('anggotaekskul.store') }}" method="POST">
                     <div class="form-body">
-                        @csrf 
+                        @csrf
                         @foreach ($forms as $key => $value)
                             <div class="row">
                                 <div class="col-md-3 text-sm-start text-md-end pt-2">
@@ -46,7 +46,7 @@
                         @endforeach
                         <div class="offset-md-3 ps-2">
                             <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
-                            <a href="{{ route('anggotaekskul.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ route('anggotaekskul.index',['id_ekskul' => $ekskul->id]) }}" class="btn btn-secondary">Batal</a>
                         </div>
                   </div>
                 </form>

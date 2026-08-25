@@ -8,7 +8,7 @@
     <div class="page-title">
         <div class="row mb-2">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <a href="{{ route('anggotaekskul.index') }}" class="btn btn-sm icon icon-left btn-outline-secondary"><i class="fa fa-arrow-left"></i> Kembali </a>
+                <a href="{{ route('anggotaekskul.index',['id_ekskul' => $ekskul->id]) }}" class="btn btn-sm icon icon-left btn-outline-secondary"><i class="fa fa-arrow-left"></i> Kembali </a>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -35,7 +35,7 @@
 									<div class='col-lg-2'><p>Ekskul</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $anggotaekskul->ekskul->id }}</p></div>
 									<div class='col-lg-2'><p>Nilai</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $anggotaekskul->nilai }}</p></div>
 									<div class='col-lg-2'><p>Semester</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $anggotaekskul->semester->id }}</p></div>
-									
+
                         </div>
                     </div>
                 </div>
