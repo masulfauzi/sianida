@@ -165,7 +165,9 @@ class AnggotaEkskulController extends Controller
 
     public function penilaian(Request $request)
 	{
-		$query = AnggotaEkskul::query()->where('id_ekskul', '=', $request->get('id_ekskul'));
+		$query = AnggotaEkskul::query()
+        ->where('id_ekskul', '=', $request->get('id_ekskul'))
+        ->where('id_semester', '=', get_semester('active_semester_id'));
 		if($request->has('search')){
 			$search = $request->get('search');
 			// $query->where('name', 'like', "%$search%");
