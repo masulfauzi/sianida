@@ -180,7 +180,7 @@ class PesertadidikController extends Controller
 		$data['forms'] = array(
 			'id_semester' => ['', Form::hidden("id_semester", $pesertadidik->id_semester) ],
 			'id_siswa' => ['Siswa', new HtmlString(Form::select("id_siswa_display", $ref_siswa, $pesertadidik->id_siswa, ["class" => "form-control select2", "disabled"]) . Form::hidden("id_siswa", $pesertadidik->id_siswa)) ],
-			'id_kelas' => ['Kelas', Form::select("id_kelas", $ref_kelas, null, ["class" => "form-control select2"]) ],
+			'id_kelas' => ['Kelas', Form::select("id_kelas", $ref_kelas, $pesertadidik->id_kelas, ["class" => "form-control select2"]) ],
 
 		);
 
