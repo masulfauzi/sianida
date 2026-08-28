@@ -67,10 +67,11 @@
                                     <td>
 										{!! button('kelas.show','', $item->id) !!}
 										{!! button('kelas.edit', $title, $item->id) !!}
-                                        {!! button('kelas.destroy', $title, $item->id) !!}
-                                        <a href="{{ route('kelas.naik.index', $item->id) }}" class="btn btn-primary">Naik Kelas</a>
-                                        <a href="{{ route('kelas.download_file_smp_pdf.show', $item->id) }}" class="btn btn-secondary">Download Ijazah SMP PDF</a>
-                                        <a href="{{ route('kelas.download_file_smp_image.show', $item->id) }}" class="btn btn-secondary">Download Ijazah SMP Gambar</a>
+                                        {{-- {!! button('kelas.destroy', $title, $item->id) !!} --}}
+                                        <a href="{{ route('kelas.naik.index', $item->id) }}" class="btn btn-outline-primary">Naik Kelas</a>
+                                        <a href="{{ route('kelas.anggota.index', $item->id) }}" class="btn btn-outline-dark">Anggota Kelas</a>
+                                        {{-- <a href="{{ route('kelas.download_file_smp_pdf.show', $item->id) }}" class="btn btn-secondary">Download Ijazah SMP PDF</a>
+                                        <a href="{{ route('kelas.download_file_smp_image.show', $item->id) }}" class="btn btn-secondary">Download Ijazah SMP Gambar</a> --}}
                                     </td>
                                 </tr>
                             @empty

@@ -42,7 +42,9 @@ class DudiController extends Controller
 			'alamat' => ['Alamat', Form::textarea("alamat", old("alamat"), ["class" => "form-control rich-editor"]) ],
 			'pimpinan' => ['Pimpinan', Form::text("pimpinan", old("pimpinan"), ["class" => "form-control","placeholder" => ""]) ],
 			'no_hp' => ['No Hp', Form::text("no_hp", old("no_hp"), ["class" => "form-control","placeholder" => ""]) ],
-			
+			'jarak' => ['Jarak', Form::number("jarak", old("jarak"), ["class" => "form-control","placeholder" => "", "step" => "any"]) ],
+			'tarif' => ['Tarif', Form::text("tarif", old("tarif"), ["class" => "form-control","placeholder" => ""]) ],
+
 		);
 
 		$this->log($request, 'membuka form tambah '.$this->title);
@@ -56,7 +58,9 @@ class DudiController extends Controller
 			'alamat' => 'required',
 			'pimpinan' => 'required',
 			'no_hp' => 'required',
-			
+			'jarak' => 'required|numeric',
+			'tarif' => 'required',
+
 		]);
 
 		$dudi = new Dudi();
@@ -64,7 +68,9 @@ class DudiController extends Controller
 		$dudi->alamat = $request->input("alamat");
 		$dudi->pimpinan = $request->input("pimpinan");
 		$dudi->no_hp = $request->input("no_hp");
-		
+		$dudi->jarak = $request->input("jarak");
+		$dudi->tarif = $request->input("tarif");
+
 		$dudi->created_by = Auth::id();
 		$dudi->save();
 
@@ -92,7 +98,9 @@ class DudiController extends Controller
 			'alamat' => ['Alamat', Form::textarea("alamat", $dudi->alamat, ["class" => "form-control rich-editor"]) ],
 			'pimpinan' => ['Pimpinan', Form::text("pimpinan", $dudi->pimpinan, ["class" => "form-control","placeholder" => "", "id" => "pimpinan"]) ],
 			'no_hp' => ['No Hp', Form::text("no_hp", $dudi->no_hp, ["class" => "form-control","placeholder" => "", "id" => "no_hp"]) ],
-			
+			'jarak' => ['Jarak', Form::number("jarak", $dudi->jarak, ["class" => "form-control","placeholder" => "", "id" => "jarak", "step" => "any"]) ],
+			'tarif' => ['Tarif', Form::text("tarif", $dudi->tarif, ["class" => "form-control","placeholder" => "", "id" => "tarif"]) ],
+
 		);
 
 		$text = 'membuka form edit '.$this->title;//.' '.$dudi->what;
@@ -107,15 +115,19 @@ class DudiController extends Controller
 			'alamat' => 'required',
 			'pimpinan' => 'required',
 			'no_hp' => 'required',
-			
+			'jarak' => 'required|numeric',
+			'tarif' => 'required',
+
 		]);
-		
+
 		$dudi = Dudi::find($id);
 		$dudi->nama_dudi = $request->input("nama_dudi");
 		$dudi->alamat = $request->input("alamat");
 		$dudi->pimpinan = $request->input("pimpinan");
 		$dudi->no_hp = $request->input("no_hp");
-		
+		$dudi->jarak = $request->input("jarak");
+		$dudi->tarif = $request->input("tarif");
+
 		$dudi->updated_by = Auth::id();
 		$dudi->save();
 

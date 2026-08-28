@@ -109,5 +109,8 @@ function loadDatePicker(element){
 		
 		});
 		d.dates.formatInput = function(date) { {return moment(date).format(form) } }
+		if(d.dates.lastPicked){
+			this.value = d.dates.formatInput(d.dates.lastPicked);
+		}
 	});
 }

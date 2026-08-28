@@ -2,11 +2,11 @@
 namespace App\Modules\Pesertadidik\Controllers;
 
 use Form;
+use Illuminate\Support\HtmlString;
 use App\Helpers\Logger;
 use Illuminate\Http\Request;
 use App\Modules\Log\Models\Log;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
-use App\Modules\Semester\Models\Semester;
 use App\Modules\Siswa\Models\Siswa;
 use App\Modules\Kelas\Models\Kelas;
 
@@ -174,15 +174,14 @@ class PesertadidikController extends Controller
 	{
 		$data['pesertadidik'] = $pesertadidik;
 
-		$ref_semester = Semester::all()->pluck('semester','id');
 		$ref_siswa = Siswa::all()->pluck('nama_siswa','id');
 		$ref_kelas = Kelas::all()->pluck('kelas','id');
-		
+
 		$data['forms'] = array(
-			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
-			'id_siswa' => ['Siswa', Form::select("id_siswa", $ref_siswa, null, ["class" => "form-control select2"]) ],
+			'id_semester' => ['', Form::hidden("id_semester", $pesertadidik->id_semester) ],
+			'id_siswa' => ['Siswa', new HtmlString(Form::select("id_siswa_display", $ref_siswa, $pesertadidik->id_siswa, ["class" => "form-control select2", "disabled"]) . Form::hidden("id_siswa", $pesertadidik->id_siswa)) ],
 			'id_kelas' => ['Kelas', Form::select("id_kelas", $ref_kelas, null, ["class" => "form-control select2"]) ],
-			
+
 		);
 
 		$text = 'membuka form edit '.$this->title;//.' '.$pesertadidik->what;
@@ -210,7 +209,7 @@ class PesertadidikController extends Controller
 
 		$text = 'mengedit '.$this->title;//.' '.$pesertadidik->what;
 		$this->log($request, $text, ['pesertadidik.id' => $pesertadidik->id]);
-		return redirect()->route('pesertadidik.index')->with('message_success', 'Pesertadidik berhasil diubah!');
+		return redirect()->route('kelas.anggota.index', $pesertadidik->id_kelas)->with('message_success', 'Pesertadidik berhasil diubah!');
 	}
 
 	public function destroy(Request $request, $id)

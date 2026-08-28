@@ -301,6 +301,21 @@ class KelasController extends Controller
 		return redirect()->route('kelas.naik.index', $request->input('id_kelas'))->with('message_success', 'Berhasil naik kelas.');
 	}
 
+	public function anggota_kelas(Request $request, $id_kelas)
+	{
+		$data['kelas'] = Kelas::find($id_kelas);
+		$data['data'] = Pesertadidik::query()
+						->whereIdSemester(get_semester('active_semester_id'))
+						->whereIdKelas($id_kelas)
+						->with('siswa')
+						->get()
+						->sortBy('siswa.nama_siswa')
+						->values();
+
+		$this->log($request, 'melihat anggota kelas '.$this->title);
+		return view('Kelas::kelas_anggota', array_merge($data, ['title' => $this->title]));
+	}
+
 	public function create(Request $request)
 	{
 		$ref_tingkat = Tingkat::all()->sortBy('tingkat')->pluck('tingkat','id');

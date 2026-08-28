@@ -23,6 +23,8 @@ Route::controller(KelasController::class)->middleware(['web','auth'])->name('kel
 
 	Route::get('/kelas/naik/{id_kelas}', 'naik_kelas')->name('naik.index');
 	Route::post('/kelas/naik', 'aksi_naik_kelas')->name('naik.store');
+
+	Route::get('/kelas/anggota/{id_kelas}', 'anggota_kelas')->name('anggota.index');
 	
 	
 

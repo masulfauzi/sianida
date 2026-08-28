@@ -46,10 +46,11 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
+                                <td>Nama Periode</td>
                                 <td>Semester</td>
 								<td>Tgl Mulai</td>
 								<td>Tgl Selesai</td>
-								
+
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -58,10 +59,11 @@
                             @forelse ($data as $item)
                                 <tr>
                                     <td>{{ $no++ }}</td>
+                                    <td>{{ $item->nama_periode }}</td>
                                     <td>{{ $item->semester->semester }}</td>
 									<td>{{ $item->tgl_mulai }}</td>
 									<td>{{ $item->tgl_selesai }}</td>
-									
+
                                     <td>
 										{!! button('periodemagang.show','', $item->id) !!}
 										{!! button('periodemagang.edit', $title, $item->id) !!}
@@ -70,7 +72,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center"><i>No data.</i></td>
+                                    <td colspan="6" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

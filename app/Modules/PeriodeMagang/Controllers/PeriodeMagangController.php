@@ -6,7 +6,6 @@ use App\Helpers\Logger;
 use Illuminate\Http\Request;
 use App\Modules\Log\Models\Log;
 use App\Modules\PeriodeMagang\Models\PeriodeMagang;
-use App\Modules\Semester\Models\Semester;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -37,9 +36,9 @@ class PeriodeMagangController extends Controller
 
 	public function create(Request $request)
 	{
-		$ref_semester = Semester::all()->pluck('semester','id');
 		
 		$data['forms'] = array(
+			'nama_periode' => ['Nama Periode', Form::text("nama_periode", old("nama_periode"), ["class" => "form-control","placeholder" => ""]) ],
 			'tgl_mulai' => ['Tgl Mulai', Form::text("tgl_mulai", old("tgl_mulai"), ["class" => "form-control datepicker"]) ],
 			'tgl_selesai' => ['Tgl Selesai', Form::text("tgl_selesai", old("tgl_selesai"), ["class" => "form-control datepicker"]) ],
 			'id_semester' => ['', Form::hidden("id_semester", get_semester('active_semester_id')) ],
@@ -53,17 +52,19 @@ class PeriodeMagangController extends Controller
 	function store(Request $request)
 	{
 		$this->validate($request, [
+			'nama_periode' => 'required',
 			'id_semester' => 'required',
 			'tgl_mulai' => 'required',
 			'tgl_selesai' => 'required',
-			
+
 		]);
 
 		$periodemagang = new PeriodeMagang();
+		$periodemagang->nama_periode = $request->input("nama_periode");
 		$periodemagang->id_semester = $request->input("id_semester");
 		$periodemagang->tgl_mulai = $request->input("tgl_mulai");
 		$periodemagang->tgl_selesai = $request->input("tgl_selesai");
-		
+
 		$periodemagang->created_by = Auth::id();
 		$periodemagang->save();
 
@@ -86,10 +87,8 @@ class PeriodeMagangController extends Controller
 	{
 		$data['periodemagang'] = $periodemagang;
 
-		$ref_semester = Semester::all()->pluck('semester','id');
-		
 		$data['forms'] = array(
-			'id_semester' => ['Semester', Form::select("id_semester", $ref_semester, null, ["class" => "form-control select2"]) ],
+			'nama_periode' => ['Nama Periode', Form::text("nama_periode", $periodemagang->nama_periode, ["class" => "form-control","placeholder" => "", "id" => "nama_periode"]) ],
 			'tgl_mulai' => ['Tgl Mulai', Form::text("tgl_mulai", $periodemagang->tgl_mulai, ["class" => "form-control datepicker", "id" => "tgl_mulai"]) ],
 			'tgl_selesai' => ['Tgl Selesai', Form::text("tgl_selesai", $periodemagang->tgl_selesai, ["class" => "form-control datepicker", "id" => "tgl_selesai"]) ],
 			
@@ -103,17 +102,17 @@ class PeriodeMagangController extends Controller
 	public function update(Request $request, $id)
 	{
 		$this->validate($request, [
-			'id_semester' => 'required',
+			'nama_periode' => 'required',
 			'tgl_mulai' => 'required',
 			'tgl_selesai' => 'required',
-			
+
 		]);
-		
+
 		$periodemagang = PeriodeMagang::find($id);
-		$periodemagang->id_semester = $request->input("id_semester");
+		$periodemagang->nama_periode = $request->input("nama_periode");
 		$periodemagang->tgl_mulai = $request->input("tgl_mulai");
 		$periodemagang->tgl_selesai = $request->input("tgl_selesai");
-		
+
 		$periodemagang->updated_by = Auth::id();
 		$periodemagang->save();
 
