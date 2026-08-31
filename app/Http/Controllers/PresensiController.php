@@ -6,7 +6,25 @@ use App\Modules\Presensi\Models\Presensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Info(
+ *     title="Sianida API",
+ *     version="1.0.0",
+ *     description="Dokumentasi API Sianida"
+ * )
+ * @OA\SecurityScheme(
+ *     securityScheme="sanctum",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="Sanctum token"
+ * )
+ * @OA\Tag(
+ *     name="Presensi",
+ *     description="Endpoint presensi harian dan presensi kartu (RFID)"
+ * )
+ */
 class PresensiController extends Controller
 {
     // TODO: ganti dengan credential asli
@@ -18,6 +36,37 @@ class PresensiController extends Controller
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/presensi",
+     *     tags={"Presensi"},
+     *     summary="Simpan presensi harian siswa",
+     *     description="Membuat data presensi harian untuk siswa pada tanggal hari ini, opsional disertai foto.",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"siswaId"},
+     *                 @OA\Property(property="siswaId", type="integer", example=1, description="ID siswa yang melakukan presensi"),
+     *                 @OA\Property(property="image", type="string", format="binary", description="Foto presensi (jpeg, png, jpg, gif, webp, heic, heif, maks 10MB)")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Presensi harian berhasil disimpan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Presensi harian saved successfully"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Siswa atau status kehadiran tidak ditemukan"),
+     *     @OA\Response(response=422, description="Validasi gagal atau siswa sudah presensi hari ini"),
+     *     @OA\Response(response=500, description="Gagal menyimpan presensi harian")
+     * )
      */
     public function store(Request $request)
     {
@@ -116,6 +165,37 @@ class PresensiController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/presensi/{userId}/{currentmonth}/{currentyear}",
+     *     tags={"Presensi"},
+     *     summary="Ambil rekap presensi harian siswa per bulan",
+     *     description="Mengembalikan status presensi siswa untuk setiap hari pada bulan dan tahun yang diminta.",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="userId", in="path", required=true, description="ID siswa", @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="currentmonth", in="path", required=true, description="Bulan (1-12)", @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="currentyear", in="path", required=true, description="Tahun (contoh: 2026)", @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Data presensi harian berhasil diambil",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Presensi harian retrieved successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="tgl", type="string", format="date", example="2026-08-31"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+     *                     @OA\Property(property="status", type="string", example="Tidak Hadir")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Siswa tidak ditemukan"),
+     *     @OA\Response(response=500, description="Gagal mengambil data presensi harian")
+     * )
+     */
     public function index(Request $request, $siswaId, $currentmonth, $currentyear)
     {
         try {
@@ -184,6 +264,34 @@ class PresensiController extends Controller
      * @param Request $request
      * @param string $id
      * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Put(
+     *     path="/api/presensi/{id}",
+     *     tags={"Presensi"},
+     *     summary="Perbarui status presensi",
+     *     description="Mengubah status kehadiran pada data presensi yang sudah ada.",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, description="ID presensi", @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"status"},
+     *             @OA\Property(property="status", type="string", example="H", description="Kode status kehadiran pendek (mis. H, T)")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Presensi berhasil diperbarui",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Presensi updated successfully"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Presensi tidak ditemukan"),
+     *     @OA\Response(response=422, description="Validasi gagal"),
+     *     @OA\Response(response=500, description="Gagal memperbarui presensi")
+     * )
      */
     public function update(Request $request, $id)
     {
@@ -229,6 +337,41 @@ class PresensiController extends Controller
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Post(
+     *     path="/api/presensi-kartu",
+     *     tags={"Presensi"},
+     *     summary="Presensi menggunakan kartu (RFID)",
+     *     description="Endpoint publik yang dipanggil alat RFID. Otentikasi memakai username/password tetap yang dikirim di body, bukan token Sanctum.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"username","password","kode"},
+     *             @OA\Property(property="username", type="string", example="4l4T"),
+     *             @OA\Property(property="password", type="string", example="4bs3n"),
+     *             @OA\Property(property="kode", type="string", description="UID kartu RFID siswa", example="04A2B3C4")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Presensi kartu berhasil disimpan",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Presensi kartu berhasil disimpan"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="nama_siswa", type="string", example="Budi Santoso"),
+     *                 @OA\Property(property="waktu_presensi", type="string", format="date-time"),
+     *                 @OA\Property(property="presensi", type="object")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Username atau password salah"),
+     *     @OA\Response(response=404, description="Kartu tidak terdaftar atau status kehadiran tidak ditemukan"),
+     *     @OA\Response(response=422, description="Validasi gagal atau siswa sudah presensi hari ini"),
+     *     @OA\Response(response=500, description="Gagal menyimpan presensi kartu")
+     * )
      */
     public function presensiKartu(Request $request)
     {
