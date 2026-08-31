@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Presensi API endpoints
     Route::post('/presensi', [PresensiController::class, 'store']);
+    Route::get('/presensi/kelas/{idKelas}', [PresensiController::class, 'perKelas']);
     Route::get('/presensi/{userId}/{currentmonth}/{currentyear}', [PresensiController::class, 'index']);
     Route::put('/presensi/{id}', [PresensiController::class, 'update']);
 

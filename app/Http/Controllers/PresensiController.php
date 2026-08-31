@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Modules\PresensiHarian\Models\PresensiHarian;
 use App\Modules\Presensi\Models\Presensi;
+use App\Modules\Semester\Models\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -457,6 +458,119 @@ class PresensiController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to save presensi kartu',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Display presensi harian for all siswa in a kelas on a given date
+     *
+     * @param Request $request
+     * @param string $idKelas
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Get(
+     *     path="/api/presensi/kelas/{idKelas}",
+     *     tags={"Presensi"},
+     *     summary="Ambil presensi harian per kelas",
+     *     description="Mengembalikan status presensi harian seluruh siswa pada kelas tertentu untuk satu tanggal (default hari ini), berdasarkan peserta didik semester aktif.",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(name="idKelas", in="path", required=true, description="ID kelas", @OA\Schema(type="string", format="uuid")),
+     *     @OA\Parameter(name="tgl", in="query", required=false, description="Tanggal presensi (default: hari ini)", @OA\Schema(type="string", format="date", example="2026-08-31")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Data presensi harian per kelas berhasil diambil",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Presensi harian per kelas retrieved successfully"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 @OA\Property(property="id_kelas", type="string", format="uuid"),
+     *                 @OA\Property(property="nama_kelas", type="string", example="XII RPL 1"),
+     *                 @OA\Property(property="tgl", type="string", format="date", example="2026-08-31"),
+     *                 @OA\Property(
+     *                     property="siswa",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id_siswa", type="string", format="uuid"),
+     *                         @OA\Property(property="nama_siswa", type="string", example="Budi Santoso"),
+     *                         @OA\Property(property="nis", type="string", nullable=true, example="12345"),
+     *                         @OA\Property(property="nisn", type="string", nullable=true, example="0012345678"),
+     *                         @OA\Property(property="status_kehadiran", type="string", example="Belum Presensi"),
+     *                         @OA\Property(property="waktu_presensi", type="string", format="date-time", nullable=true)
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Kelas tidak ditemukan atau tidak ada semester aktif"),
+     *     @OA\Response(response=500, description="Gagal mengambil data presensi harian per kelas")
+     * )
+     */
+    public function perKelas(Request $request, $idKelas)
+    {
+        try {
+            $kelas = DB::table('kelas')
+                ->where('id', $idKelas)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $kelas) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kelas not found',
+                ], 404);
+            }
+
+            $semester = Semester::get_semester_aktif();
+
+            if (! $semester) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Semester aktif not found',
+                ], 404);
+            }
+
+            $tgl = $request->query('tgl', today()->format('Y-m-d'));
+
+            $siswa = DB::table('pesertadidik as pd')
+                ->join('siswa as s', 's.id', '=', 'pd.id_siswa')
+                ->leftJoin('presensi_harian as ph', function ($join) use ($tgl) {
+                    $join->on('ph.id_siswa', '=', 'pd.id_siswa')
+                        ->whereDate('ph.tgl', $tgl)
+                        ->whereNull('ph.deleted_at');
+                })
+                ->leftJoin('statuskehadiran as sk', 'ph.id_status_kehadiran', '=', 'sk.id')
+                ->where('pd.id_kelas', $idKelas)
+                ->where('pd.id_semester', $semester->id)
+                ->whereNull('pd.deleted_at')
+                ->orderBy('s.nama_siswa')
+                ->select(
+                    's.id as id_siswa',
+                    's.nama_siswa',
+                    's.nis',
+                    's.nisn',
+                    DB::raw('CASE WHEN ph.id IS NULL THEN \'Belum Presensi\' ELSE sk.status_kehadiran END as status_kehadiran'),
+                    'ph.created_at as waktu_presensi'
+                )
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Presensi harian per kelas retrieved successfully',
+                'data'    => [
+                    'id_kelas'   => $kelas->id,
+                    'nama_kelas' => $kelas->kelas,
+                    'tgl'        => $tgl,
+                    'siswa'      => $siswa,
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve presensi harian per kelas',
                 'error'   => $e->getMessage(),
             ], 500);
         }
