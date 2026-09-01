@@ -90,7 +90,9 @@
                         @forelse ($siswa as $i => $s)
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-                                <td class="text-start">{{ $s->nama_siswa }}</td>
+                                <td class="text-start">
+                                    <a href="#" class="link-primary" data-bs-toggle="modal" data-bs-target="#modalDetailSiswa{{ $s->id_siswa }}">{{ $s->nama_siswa }}</a>
+                                </td>
                                 @for ($d = 1; $d <= $jumlah_hari; $d++)
                                     @php
                                         $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]);
@@ -124,6 +126,75 @@
                 </table>
             </div>
         </div>
+
+        @php
+            $namaBulanList = [1=>'Januari',2=>'Februari',3=>'Maret',4=>'April',5=>'Mei',6=>'Juni',7=>'Juli',8=>'Agustus',9=>'September',10=>'Oktober',11=>'November',12=>'Desember'];
+        @endphp
+        @foreach ($siswa as $s)
+            <div class="modal fade" id="modalDetailSiswa{{ $s->id_siswa }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detail Presensi - {{ $s->nama_siswa }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-2">Bulan: <strong>{{ $namaBulanList[(int) $bulan] ?? $bulan }} {{ $tahun }}</strong></p>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th style="white-space:nowrap">Tanggal</th>
+                                        <th>Hari</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for ($d = 1; $d <= $jumlah_hari; $d++)
+                                        @php
+                                            $isWeekend = in_array(date('N', mktime(0,0,0,$bulan,$d,$tahun)), [6,7]);
+                                            $isLibur = in_array($d, $hari_libur);
+                                            $statusLengkap = $rekap_lengkap[$s->id_siswa][$d] ?? 'Alfa';
+                                            $statusClass = match (strtolower($statusLengkap)) {
+                                                'hadir', 'terlambat' => 'table-success',
+                                                'sakit' => 'table-warning',
+                                                'ijin', 'izin' => 'table-info',
+                                                default => 'table-danger',
+                                            };
+                                            $idPresensi = $rekap_id[$s->id_siswa][$d] ?? null;
+                                            $tglPresensi = sprintf('%04d-%02d-%02d', $tahun, $bulan, $d);
+                                        @endphp
+                                        <tr @class(['table-secondary text-muted' => $isWeekend || $isLibur, $statusClass => !($isWeekend || $isLibur)])>
+                                            <td>{{ str_pad($d, 2, '0', STR_PAD_LEFT) }}/{{ str_pad($bulan, 2, '0', STR_PAD_LEFT) }}/{{ $tahun }}</td>
+                                            <td>{{ \Carbon\Carbon::create($tahun, $bulan, $d)->translatedFormat('l') }}</td>
+                                            <td class="fw-bold">
+                                                @if ($isWeekend || $isLibur)
+                                                    {{ $isLibur ? 'Hari Libur' : 'Akhir Pekan' }}
+                                                @else
+                                                    {{ $statusLengkap }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($isWeekend || $isLibur)
+                                                    -
+                                                @elseif ($idPresensi)
+                                                    <a href="{{ route('presensiharian.edit', ['presensiharian' => $idPresensi, 'id_kelas' => $id_kelas, 'bulan' => $bulan, 'tahun' => $tahun]) }}" class="btn btn-sm icon icon-left btn-outline-primary"><i class="fa fa-pencil-alt"></i> Edit</a>
+                                                @else
+                                                    <a href="{{ route('presensiharian.create', ['id_siswa' => $s->id_siswa, 'tgl' => $tglPresensi, 'id_kelas' => $id_kelas, 'bulan' => $bulan, 'tahun' => $tahun]) }}" class="btn btn-sm icon icon-left btn-outline-success"><i class="fa fa-plus"></i> Isi</a>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endfor
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
         @endif
     </section>
 </div>

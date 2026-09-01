@@ -40,6 +40,7 @@ class PresensiHarian extends Model
             ->whereNull('ph.deleted_at')
             ->whereNull('pd.deleted_at')
             ->select(
+                'ph.id as id_presensi',
                 'ph.id_siswa',
                 DB::raw('DAY(ph.tgl) as tanggal'),
                 'sk.status_kehadiran_pendek as status',

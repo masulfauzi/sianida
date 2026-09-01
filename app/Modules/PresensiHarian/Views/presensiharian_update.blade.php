@@ -26,7 +26,7 @@
             </h6>
             <div class="card-body">
                 @include('include.flash')
-                <form class="form form-horizontal" action="{{ route('presensiharian.update', $presensiharian->id) }}" method="POST">
+                <form class="form form-horizontal" action="{{ route('presensiharian.update', ['presensiharian' => $presensiharian->id, 'id_kelas' => $id_kelas ?? null, 'bulan' => $bulan ?? null, 'tahun' => $tahun ?? null]) }}" method="POST">
                     <div class="form-body">
                         @csrf @method('patch')
                         @foreach ($forms as $key => $value)
@@ -46,7 +46,7 @@
                         @endforeach
                         <div class="offset-md-3 ps-2">
                             <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
-                            <a href="{{ route('presensiharian.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ ($id_kelas ?? null) && ($bulan ?? null) && ($tahun ?? null) ? route('presensiharian.rekap.bulanan.index', ['id_kelas' => $id_kelas, 'bulan' => $bulan, 'tahun' => $tahun]) : route('presensiharian.index') }}" class="btn btn-secondary">Batal</a>
                         </div>
                   </div>
                 </form>

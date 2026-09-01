@@ -226,6 +226,8 @@ class PresensiHarianController extends Controller
 
 		$data['siswa']        = collect();
 		$data['rekap']        = [];
+		$data['rekap_lengkap'] = [];
+		$data['rekap_id']      = [];
 		$data['summary']      = [];
 		$data['jumlah_hari']  = 0;
 		$data['hari_efektif'] = 0;
@@ -259,9 +261,13 @@ class PresensiHarianController extends Controller
 
 			$rows = PresensiHarian::rekap_bulanan($data['id_kelas'], $id_semester, $tahun, $bulan);
 			$matriks = [];
+			$matriksLengkap = [];
+			$matriksId = [];
 			$summary = [];
 			foreach ($rows as $row) {
-				$matriks[$row->id_siswa][$row->tanggal] = $row->status;
+				$matriks[$row->id_siswa][$row->tanggal]        = $row->status;
+				$matriksLengkap[$row->id_siswa][$row->tanggal] = $row->status_lengkap;
+				$matriksId[$row->id_siswa][$row->tanggal]      = $row->id_presensi;
 
 				if (!isset($summary[$row->id_siswa])) {
 					$summary[$row->id_siswa] = ['hadir' => 0, 'sakit' => 0, 'ijin' => 0];
@@ -275,8 +281,10 @@ class PresensiHarianController extends Controller
 					$summary[$row->id_siswa]['ijin']++;
 				}
 			}
-			$data['rekap']   = $matriks;
-			$data['summary'] = $summary;
+			$data['rekap']         = $matriks;
+			$data['rekap_lengkap'] = $matriksLengkap;
+			$data['rekap_id']      = $matriksId;
+			$data['summary']       = $summary;
 		}
 
 		return $data;
@@ -284,15 +292,28 @@ class PresensiHarianController extends Controller
 
 	public function create(Request $request)
 	{
-		$ref_siswa = Siswa::all()->pluck('nama_siswa','id');
+		$id_siswa = old('id_siswa', $request->get('id_siswa'));
+		$tgl      = old('tgl', $request->get('tgl'));
+		$siswa    = $id_siswa ? Siswa::find($id_siswa) : null;
+
 		$ref_statuskehadiran = Statuskehadiran::all()->pluck('status_kehadiran','id');
-		
+
 		$data['forms'] = array(
-			'id_siswa' => ['Siswa', Form::select("id_siswa", $ref_siswa, null, ["class" => "form-control select2"]) ],
-			'id_status_kehadiran' => ['Status Kehadiran', Form::select("id_status_kehadiran", $ref_statuskehadiran, null, ["class" => "form-control select2"]) ],
-			'tgl' => ['Tgl', Form::text("tgl", old("tgl"), ["class" => "form-control datepicker"]) ],
-			
+			'id_siswa' => ['Siswa', new \Illuminate\Support\HtmlString(
+				Form::text("nama_siswa", $siswa->nama_siswa ?? '', ["class" => "form-control", "readonly" => true])
+				. Form::hidden("id_siswa", $id_siswa)
+			) ],
+			'id_status_kehadiran' => ['Status Kehadiran', Form::select("id_status_kehadiran", $ref_statuskehadiran, old('id_status_kehadiran'), ["class" => "form-control select2"]) ],
+			'tgl' => ['Tgl', new \Illuminate\Support\HtmlString(
+				Form::text("tgl_display", $tgl, ["class" => "form-control", "disabled" => true])
+				. Form::hidden("tgl", $tgl)
+			) ],
+
 		);
+
+		$data['id_kelas'] = $request->query('id_kelas');
+		$data['bulan']    = $request->query('bulan');
+		$data['tahun']    = $request->query('tahun');
 
 		$this->log($request, 'membuka form tambah '.$this->title);
 		return view('PresensiHarian::presensiharian_create', array_merge($data, ['title' => $this->title]));
@@ -304,19 +325,28 @@ class PresensiHarianController extends Controller
 			'id_siswa' => 'required',
 			'id_status_kehadiran' => 'required',
 			'tgl' => 'required',
-			
+
 		]);
 
 		$presensiharian = new PresensiHarian();
 		$presensiharian->id_siswa = $request->input("id_siswa");
 		$presensiharian->id_status_kehadiran = $request->input("id_status_kehadiran");
 		$presensiharian->tgl = $request->input("tgl");
-		
+
 		$presensiharian->created_by = Auth::id();
 		$presensiharian->save();
 
 		$text = 'membuat '.$this->title; //' baru '.$presensiharian->what;
 		$this->log($request, $text, ['presensiharian.id' => $presensiharian->id]);
+
+		if ($request->query('id_kelas') && $request->query('bulan') && $request->query('tahun')) {
+			return redirect()->route('presensiharian.rekap.bulanan.index', [
+				'id_kelas' => $request->query('id_kelas'),
+				'bulan'    => $request->query('bulan'),
+				'tahun'    => $request->query('tahun'),
+			])->with('message_success', 'Presensi Harian berhasil ditambahkan!');
+		}
+
 		return redirect()->route('presensiharian.index')->with('message_success', 'Presensi Harian berhasil ditambahkan!');
 	}
 
@@ -333,15 +363,24 @@ class PresensiHarianController extends Controller
 	{
 		$data['presensiharian'] = $presensiharian;
 
-		$ref_siswa = Siswa::all()->pluck('nama_siswa','id');
 		$ref_statuskehadiran = Statuskehadiran::all()->pluck('status_kehadiran','id');
-		
+
 		$data['forms'] = array(
-			'id_siswa' => ['Siswa', Form::select("id_siswa", $ref_siswa, null, ["class" => "form-control select2"]) ],
-			'id_status_kehadiran' => ['Status Kehadiran', Form::select("id_status_kehadiran", $ref_statuskehadiran, null, ["class" => "form-control select2"]) ],
-			'tgl' => ['Tgl', Form::text("tgl", $presensiharian->tgl, ["class" => "form-control datepicker", "id" => "tgl"]) ],
-			
+			'id_siswa' => ['Siswa', new \Illuminate\Support\HtmlString(
+				Form::text("nama_siswa", $presensiharian->siswa->nama_siswa ?? '', ["class" => "form-control", "readonly" => true])
+				. Form::hidden("id_siswa", $presensiharian->id_siswa)
+			) ],
+			'id_status_kehadiran' => ['Status Kehadiran', Form::select("id_status_kehadiran", $ref_statuskehadiran, $presensiharian->id_status_kehadiran, ["class" => "form-control select2"]) ],
+			'tgl' => ['Tgl', new \Illuminate\Support\HtmlString(
+				Form::text("tgl_display", $presensiharian->tgl, ["class" => "form-control", "disabled" => true])
+				. Form::hidden("tgl", $presensiharian->tgl)
+			) ],
+
 		);
+
+		$data['id_kelas'] = $request->query('id_kelas');
+		$data['bulan']    = $request->query('bulan');
+		$data['tahun']    = $request->query('tahun');
 
 		$text = 'membuka form edit '.$this->title;//.' '.$presensiharian->what;
 		$this->log($request, $text, ['presensiharian.id' => $presensiharian->id]);
@@ -354,20 +393,29 @@ class PresensiHarianController extends Controller
 			'id_siswa' => 'required',
 			'id_status_kehadiran' => 'required',
 			'tgl' => 'required',
-			
+
 		]);
-		
+
 		$presensiharian = PresensiHarian::find($id);
 		$presensiharian->id_siswa = $request->input("id_siswa");
 		$presensiharian->id_status_kehadiran = $request->input("id_status_kehadiran");
 		$presensiharian->tgl = $request->input("tgl");
-		
+
 		$presensiharian->updated_by = Auth::id();
 		$presensiharian->save();
 
 
 		$text = 'mengedit '.$this->title;//.' '.$presensiharian->what;
 		$this->log($request, $text, ['presensiharian.id' => $presensiharian->id]);
+
+		if ($request->query('id_kelas') && $request->query('bulan') && $request->query('tahun')) {
+			return redirect()->route('presensiharian.rekap.bulanan.index', [
+				'id_kelas' => $request->query('id_kelas'),
+				'bulan'    => $request->query('bulan'),
+				'tahun'    => $request->query('tahun'),
+			])->with('message_success', 'Presensi Harian berhasil diubah!');
+		}
+
 		return redirect()->route('presensiharian.index')->with('message_success', 'Presensi Harian berhasil diubah!');
 	}
 
