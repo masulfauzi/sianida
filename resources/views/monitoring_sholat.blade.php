@@ -207,7 +207,7 @@
     <div class="charts-grid">
         @forelse($charts as $i => $chart)
             <div class="chart-card">
-                <div class="chart-card-header">Sholat Dzuhur Angkatan {{ $chart['angkatan'] }}</div>
+                <div class="chart-card-header">Sholat Dzuhur Tingkat {{ $chart['tingkat'] }}</div>
                 <div class="chart-card-body">
                     @if(count($chart['series']) > 0)
                         <div id="chart-{{ $i }}"></div>
@@ -230,6 +230,7 @@
     var statusColors = {
         'Hadir': '#3fb950',
         'Ijin':  '#f85149',
+        'Belum Presensi': '#8b949e',
     };
 
     function getSeriesColors(series) {

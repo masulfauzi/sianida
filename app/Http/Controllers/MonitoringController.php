@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\IjinSholat;
 use App\Models\PresensiSholat;
 use App\Modules\Agenda\Models\Agenda;
@@ -29,49 +30,71 @@ class MonitoringController extends Controller
     {
         $tgl = $request->get('tgl', today()->format('Y-m-d'));
 
-        $angkatan = PresensiSholat::where('jenis_presensi', 'Sholat Dzuhur')
-            ->distinct()
-            ->orderBy('Angkatan', 'desc')
-            ->limit(3)
-            ->pluck('Angkatan');
+        $semester    = Semester::get_semester_aktif();
+        $id_semester = $semester?->id;
 
-        $hadirRows = PresensiSholat::selectRaw('Angkatan, Kelas, COUNT(*) as jumlah')
-            ->where('jenis_presensi', 'Sholat Dzuhur')
+        $roster = DB::table('pesertadidik as p')
+            ->join('siswa as s', 's.id', '=', 'p.id_siswa')
+            ->join('kelas as k', 'k.id', '=', 'p.id_kelas')
+            ->join('tingkat as t', 't.id', '=', 'k.id_tingkat')
+            ->where('p.id_semester', $id_semester)
+            ->where('p.is_magang', 0)
+            ->whereNull('p.deleted_at')
+            ->select('s.nisn', 't.tingkat', 'k.kelas as nama_kelas')
+            ->get();
+
+        $hadirNisn = PresensiSholat::where('jenis_presensi', 'Sholat Dzuhur')
             ->whereDate('Waktu_Presensi', $tgl)
-            ->groupBy('Angkatan', 'Kelas')
-            ->get();
+            ->pluck('NISN')
+            ->map(fn ($nisn) => trim((string) $nisn))
+            ->flip();
 
-        $ijinRows = IjinSholat::join('siswa', 'siswa.NISN', '=', 'ijin_sholat.nisn')
-            ->whereDate('ijin_sholat.tanggal', $tgl)
-            ->selectRaw('siswa.Angkatan as Angkatan, siswa.Kelas as Kelas, COUNT(*) as jumlah')
-            ->groupBy('siswa.Angkatan', 'siswa.Kelas')
-            ->get();
+        $ijinNisn = IjinSholat::whereDate('tanggal', $tgl)
+            ->pluck('nisn')
+            ->map(fn ($nisn) => trim((string) $nisn))
+            ->flip();
+
+        $tingkatList = ['X', 'XI', 'XII'];
 
         $charts = [];
-        foreach ($angkatan as $tahun) {
-            $hadirPerAngkatan = $hadirRows->where('Angkatan', $tahun)->values();
-            $ijinPerAngkatan  = $ijinRows->where('Angkatan', $tahun)->values();
+        foreach ($tingkatList as $tingkat) {
+            $siswaTingkat = $roster->where('tingkat', $tingkat)->values();
 
-            $categories = $hadirPerAngkatan->pluck('Kelas')
-                ->merge($ijinPerAngkatan->pluck('Kelas'))
-                ->unique()
-                ->sort()
-                ->values();
+            $categories = $siswaTingkat->pluck('nama_kelas')->unique()->sort()->values();
 
-            $dataHadir = $categories->map(function ($kelas) use ($hadirPerAngkatan) {
-                return (int) optional($hadirPerAngkatan->firstWhere('Kelas', $kelas))->jumlah;
-            })->values();
+            $dataHadir = [];
+            $dataIjin  = [];
+            $dataBelum = [];
 
-            $dataIjin = $categories->map(function ($kelas) use ($ijinPerAngkatan) {
-                return (int) optional($ijinPerAngkatan->firstWhere('Kelas', $kelas))->jumlah;
-            })->values();
+            foreach ($categories as $kelas) {
+                $siswaKelas = $siswaTingkat->where('nama_kelas', $kelas);
+                $hadir = 0;
+                $ijin  = 0;
+                $belum = 0;
+
+                foreach ($siswaKelas as $siswa) {
+                    $nisn = trim((string) $siswa->nisn);
+                    if (isset($hadirNisn[$nisn])) {
+                        $hadir++;
+                    } elseif (isset($ijinNisn[$nisn])) {
+                        $ijin++;
+                    } else {
+                        $belum++;
+                    }
+                }
+
+                $dataHadir[] = $hadir;
+                $dataIjin[]  = $ijin;
+                $dataBelum[] = $belum;
+            }
 
             $charts[] = [
-                'angkatan'   => $tahun,
+                'tingkat'    => $tingkat,
                 'categories' => $categories,
                 'series'     => $categories->isEmpty() ? [] : [
                     ['name' => 'Hadir', 'data' => $dataHadir],
                     ['name' => 'Ijin', 'data' => $dataIjin],
+                    ['name' => 'Belum Presensi', 'data' => $dataBelum],
                 ],
             ];
         }
