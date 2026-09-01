@@ -74,6 +74,7 @@ class PresensiHarianController extends Controller
 	public function rekap_bulanan(Request $request)
 	{
 		$data = $this->build_rekap_bulanan_data($request);
+		$data['open_siswa'] = $request->get('open_siswa');
 
 		$this->log($request, 'melihat rekap bulanan '.$this->title);
 		return view('PresensiHarian::presensiharian_rekap_bulanan', array_merge($data, ['title' => $this->title]));
@@ -341,9 +342,10 @@ class PresensiHarianController extends Controller
 
 		if ($request->query('id_kelas') && $request->query('bulan') && $request->query('tahun')) {
 			return redirect()->route('presensiharian.rekap.bulanan.index', [
-				'id_kelas' => $request->query('id_kelas'),
-				'bulan'    => $request->query('bulan'),
-				'tahun'    => $request->query('tahun'),
+				'id_kelas'   => $request->query('id_kelas'),
+				'bulan'      => $request->query('bulan'),
+				'tahun'      => $request->query('tahun'),
+				'open_siswa' => $presensiharian->id_siswa,
 			])->with('message_success', 'Presensi Harian berhasil ditambahkan!');
 		}
 
@@ -410,9 +412,10 @@ class PresensiHarianController extends Controller
 
 		if ($request->query('id_kelas') && $request->query('bulan') && $request->query('tahun')) {
 			return redirect()->route('presensiharian.rekap.bulanan.index', [
-				'id_kelas' => $request->query('id_kelas'),
-				'bulan'    => $request->query('bulan'),
-				'tahun'    => $request->query('tahun'),
+				'id_kelas'   => $request->query('id_kelas'),
+				'bulan'      => $request->query('bulan'),
+				'tahun'      => $request->query('tahun'),
+				'open_siswa' => $presensiharian->id_siswa,
 			])->with('message_success', 'Presensi Harian berhasil diubah!');
 		}
 

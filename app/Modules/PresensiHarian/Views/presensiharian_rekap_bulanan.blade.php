@@ -204,4 +204,19 @@
 @endsection
 
 @section('inline-js')
+@if ($open_siswa ?? null)
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalEl = document.getElementById('modalDetailSiswa{{ $open_siswa }}');
+        if (modalEl && window.bootstrap) {
+            new bootstrap.Modal(modalEl).show();
+        }
+        if (window.history.replaceState) {
+            var url = new URL(window.location.href);
+            url.searchParams.delete('open_siswa');
+            window.history.replaceState({}, document.title, url.toString());
+        }
+    });
+</script>
+@endif
 @endsection
