@@ -50,6 +50,10 @@
             vertical-align: top;
         }
 
+        .surat-info-table td p {
+            margin: 0;
+        }
+
         .label-col {
             width: 60px;
         }
@@ -126,7 +130,7 @@
     <table class="surat-info-table" style="margin-top: 10px;">
         <tr>
             <td class="label-col" valign="top">Yth.</td>
-            <td class="sep-col" valign="top"></td>
+            {{-- <td class="sep-col" valign="top"></td> --}}
             <td>
                 Pimpinan {{ $dudi->nama_dudi }}<br>
                 {!! $dudi->alamat !!}
