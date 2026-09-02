@@ -82,6 +82,10 @@
             vertical-align: top;
         }
 
+        .rincian-table td p {
+            margin: 0;
+        }
+
         .no-col {
             width: 20px;
         }
