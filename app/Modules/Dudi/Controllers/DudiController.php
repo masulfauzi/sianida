@@ -24,9 +24,14 @@ class DudiController extends Controller
 	public function index(Request $request)
 	{
 		$query = Dudi::query();
-		if($request->has('search')){
+		if($request->filled('search')){
 			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
+			$query->where(function ($q) use ($search) {
+				$q->where('nama_dudi', 'like', "%$search%")
+					->orWhere('alamat', 'like', "%$search%")
+					->orWhere('pimpinan', 'like', "%$search%")
+					->orWhere('no_hp', 'like', "%$search%");
+			});
 		}
 		$data['data'] = $query->paginate(10)->withQueryString();
 
