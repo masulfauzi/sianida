@@ -60,6 +60,22 @@
             vertical-align: top;
         }
 
+        .identitas-table td p {
+            margin: 0;
+        }
+
+        .tempat-table {
+            width: 100%;
+        }
+
+        .tempat-table td {
+            padding: 0;
+        }
+
+        .tempat-no-col {
+            width: 16px;
+        }
+
         .label-col {
             width: 110px;
         }
@@ -125,8 +141,15 @@
             <td valign="top">:</td>
             <td>
                 @forelse ($tempats as $i => $tempat)
-                    {{ $i + 1 }}. {{ $tempat->nama_dudi }}<br>
-                    {!! $tempat->alamat !!}
+                    <table class="tempat-table">
+                        <tr>
+                            <td class="tempat-no-col" valign="top">{{ $i + 1 }}.</td>
+                            <td valign="top">
+                                {{ $tempat->nama_dudi }}<br>
+                                {!! $tempat->alamat !!}
+                            </td>
+                        </tr>
+                    </table>
                 @empty
                     -
                 @endforelse
