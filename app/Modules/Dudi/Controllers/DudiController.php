@@ -33,7 +33,7 @@ class DudiController extends Controller
 					->orWhere('no_hp', 'like', "%$search%");
 			});
 		}
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$data['data'] = $query->orderBy('nama_dudi')->paginate(10)->withQueryString();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('Dudi::dudi', array_merge($data, ['title' => $this->title]));
