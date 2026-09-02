@@ -48,7 +48,7 @@
                                 <th width="15">No</th>
                                 <td>Periode</td>
 								<td>Tgl Surat</td>
-								
+								<td>No Surat</td>
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -59,7 +59,7 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->periode->nama_periode }}</td>
 									<td>{{ $item->tgl_surat }}</td>
-									
+									<td>{{ $item->no_surat }}</td>
                                     <td>
 										{!! button('stpenerjunansiswa.show','', $item->id) !!}
 										{!! button('stpenerjunansiswa.edit', $title, $item->id) !!}
@@ -68,7 +68,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center"><i>No data.</i></td>
+                                    <td colspan="5" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

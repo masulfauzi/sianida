@@ -47,7 +47,8 @@ class StPenerjunanSiswaController extends Controller
 		$data['forms'] = array(
 			'id_periode' => ['Periode', Form::select("id_periode", $ref_periode_magang, null, ["class" => "form-control select2"]) ],
 			'tgl_surat' => ['Tgl Surat', Form::text("tgl_surat", old("tgl_surat"), ["class" => "form-control datepicker"]) ],
-			
+			'no_surat' => ['No Surat', Form::text("no_surat", old("no_surat"), ["class" => "form-control","placeholder" => ""]) ],
+
 		);
 
 		$this->log($request, 'membuka form tambah '.$this->title);
@@ -59,12 +60,14 @@ class StPenerjunanSiswaController extends Controller
 		$this->validate($request, [
 			'id_periode' => 'required',
 			'tgl_surat' => 'required',
-			
+			'no_surat' => 'required',
+
 		]);
 
 		$stpenerjunansiswa = new StPenerjunanSiswa();
 		$stpenerjunansiswa->id_periode = $request->input("id_periode");
 		$stpenerjunansiswa->tgl_surat = $request->input("tgl_surat");
+		$stpenerjunansiswa->no_surat = $request->input("no_surat");
 		
 		$stpenerjunansiswa->created_by = Auth::id();
 		$stpenerjunansiswa->save();
@@ -138,7 +141,8 @@ class StPenerjunanSiswaController extends Controller
 		$data['forms'] = array(
 			'id_periode' => ['Periode', Form::select("id_periode", $ref_periode_magang, null, ["class" => "form-control select2"]) ],
 			'tgl_surat' => ['Tgl Surat', Form::text("tgl_surat", $stpenerjunansiswa->tgl_surat, ["class" => "form-control datepicker", "id" => "tgl_surat"]) ],
-			
+			'no_surat' => ['No Surat', Form::text("no_surat", $stpenerjunansiswa->no_surat, ["class" => "form-control","placeholder" => "", "id" => "no_surat"]) ],
+
 		);
 
 		$text = 'membuka form edit '.$this->title;//.' '.$stpenerjunansiswa->what;
@@ -151,13 +155,15 @@ class StPenerjunanSiswaController extends Controller
 		$this->validate($request, [
 			'id_periode' => 'required',
 			'tgl_surat' => 'required',
-			
+			'no_surat' => 'required',
+
 		]);
-		
+
 		$stpenerjunansiswa = StPenerjunanSiswa::find($id);
 		$stpenerjunansiswa->id_periode = $request->input("id_periode");
 		$stpenerjunansiswa->tgl_surat = $request->input("tgl_surat");
-		
+		$stpenerjunansiswa->no_surat = $request->input("no_surat");
+
 		$stpenerjunansiswa->updated_by = Auth::id();
 		$stpenerjunansiswa->save();
 

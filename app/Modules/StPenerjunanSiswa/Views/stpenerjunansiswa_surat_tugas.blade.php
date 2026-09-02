@@ -129,7 +129,7 @@
     <div class="kop-line-tipis"></div>
 
     <div class="center title">SURAT PERINTAH TUGAS</div>
-    <div class="center">NOMOR : -</div>
+    <div class="center">NOMOR : {{ $stpenerjunansiswa->no_surat }}</div>
 
     <table class="identitas-table">
         <tr>
