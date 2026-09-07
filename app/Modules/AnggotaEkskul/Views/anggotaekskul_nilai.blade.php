@@ -31,6 +31,7 @@
                     <div class="col-9">
                         <form action="{{ route('anggotaekskul.index',['id_ekskul' => $ekskul->id]) }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
+                                <input type="hidden" name="id_ekskul" value="{{ request()->get('id_ekskul') }}">
                                 <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
                                 <div class="form-control-icon"><i class="fa fa-search"></i></div>
                             </div>

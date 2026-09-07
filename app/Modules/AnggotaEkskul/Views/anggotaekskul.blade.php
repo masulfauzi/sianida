@@ -31,6 +31,7 @@
                     <div class="col-9">
                         <form action="{{ route('anggotaekskul.index') }}" method="get">
                             <div class="form-group col-md-3 has-icon-left position-relative">
+                                <input type="hidden" name="id_ekskul" value="{{ request()->get('id_ekskul') }}">
                                 <input type="text" class="form-control" value="{{ request()->get('search') }}" name="search" placeholder="Search">
                                 <div class="form-control-icon"><i class="fa fa-search"></i></div>
                             </div>
@@ -46,7 +47,8 @@
                         <thead>
                             <tr>
                                 <th width="15">No</th>
-                                <td>Pd</td>
+                                <td>Nama</td>
+                                <td>Kelas</td>
 								<td>Ekskul</td>
 								<td>Nilai</td>
 								{{-- <td>Semester</td> --}}
@@ -60,13 +62,15 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->pd->siswa->nama_siswa ?? 'N/A' }}</td>
+                                    <td>{{ $item->pd->kelas->kelas ?? 'N/A' }}</td>
 									<td>{{ $item->ekskul->nama ?? 'N/A' }}</td>
 									<td>{{ $item->nilai }}</td>
 									{{-- <td>{{ $item->id_semester }}</td> --}}
 
                                     <td>
-										{!! button('anggotaekskul.show','', $item->id) !!}
-										{!! button('anggotaekskul.edit', $title, $item->id) !!}
+										{{-- {!! button('anggotaekskul.show', '', $item->id, ['id_ekskul' => $ekskul->id]) !!} --}}
+
+										{{-- {!! button('anggotaekskul.edit', $title, $item->id) !!} --}}
                                         {!! button('anggotaekskul.destroy', $title, $item->id) !!}
                                     </td>
                                 </tr>
