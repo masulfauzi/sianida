@@ -27,17 +27,22 @@ class AnggotaEkskulController extends Controller
 	public function index(Request $request)
 	{
 		$query = AnggotaEkskul::query()
-        ->where('id_ekskul', '=', $request->get('id_ekskul'))
-        ->where('id_semester', '=', get_semester('active_semester_id'));
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
-
+        ->join('pesertadidik', 'anggota_ekskul.id_pd', '=', 'pesertadidik.id')
+        ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
+        ->join('siswa', 'pesertadidik.id_siswa', '=', 'siswa.id')
+        ->where('anggota_ekskul.id_ekskul', '=', $request->get('id_ekskul'))
+        ->where('anggota_ekskul.id_semester', '=', get_semester('active_semester_id'))
+        ->orderBy('kelas.kelas', 'asc')
+        ->orderBy('siswa.nama_siswa', 'asc')
+        ->select('anggota_ekskul.*');
+		if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where('siswa.nama_siswa', 'like', "%$search%");
+        }
         $id_ekskul = $request->get('id_ekskul');
         $data['ekskul'] = Ekskul::find($id_ekskul);
 
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$data['data'] = $query->paginate(100)->withQueryString();
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('AnggotaEkskul::anggotaekskul', array_merge($data, ['title' => $this->title]));
@@ -165,17 +170,27 @@ class AnggotaEkskulController extends Controller
 
     public function penilaian(Request $request)
 	{
-		$query = AnggotaEkskul::query()
-        ->where('id_ekskul', '=', $request->get('id_ekskul'))
-        ->where('id_semester', '=', get_semester('active_semester_id'));
-		if($request->has('search')){
-			$search = $request->get('search');
-			// $query->where('name', 'like', "%$search%");
-		}
+		// $query = AnggotaEkskul::query()
+        // ->where('id_ekskul', '=', $request->get('id_ekskul'))
+        // ->where('id_semester', '=', get_semester('active_semester_id'));
+        $query = AnggotaEkskul::query()
+            ->join('pesertadidik', 'anggota_ekskul.id_pd', '=', 'pesertadidik.id')
+            ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
+            ->join('siswa', 'pesertadidik.id_siswa', '=', 'siswa.id')
+            ->where('anggota_ekskul.id_ekskul', '=', $request->get('id_ekskul'))
+            ->where('anggota_ekskul.id_semester', '=', get_semester('active_semester_id'))
+            ->orderBy('kelas.kelas', 'asc')
+            ->orderBy('siswa.nama_siswa', 'asc')
+            ->select('anggota_ekskul.*');
+
+		if ($request->filled('search')) {
+            $search = $request->get('search');
+            $query->where('siswa.nama_siswa', 'like', "%$search%");
+        }
 
         $id_ekskul = $request->get('id_ekskul');
 
-		$data['data'] = $query->paginate(10)->withQueryString();
+		$data['data'] = $query->paginate(100)->withQueryString();
         $data['ekskul'] = Ekskul::find($id_ekskul);
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
