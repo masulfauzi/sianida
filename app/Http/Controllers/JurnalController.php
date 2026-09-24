@@ -116,6 +116,70 @@ class JurnalController extends Controller
     }
 
     /**
+     * Get jurnal by id_kelas on a given date (query param: tgl, default today)
+     *
+     * @param Request $request
+     * @param string $idKelas
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function perKelas(Request $request, $idKelas)
+    {
+        try {
+            $kelas = DB::table('kelas')
+                ->where('id', $idKelas)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if (! $kelas) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kelas not found',
+                ], 404);
+            }
+
+            $tgl = $request->query('tgl', today()->format('Y-m-d'));
+
+            $jurnal = DB::table('jurnal as a')
+                ->select(
+                    'a.id',
+                    'a.tgl_pembelajaran',
+                    'g.nama as nama_guru',
+                    'c.mapel',
+                    'e.jam_pelajaran as jam_mulai',
+                    'f.jam_pelajaran as jam_selesai',
+                    'a.materi',
+                    'a.catatan'
+                )
+                ->join('mapel as c', 'a.id_mapel', '=', 'c.id')
+                ->leftJoin('guru as g', 'a.id_guru', '=', 'g.id')
+                ->leftJoin('jampelajaran as e', 'a.jam_mulai', '=', 'e.id')
+                ->leftJoin('jampelajaran as f', 'a.jam_selesai', '=', 'f.id')
+                ->where('a.id_kelas', $idKelas)
+                ->whereDate('a.tgl_pembelajaran', $tgl)
+                ->whereNull('a.deleted_at')
+                ->orderBy('e.jam_pelajaran')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jurnal per kelas retrieved successfully',
+                'data'    => [
+                    'id_kelas'   => $kelas->id,
+                    'nama_kelas' => $kelas->kelas,
+                    'tgl'        => $tgl,
+                    'jurnal'     => $jurnal,
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve jurnal per kelas',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Get jurnal detail by id
      *
      * @param string $id
