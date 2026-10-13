@@ -29,7 +29,14 @@ class SoalTkaController extends Controller
 
 	public function index(Request $request)
 	{
+		$id_guru_aktif = session('id_guru') ?? (Auth::check() ? Guru::get_id_guru_by_id_user(Auth::id())->first()?->id_guru : null);
+
 		$query = SoalTka::query()->with(['guru', 'mapel', 'semester', 'tingkat']);
+
+		if ($id_guru_aktif) {
+			$query->where('id_guru', $id_guru_aktif);
+		}
+
 		if($request->has('search')){
 			$search = $request->get('search');
 			$query->where(function($q) use ($search) {
