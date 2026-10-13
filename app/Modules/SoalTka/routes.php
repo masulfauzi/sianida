@@ -5,6 +5,7 @@ use App\Modules\SoalTka\Controllers\SoalTkaController;
 
 Route::controller(SoalTkaController::class)->middleware(['web','auth'])->name('soaltka.')->group(function(){
 	Route::get('/soaltka', 'index')->name('index');
+	Route::get('/soaltka/monitoring', 'monitoring')->name('monitoring.index');
 	Route::get('/soaltka/data', 'data')->name('data.index');
 	Route::get('/soaltka/create', 'create')->name('create');
 	Route::post('/soaltka', 'store')->name('store');

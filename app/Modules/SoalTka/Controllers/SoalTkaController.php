@@ -29,6 +29,15 @@ class SoalTkaController extends Controller
 
 	public function index(Request $request)
 	{
+		$admin_roles = [
+			'bf1548f3-295c-4d73-809d-66ab7c240091', // Admin
+			'1fe8326c-22c4-4732-9c12-f7b83a16b842', // Super Admin
+		];
+		$active_role_id = session('active_role')['id'] ?? null;
+		if (in_array($active_role_id, $admin_roles) && !session()->has('id_guru') && !$request->has('view_raw')) {
+			return redirect()->route('soaltka.monitoring.index');
+		}
+
 		$id_guru_aktif = session('id_guru') ?? (Auth::check() ? Guru::get_id_guru_by_id_user(Auth::id())->first()?->id_guru : null);
 
 		$query = SoalTka::query()->with(['guru', 'mapel', 'semester', 'tingkat']);
@@ -53,6 +62,92 @@ class SoalTkaController extends Controller
 
 		$this->log($request, 'melihat halaman manajemen data '.$this->title);
 		return view('SoalTka::soaltka', array_merge($data, ['title' => $this->title]));
+	}
+
+	public function monitoring(Request $request)
+	{
+		$active_semester_id = session('active_semester.id') ?? (session()->has('active_semester') ? get_semester('active_semester_id') : null) ?? Semester::first()?->id;
+
+		$query = DB::table('jam_mengajar as jm')
+			->join('mapel as m', 'jm.id_mapel', '=', 'm.id')
+			->join('guru as g', 'jm.id_guru', '=', 'g.id')
+			->join('kelas as k', 'jm.id_kelas', '=', 'k.id')
+			->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
+			->leftJoin('soal_tka as st', function ($join) {
+				$join->on('st.id_guru', '=', 'jm.id_guru')
+					->on('st.id_mapel', '=', 'jm.id_mapel')
+					->on('st.id_tingkat', '=', 't.id')
+					->on('st.id_semester', '=', 'jm.id_semester')
+					->whereNull('st.deleted_at');
+			})
+			->where('jm.id_semester', $active_semester_id)
+			->whereNull('jm.deleted_at')
+			->whereNull('m.deleted_at')
+			->whereNull('g.deleted_at')
+			->select(
+				'jm.id_semester',
+				'jm.id_mapel',
+				'm.mapel',
+				't.id as id_tingkat',
+				't.tingkat',
+				'jm.id_guru',
+				'g.nama as nama_guru',
+				DB::raw('MAX(st.id) as id_soal_tka'),
+				DB::raw('MAX(st.file) as file_soal_tka')
+			)
+			->groupBy('jm.id_mapel', 't.id', 'jm.id_guru', 'jm.id_semester', 'm.mapel', 't.tingkat', 'g.nama')
+			->orderBy('m.mapel', 'ASC')
+			->orderBy('t.tingkat', 'ASC')
+			->orderBy('g.nama', 'ASC');
+
+		if ($request->has('search') && filled($request->get('search'))) {
+			$search = $request->get('search');
+			$query->where(function ($q) use ($search) {
+				$q->where('m.mapel', 'like', "%{$search}%")
+					->orWhere('g.nama', 'like', "%{$search}%")
+					->orWhere('t.tingkat', 'like', "%{$search}%");
+			});
+		}
+
+		if ($request->has('status') && in_array($request->get('status'), ['sudah', 'belum'])) {
+			if ($request->get('status') == 'sudah') {
+				$query->havingRaw('MAX(st.file) IS NOT NULL');
+			} else {
+				$query->havingRaw('MAX(st.file) IS NULL');
+			}
+		}
+
+		$data['data'] = $query->paginate(25)->withQueryString();
+
+		$allStats = DB::table('jam_mengajar as jm')
+			->join('mapel as m', 'jm.id_mapel', '=', 'm.id')
+			->join('guru as g', 'jm.id_guru', '=', 'g.id')
+			->join('kelas as k', 'jm.id_kelas', '=', 'k.id')
+			->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
+			->leftJoin('soal_tka as st', function ($join) {
+				$join->on('st.id_guru', '=', 'jm.id_guru')
+					->on('st.id_mapel', '=', 'jm.id_mapel')
+					->on('st.id_tingkat', '=', 't.id')
+					->on('st.id_semester', '=', 'jm.id_semester')
+					->whereNull('st.deleted_at');
+			})
+			->where('jm.id_semester', $active_semester_id)
+			->whereNull('jm.deleted_at')
+			->whereNull('m.deleted_at')
+			->whereNull('g.deleted_at')
+			->select(
+				DB::raw('COUNT(DISTINCT jm.id_mapel, t.id, jm.id_guru) as total'),
+				DB::raw('COUNT(DISTINCT CASE WHEN st.file IS NOT NULL THEN CONCAT(jm.id_mapel, t.id, jm.id_guru) END) as sudah_upload')
+			)
+			->first();
+
+		$data['total'] = $allStats->total ?? 0;
+		$data['sudah_upload'] = $allStats->sudah_upload ?? 0;
+		$data['belum_upload'] = max(0, $data['total'] - $data['sudah_upload']);
+		$data['persentase'] = $data['total'] > 0 ? round(($data['sudah_upload'] / $data['total']) * 100, 1) : 0;
+
+		$this->log($request, 'melihat monitoring upload ' . $this->title);
+		return view('SoalTka::soaltka_monitoring', array_merge($data, ['title' => 'Monitoring Upload ' . $this->title]));
 	}
 
 	public function create(Request $request)
