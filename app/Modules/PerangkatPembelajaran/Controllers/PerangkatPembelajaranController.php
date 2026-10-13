@@ -112,14 +112,26 @@ class PerangkatPembelajaranController extends Controller
 		if (!$jenis_perangkat) {
 			abort(404, 'Jenis Perangkat tidak ditemukan');
 		}
+
+		$jenis_ids = [$jenis_perangkat->id];
+		if ($jenis === 'modul' || $jenis_perangkat->slug === 'modul') {
+			$litnum = JenisPerangkat::query()->where('slug', 'litnum')->orWhere('jenis_perangkat', 'RPM Berbasis Litnum')->first();
+			if ($litnum) {
+				$jenis_ids[] = $litnum->id;
+			}
+		}
+
 		$data['data'] = JamMengajar::find($id);
+		if (!$data['data']) {
+			abort(404, 'Data Jam Mengajar tidak ditemukan');
+		}
 		$data['mapel'] = PerangkatPembelajaran::get_kelas_by_data($data['data']);
 		$data['perangkat'] = PerangkatPembelajaran::query()
 							->whereIdGuru($data['data']->id_guru)
 							->whereIdMapel($data['data']->id_mapel)
 							->whereIdSemester($data['data']->id_semester)
 							->whereIdTingkat($data['data']->kelas['id_tingkat'])
-							->whereIdJenisPerangkat($jenis_perangkat->id)
+							->whereIn('id_jenis_perangkat', $jenis_ids)
 							->get();
 							
 		return view('PerangkatPembelajaran::perangkatpembelajaran_lihat_perangkat', $data);
