@@ -145,9 +145,9 @@
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
+                                <th>Nama Guru</th>
                                 <th>Mapel</th>
                                 <th width="12%">Tingkat</th>
-                                <th>Guru</th>
                                 <th width="22%" class="text-center">Status Upload</th>
                             </tr>
                         </thead>
@@ -157,13 +157,13 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>
-                                        <strong>{{ $item->mapel }}</strong>
+                                        <strong>{{ $item->nama_guru }}</strong>
+                                    </td>
+                                    <td>
+                                        {{ $item->mapel }}
                                     </td>
                                     <td>
                                         <span class="badge bg-primary">Kelas {{ $item->tingkat }}</span>
-                                    </td>
-                                    <td>
-                                        {{ $item->nama_guru }}
                                     </td>
                                     <td class="text-center">
                                         @if ($item->file_soal_tka)

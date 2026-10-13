@@ -96,9 +96,9 @@ class SoalTkaController extends Controller
 				DB::raw('MAX(st.file) as file_soal_tka')
 			)
 			->groupBy('jm.id_mapel', 't.id', 'jm.id_guru', 'jm.id_semester', 'm.mapel', 't.tingkat', 'g.nama')
+			->orderBy('g.nama', 'ASC')
 			->orderBy('m.mapel', 'ASC')
-			->orderBy('t.tingkat', 'ASC')
-			->orderBy('g.nama', 'ASC');
+			->orderBy('t.tingkat', 'ASC');
 
 		if ($request->has('search') && filled($request->get('search'))) {
 			$search = $request->get('search');
