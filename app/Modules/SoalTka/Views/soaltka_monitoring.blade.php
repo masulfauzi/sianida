@@ -109,13 +109,8 @@
 
     <section class="section">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="card-header">
                 <h6 class="mb-0">Daftar Monitoring Unggahan Soal TKA Guru</h6>
-                <div>
-                    <a href="{{ route('soaltka.index', ['view_raw' => 1]) }}" class="btn btn-sm btn-outline-secondary">
-                        <i class="fa fa-list"></i> Lihat Data Mandiri Soal TKA
-                    </a>
-                </div>
             </div>
             <div class="card-body">
                 <!-- Form Pencarian & Filter Status -->
