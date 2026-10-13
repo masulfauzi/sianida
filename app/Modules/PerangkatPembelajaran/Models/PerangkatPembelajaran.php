@@ -62,13 +62,20 @@ public function jenisPerangkat(){
 					->where('a.id', $id)
 					->first();
 
+		if (!$cek) {
+			return 0;
+		}
+
 		$data = DB::table('perangkat_pembelajaran as a')
 					->join('jenis_perangkat as b', 'a.id_jenis_perangkat', '=', 'b.id')
 					->where('a.id_guru', $cek->id_guru)
 					->where('a.id_semester', $cek->id_semester)
 					->where('a.id_mapel', $cek->id_mapel)
 					->where('a.id_tingkat', $cek->id_tingkat)
-					->where('b.slug', $slug_jenis_perangkat)
+					->where(function($q) use ($slug_jenis_perangkat) {
+						$q->where('b.slug', $slug_jenis_perangkat)
+						  ->orWhere('b.jenis_perangkat', $slug_jenis_perangkat);
+					})
 					->count();
 
 		return $data;

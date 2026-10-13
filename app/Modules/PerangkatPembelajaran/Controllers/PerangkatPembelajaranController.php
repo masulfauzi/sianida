@@ -108,7 +108,10 @@ class PerangkatPembelajaranController extends Controller
 
 	public function lihat_perangkat(Request $request, $id, $jenis)
 	{
-		$jenis_perangkat = JenisPerangkat::query()->whereSlug($jenis)->first();
+		$jenis_perangkat = JenisPerangkat::query()->where('slug', $jenis)->orWhere('jenis_perangkat', $jenis)->first();
+		if (!$jenis_perangkat) {
+			abort(404, 'Jenis Perangkat tidak ditemukan');
+		}
 		$data['data'] = JamMengajar::find($id);
 		$data['mapel'] = PerangkatPembelajaran::get_kelas_by_data($data['data']);
 		$data['perangkat'] = PerangkatPembelajaran::query()

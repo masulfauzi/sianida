@@ -40,6 +40,7 @@
                                     <td>Tingkat</td>
                                     <td>Upload ATP</td>
                                     <td>Upload Modul</td>
+                                    <td>Modul Litnum</td>
                                     <td>Link ATP</td>
                                     <td>Link Modul</td>
                                     {{-- <td>Jenis Perangkat</td>
@@ -80,6 +81,17 @@
                                             @endif
                                         </td>
                                         <td>
+                                            @php
+                                                $cekLitnum = App\Modules\PerangkatPembelajaran\Models\PerangkatPembelajaran::cek_upload_perangkat_by_jenis($item->id, 'litnum');
+                                            @endphp
+
+                                            @if ($cekLitnum > 0)
+                                                <img src="{{ asset('assets/images/icon/check.png') }}" alt="">
+                                            @else
+                                                <img src="{{ asset('assets/images/icon/cross.png') }}" alt="">
+                                            @endif
+                                        </td>
+                                        <td>
                                             <a href="{{ route('perangkat.atp.index', [$item->id, 'atp']) }}" target="_blank">
                                                 {{ route('perangkat.atp.index', [$item->id, 'atp']) }}
                                             </a>
@@ -99,7 +111,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9" class="text-center"><i>No data.</i></td>
+                                        <td colspan="10" class="text-center"><i>No data.</i></td>
                                     </tr>
                                 @endforelse
                             </tbody>
