@@ -70,33 +70,31 @@ class SoalTkaController extends Controller
 
 		$query = DB::table('jam_mengajar as jm')
 			->join('mapel as m', 'jm.id_mapel', '=', 'm.id')
-			->join('guru as g', 'jm.id_guru', '=', 'g.id')
 			->join('kelas as k', 'jm.id_kelas', '=', 'k.id')
 			->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
-			->leftJoin('soal_tka as st', function ($join) {
-				$join->on('st.id_guru', '=', 'jm.id_guru')
-					->on('st.id_mapel', '=', 'jm.id_mapel')
+			->leftJoin('soal_tka as st', function ($join) use ($active_semester_id) {
+				$join->on('st.id_mapel', '=', 'jm.id_mapel')
 					->on('st.id_tingkat', '=', 't.id')
-					->on('st.id_semester', '=', 'jm.id_semester')
+					->where('st.id_semester', '=', $active_semester_id)
 					->whereNull('st.deleted_at');
+			})
+			->leftJoin('guru as g', function ($join) {
+				$join->on('st.id_guru', '=', 'g.id')
+					->whereNull('g.deleted_at');
 			})
 			->where('jm.id_semester', $active_semester_id)
 			->whereNull('jm.deleted_at')
 			->whereNull('m.deleted_at')
-			->whereNull('g.deleted_at')
 			->select(
-				'jm.id_semester',
 				'jm.id_mapel',
 				'm.mapel',
 				't.id as id_tingkat',
 				't.tingkat',
-				'jm.id_guru',
-				'g.nama as nama_guru',
+				DB::raw('GROUP_CONCAT(DISTINCT g.nama SEPARATOR ", ") as nama_guru_pengunggah'),
 				DB::raw('MAX(st.id) as id_soal_tka'),
 				DB::raw('MAX(st.file) as file_soal_tka')
 			)
-			->groupBy('jm.id_mapel', 't.id', 'jm.id_guru', 'jm.id_semester', 'm.mapel', 't.tingkat', 'g.nama')
-			->orderBy('g.nama', 'ASC')
+			->groupBy('jm.id_mapel', 't.id', 'm.mapel', 't.tingkat')
 			->orderBy('m.mapel', 'ASC')
 			->orderBy('t.tingkat', 'ASC');
 
@@ -121,23 +119,20 @@ class SoalTkaController extends Controller
 
 		$allStats = DB::table('jam_mengajar as jm')
 			->join('mapel as m', 'jm.id_mapel', '=', 'm.id')
-			->join('guru as g', 'jm.id_guru', '=', 'g.id')
 			->join('kelas as k', 'jm.id_kelas', '=', 'k.id')
 			->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
-			->leftJoin('soal_tka as st', function ($join) {
-				$join->on('st.id_guru', '=', 'jm.id_guru')
-					->on('st.id_mapel', '=', 'jm.id_mapel')
+			->leftJoin('soal_tka as st', function ($join) use ($active_semester_id) {
+				$join->on('st.id_mapel', '=', 'jm.id_mapel')
 					->on('st.id_tingkat', '=', 't.id')
-					->on('st.id_semester', '=', 'jm.id_semester')
+					->where('st.id_semester', '=', $active_semester_id)
 					->whereNull('st.deleted_at');
 			})
 			->where('jm.id_semester', $active_semester_id)
 			->whereNull('jm.deleted_at')
 			->whereNull('m.deleted_at')
-			->whereNull('g.deleted_at')
 			->select(
-				DB::raw('COUNT(DISTINCT jm.id_mapel, t.id, jm.id_guru) as total'),
-				DB::raw('COUNT(DISTINCT CASE WHEN st.file IS NOT NULL THEN CONCAT(jm.id_mapel, t.id, jm.id_guru) END) as sudah_upload')
+				DB::raw('COUNT(DISTINCT jm.id_mapel, t.id) as total'),
+				DB::raw('COUNT(DISTINCT CASE WHEN st.file IS NOT NULL THEN CONCAT(jm.id_mapel, "-", t.id) END) as sudah_upload')
 			)
 			->first();
 

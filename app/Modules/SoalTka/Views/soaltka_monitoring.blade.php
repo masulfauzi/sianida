@@ -21,7 +21,7 @@
         <div class="row mb-2">
             <div class="col-12 col-md-6 order-md-1 order-last">
                 <h3>{{ $title }}</h3>
-                <p class="text-subtitle text-muted">Pantau kelengkapan unggahan Soal TKA guru berdasarkan mata pelajaran yang diajarkan pada semester aktif.</p>
+                <p class="text-subtitle text-muted">Pantau kelengkapan unggahan Soal TKA per mata pelajaran dan tingkat pada semester aktif.</p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
@@ -47,7 +47,7 @@
                             </div>
                         </div>
                         <div class="col-md-8">
-                            <h6 class="text-muted font-semibold">Total Penugasan</h6>
+                            <h6 class="text-muted font-semibold">Total Mapel & Tingkat</h6>
                             <h4 class="font-extrabold mb-0">{{ $total }}</h4>
                         </div>
                     </div>
@@ -110,7 +110,7 @@
     <section class="section">
         <div class="card">
             <div class="card-header">
-                <h6 class="mb-0">Daftar Monitoring Unggahan Soal TKA Guru</h6>
+                <h6 class="mb-0">Daftar Monitoring Unggahan Soal TKA Per Mapel & Tingkat</h6>
             </div>
             <div class="card-body">
                 <!-- Form Pencarian & Filter Status -->
@@ -145,10 +145,10 @@
                         <thead>
                             <tr>
                                 <th width="5%">No</th>
-                                <th>Nama Guru</th>
                                 <th>Mapel</th>
                                 <th width="12%">Tingkat</th>
-                                <th width="22%" class="text-center">Status Upload</th>
+                                <th width="28%">Guru</th>
+                                <th width="20%" class="text-center">Status Upload</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -157,13 +157,17 @@
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td>
-                                        <strong>{{ $item->nama_guru }}</strong>
-                                    </td>
-                                    <td>
-                                        {{ $item->mapel }}
+                                        <strong>{{ $item->mapel }}</strong>
                                     </td>
                                     <td>
                                         <span class="badge bg-primary">Kelas {{ $item->tingkat }}</span>
+                                    </td>
+                                    <td>
+                                        @if ($item->nama_guru_pengunggah)
+                                            <span class="text-dark font-semibold">{{ $item->nama_guru_pengunggah }}</span>
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         @if ($item->file_soal_tka)
