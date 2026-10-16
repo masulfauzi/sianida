@@ -16,6 +16,7 @@ return [
         'profile',
         'skanida-mobile',
         'kebijakan-privasi',
+        'kebijakan-privasi-teacher',
         'app-ads.txt',
         'support',
         'monitoring',

@@ -103,4 +103,9 @@ class AktivasiController extends Controller
     {
         return view('kebijakan_privasi');
     }
+
+    public function kebijakanPrivasiTeacher()
+    {
+        return view('kebijakan_privasi_teacher');
+    }
 }

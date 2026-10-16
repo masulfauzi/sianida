@@ -29,6 +29,7 @@ Route::get('/aktivasi/radius', [AktivasiController::class, 'radius'])->name('akt
 Route::post('/registrasi', [AktivasiController::class, 'registrasi'])->name('registrasi')->middleware(['guest']);
 Route::get('/kirimemail', [ApiController::class, 'kirimemail'])->name('kirimemail')->middleware(['guest']);
 Route::get('/skanida-mobile/kebijakan-privasi', [AktivasiController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi')->middleware(['guest']);
+Route::get('/skanida-teacher/kebijakan-privasi', [AktivasiController::class, 'kebijakanPrivasiTeacher'])->name('kebijakan-privasi-teacher')->middleware(['guest']);
 
 // Monitoring (tanpa login)
 Route::get('/monitoring/presensiharian', [MonitoringController::class, 'monitoring_1'])->name('monitoring.presensiharian');
