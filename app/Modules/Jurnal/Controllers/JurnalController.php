@@ -69,7 +69,7 @@ class JurnalController extends Controller
 
     public function index_guru(Request $request)
     {
-        $query = Jurnal::get_jurnal_guru(Auth::id(), get_semester('active_semester_id'))
+        $query = Jurnal::get_jurnal_guru(session('id_guru'), get_semester('active_semester_id'))
             ->orderBy('tgl_pembelajaran', 'desc');
         $data['data'] = $query->paginate(20)->withQueryString();
 

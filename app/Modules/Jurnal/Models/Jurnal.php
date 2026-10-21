@@ -54,15 +54,14 @@ class Jurnal extends Model
             ->first();
     }
 
-    public static function get_jurnal_guru($id_user, $id_semester)
+    public static function get_jurnal_guru($id_guru, $id_semester)
     {
         return DB::table('jurnal as a')
-            ->select('a.*', 'c.mapel', 'b.id_kelas', 'd.kelas')
-            ->join('jadwal as b', 'a.id_jadwal', '=', 'b.id')
-            ->join('mapel as c', 'b.id_mapel', '=', 'c.id')
-            ->join('kelas as d', 'b.id_kelas', '=', 'd.id')
-            ->where('a.created_by', $id_user)
-            ->where('b.id_semester', $id_semester)
+            ->select('a.*', 'c.mapel', 'a.id_kelas', 'd.kelas')
+            ->join('mapel as c', 'a.id_mapel', '=', 'c.id')
+            ->join('kelas as d', 'a.id_kelas', '=', 'd.id')
+            ->where('a.id_guru', $id_guru)
+            ->where('a.id_semester', $id_semester)
             ->whereNull('a.deleted_at')
             ->orderBy('a.tgl_pembelajaran', 'DESC');
     }
