@@ -87,9 +87,18 @@ class JurnalController extends Controller
 
             $semesterAktif = Semester::get_semester_aktif();
 
+            if (! $semesterAktif) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Semester aktif not found',
+                ], 404);
+            }
+
             $pesertadidik = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->where('id_semester', $semesterAktif->id)->get();
             // dd($pesertadidik->count());
             $statuskehadiran = Statuskehadiran::where('status_kehadiran_pendek', 'H')->first();
+
+            $data['id_semester'] = $semesterAktif->id;
 
             $jurnal = Jurnal::create($data);
 
