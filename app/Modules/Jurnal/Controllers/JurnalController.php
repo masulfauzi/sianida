@@ -122,8 +122,8 @@ class JurnalController extends Controller
 
     public function cetak_jurnal(Request $request)
     {
-        $mapel = Mapel::all()->sortBy('mapel')->pluck('mapel', 'id');
-        $kelas = Kelas::all()->sortBy('kelas')->pluck('kelas', 'id');
+        $mapel = Jurnal::get_mapel_guru(session('id_guru'), get_semester('active_semester_id'))->pluck('mapel', 'id');
+        $kelas = Jurnal::get_kelas_guru(session('id_guru'), get_semester('active_semester_id'))->pluck('kelas', 'id');
         $mapel->prepend('-PILIH SALAH SATU-', '');
         $kelas->prepend('-PILIH SALAH SATU-', '');
 

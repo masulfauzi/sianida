@@ -70,22 +70,26 @@ class Jurnal extends Model
 
     public static function get_mapel_guru($id_guru, $id_semester)
     {
-        return DB::table('jadwal as a')
+        return DB::table('jurnal as a')
             ->select('b.id', 'b.mapel')
             ->join('mapel as b', 'a.id_mapel', '=', 'b.id')
             ->where('a.id_guru', $id_guru)
             ->where('a.id_semester', $id_semester)
+            ->whereNull('a.deleted_at')
+            ->distinct()
             ->orderBy('b.mapel')
             ->get();
     }
 
     public static function get_kelas_guru($id_guru, $id_semester)
     {
-        return DB::table('jadwal as a')
+        return DB::table('jurnal as a')
             ->select('b.id', 'b.kelas')
             ->join('kelas as b', 'a.id_kelas', '=', 'b.id')
             ->where('a.id_guru', $id_guru)
             ->where('a.id_semester', $id_semester)
+            ->whereNull('a.deleted_at')
+            ->distinct()
             ->orderBy('b.kelas')
             ->get();
     }
