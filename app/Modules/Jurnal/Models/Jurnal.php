@@ -2,9 +2,11 @@
 namespace App\Modules\Jurnal\Models;
 
 use App\Helpers\UsesUuid;
+use App\Modules\Guru\Models\Guru;
 use App\Modules\Jadwal\Models\Jadwal;
 use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Mapel\Models\Mapel;
+use App\Modules\Semester\Models\Semester;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +87,31 @@ class Jurnal extends Model
             ->where('a.id_guru', $id_guru)
             ->where('a.id_semester', $id_semester)
             ->orderBy('b.kelas')
+            ->get();
+    }
+
+    public static function get_cetak_header($id_kelas, $id_mapel, $id_semester, $id_guru)
+    {
+        return (object) [
+            'kelas'    => optional(Kelas::find($id_kelas))->kelas,
+            'mapel'    => optional(Mapel::find($id_mapel))->mapel,
+            'semester' => optional(Semester::find($id_semester))->semester,
+            'nama'     => optional(Guru::find($id_guru))->nama,
+        ];
+    }
+
+    public static function get_jurnal_by_kelas_mapel($id_kelas, $id_mapel, $id_semester, $id_guru)
+    {
+        return DB::table('jurnal as a')
+            ->select('a.id', 'a.tgl_pembelajaran', 'c.jam_pelajaran as jam_mulai', 'd.jam_pelajaran as jam_selesai', 'a.materi', 'a.catatan')
+            ->leftJoin('jampelajaran as c', 'a.jam_mulai', '=', 'c.id')
+            ->leftJoin('jampelajaran as d', 'a.jam_selesai', '=', 'd.id')
+            ->where('a.id_kelas', $id_kelas)
+            ->where('a.id_mapel', $id_mapel)
+            ->where('a.id_semester', $id_semester)
+            ->where('a.id_guru', $id_guru)
+            ->whereNull('a.deleted_at')
+            ->orderBy('a.tgl_pembelajaran')
             ->get();
     }
 

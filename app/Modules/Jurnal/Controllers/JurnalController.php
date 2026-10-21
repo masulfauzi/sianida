@@ -122,8 +122,8 @@ class JurnalController extends Controller
 
     public function cetak_jurnal(Request $request)
     {
-        $mapel = Jurnal::get_mapel_guru(session('id_guru'), get_semester('active_semester_id'))->pluck('mapel', 'id');
-        $kelas = Jurnal::get_kelas_guru(session('id_guru'), get_semester('active_semester_id'))->pluck('kelas', 'id');
+        $mapel = Mapel::all()->sortBy('mapel')->pluck('mapel', 'id');
+        $kelas = Kelas::all()->sortBy('kelas')->pluck('kelas', 'id');
         $mapel->prepend('-PILIH SALAH SATU-', '');
         $kelas->prepend('-PILIH SALAH SATU-', '');
 
@@ -135,23 +135,17 @@ class JurnalController extends Controller
 
     public function aksi_cetak_presensi(Request $request)
     {
-        $jadwals = Jadwal::get_jadwal_by_kelas_mapel($request->input('id_kelas'), $request->input('id_mapel'), get_semester('active_semester_id'));
-        $jadwal  = $jadwals->first();
-        // dd($jadwal);
-        $siswa            = Pesertadidik::get_pd_by_idkelas($request->input('id_kelas'), get_semester('active_semester_id'));
+        $id_kelas    = $request->input('id_kelas');
+        $id_mapel    = $request->input('id_mapel');
+        $id_semester = get_semester('active_semester_id');
+        $id_guru     = session('id_guru');
+
+        $jadwal = Jurnal::get_cetak_header($id_kelas, $id_mapel, $id_semester, $id_guru);
+
+        $siswa            = Pesertadidik::get_pd_by_idkelas($id_kelas, $id_semester);
         $status_kehadiran = Statuskehadiran::get();
 
-        $id_jadwal = [];
-        foreach ($jadwals as $jw) {
-            array_push($id_jadwal, $jw->id_jadwal);
-        }
-
-        // $pertemuan = $jadwals->pluck('id_jadwal', '');
-        // dd($pertemuan);
-
-        $pertemuan = Jurnal::query()->whereIn('id_jadwal', $id_jadwal)->orderBy('tgl_pembelajaran')->get();
-
-        // dd($pertemuan);
+        $pertemuan = Jurnal::get_jurnal_by_kelas_mapel($id_kelas, $id_mapel, $id_semester, $id_guru);
 
         // //buat array jurnal
         $id_jurnal = [];
@@ -364,21 +358,16 @@ class JurnalController extends Controller
 
     public function aksi_cetak_presensi2(Request $request)
     {
-        $jadwals        = Jadwal::get_jadwal_by_kelas_mapel($request->input('id_kelas'), $request->input('id_mapel'), get_semester('active_semester_id'));
-        $data['jadwal'] = $jadwals->first();
-        // dd($data['jadwal']);
-        // $data['siswa']	= Pesertadidik::query()->where('id_kelas', $request->input('id_kelas'))->where('id_semester',get_semester('active_semester_id'))->get();
-        $data['siswa']            = Pesertadidik::get_pd_by_idkelas($request->input('id_kelas'), get_semester('active_semester_id'));
+        $id_kelas    = $request->input('id_kelas');
+        $id_mapel    = $request->input('id_mapel');
+        $id_semester = get_semester('active_semester_id');
+        $id_guru     = session('id_guru');
+
+        $data['jadwal']           = Jurnal::get_cetak_header($id_kelas, $id_mapel, $id_semester, $id_guru);
+        $data['siswa']            = Pesertadidik::get_pd_by_idkelas($id_kelas, $id_semester);
         $data['status_kehadiran'] = Statuskehadiran::get();
-        // dd($data['status_kehadiran']);
 
-        //buat array jadwal
-        $jadwal = [];
-        foreach ($jadwals as $jw) {
-            array_push($jadwal, $jw->id_jadwal);
-        }
-
-        $data['jurnal'] = Jurnal::query()->whereIn('id_jadwal', $jadwal)->orderBy('tgl_pembelajaran')->get();
+        $data['jurnal'] = Jurnal::get_jurnal_by_kelas_mapel($id_kelas, $id_mapel, $id_semester, $id_guru);
 
         //buat array jurnal
         $jurnal = [];
@@ -394,11 +383,13 @@ class JurnalController extends Controller
 
     public function cetak_jurnalmengajar(Request $request)
     {
-        $data['jadwal']        = Jadwal::get_jadwal_by_kelas_mapel($request->input('id_kelas'), $request->input('id_mapel'), get_semester('active_semester_id'));
-        $data['detail_jadwal'] = $data['jadwal']->first();
-        $id_jadwal             = $data['jadwal']->pluck('id_jadwal')->toArray();
+        $id_kelas    = $request->input('id_kelas');
+        $id_mapel    = $request->input('id_mapel');
+        $id_semester = get_semester('active_semester_id');
+        $id_guru     = session('id_guru');
 
-        $data['jurnal'] = Jurnal::get_jurnal($id_jadwal);
+        $data['detail_jadwal'] = Jurnal::get_cetak_header($id_kelas, $id_mapel, $id_semester, $id_guru);
+        $data['jurnal']        = Jurnal::get_jurnal_by_kelas_mapel($id_kelas, $id_mapel, $id_semester, $id_guru);
 
         return view('Jurnal::jurnal_mengajar', $data);
 
