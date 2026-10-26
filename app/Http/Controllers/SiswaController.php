@@ -69,6 +69,66 @@ class SiswaController extends Controller
     }
 
     /**
+     * Get siswa data by NISN
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function siswaByNisn(Request $request)
+    {
+        try {
+            $nisn = $request->input('nisn');
+
+            if (! $nisn) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'NISN is required',
+                ], 400);
+            }
+
+            $semesterAktif = Semester::get_semester_aktif();
+
+            $siswa = DB::table('siswa')
+                ->select(
+                    'siswa.id as id_siswa',
+                    'siswa.nama_siswa',
+                    'siswa.nis',
+                    'siswa.foto',
+                    'siswa.nisn',
+                    'siswa.nik',
+                    'siswa.no_hp',
+                    'kelas.kelas',
+                    'users.email'
+                )
+                ->join('pesertadidik', 'siswa.id', '=', 'pesertadidik.id_siswa')
+                ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
+                ->leftJoin('users', 'siswa.nik', '=', 'users.identitas')
+                ->where('siswa.nisn', $nisn)
+                ->where('pesertadidik.id_semester', $semesterAktif->id)
+                ->first();
+
+            if (! $siswa) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Siswa not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data siswa retrieved successfully',
+                'data'    => $siswa,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve siswa data',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Upload profile photo for siswa
      *
      * @param Request $request
