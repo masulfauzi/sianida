@@ -129,6 +129,65 @@ class SiswaController extends Controller
     }
 
     /**
+     * Search siswa by name
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function cariSiswa(Request $request)
+    {
+        try {
+            $nama = trim((string) $request->input('nama'));
+
+            if ($nama === '') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nama is required',
+                ], 400);
+            }
+
+            if (mb_strlen($nama) < 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nama minimal 3 karakter',
+                ], 400);
+            }
+
+            $semesterAktif = Semester::get_semester_aktif();
+
+            $keyword = addcslashes($nama, '\\%_');
+
+            $siswa = DB::table('siswa')
+                ->select(
+                    'siswa.id as id_siswa',
+                    'siswa.nama_siswa',
+                    'siswa.nis',
+                    'siswa.nisn',
+                    'kelas.kelas'
+                )
+                ->join('pesertadidik', 'siswa.id', '=', 'pesertadidik.id_siswa')
+                ->join('kelas', 'pesertadidik.id_kelas', '=', 'kelas.id')
+                ->where('pesertadidik.id_semester', $semesterAktif->id)
+                ->where('siswa.nama_siswa', 'like', '%' . $keyword . '%')
+                ->orderBy('siswa.nama_siswa')
+                ->limit(20)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data siswa retrieved successfully',
+                'data'    => $siswa,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve siswa data',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Upload profile photo for siswa
      *
      * @param Request $request

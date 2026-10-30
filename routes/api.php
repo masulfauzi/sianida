@@ -40,6 +40,9 @@ Route::post('/presensi-kartu', [PresensiController::class, 'presensiKartu']);
 // Detail siswa berdasarkan NISN - tanpa middleware
 Route::get('/siswa/nisn', [SiswaController::class, 'siswaByNisn']);
 
+// Pencarian siswa berdasarkan nama - tanpa middleware
+Route::get('/siswa/cari', [SiswaController::class, 'cariSiswa']);
+
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
