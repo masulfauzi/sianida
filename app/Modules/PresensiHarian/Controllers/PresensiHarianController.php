@@ -242,6 +242,7 @@ class PresensiHarianController extends Controller
 
 			$data['hari_libur'] = HariLibur::whereYear('tanggal', $tahun)
 				->whereMonth('tanggal', $bulan)
+				->berlakuUntukKelas($data['id_kelas'])
 				->pluck('tanggal')
 				->map(fn ($tanggal) => (int) date('j', strtotime($tanggal)))
 				->unique()

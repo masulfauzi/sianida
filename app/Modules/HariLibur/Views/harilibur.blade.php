@@ -48,7 +48,8 @@
                                 <th width="15">No</th>
                                 <td>Ketarangan</td>
 								<td>Tanggal</td>
-								
+								<td>Berlaku untuk</td>
+
                                 <th width="20%">Aksi</th>
                             </tr>
                         </thead>
@@ -59,7 +60,14 @@
                                     <td>{{ $no++ }}</td>
                                     <td>{{ $item->ketarangan }}</td>
 									<td>{{ $item->tanggal }}</td>
-									
+									<td>
+										@if ($item->kelas->isEmpty())
+											Semua kelas
+										@else
+											<span title="{{ $item->kelas->sortBy('kelas')->pluck('kelas')->implode(', ') }}">{{ $item->kelas->count() }} kelas OFF</span>
+										@endif
+									</td>
+
                                     <td>
 										{!! button('harilibur.show','', $item->id) !!}
 										{!! button('harilibur.edit', $title, $item->id) !!}
@@ -68,7 +76,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center"><i>No data.</i></td>
+                                    <td colspan="5" class="text-center"><i>No data.</i></td>
                                 </tr>
                             @endforelse
                         </tbody>

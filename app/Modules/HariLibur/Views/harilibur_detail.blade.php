@@ -33,6 +33,7 @@
                         <div class="row">
                             <div class='col-lg-2'><p>Ketarangan</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $harilibur->ketarangan }}</p></div>
 									<div class='col-lg-2'><p>Tanggal</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $harilibur->tanggal }}</p></div>
+									<div class='col-lg-2'><p>Kelas OFF</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $harilibur->kelas->isEmpty() ? 'Semua kelas' : $harilibur->kelas->sortBy('kelas')->pluck('kelas')->implode(', ') }}</p></div>
 									
                         </div>
                     </div>

@@ -44,6 +44,7 @@
                                 </div>
                             </div>
                         @endforeach
+                        @include('HariLibur::harilibur_kelas_form')
                         <div class="offset-md-3 ps-2">
                             <button class="btn btn-primary" type="submit">Simpan</button> &nbsp;
                             <a href="{{ route('harilibur.index') }}" class="btn btn-secondary">Batal</a>
