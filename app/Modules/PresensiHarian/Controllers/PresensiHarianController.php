@@ -42,6 +42,24 @@ class PresensiHarianController extends Controller
 		$data['chart_xi']  = $this->buildChartData('XI', $id_semester, $tgl);
 		$data['chart_xii'] = $this->buildChartData('XII', $id_semester, $tgl);
 
+		// Siswa belum presensi; kelas yang OFF (hari libur per kelas) dikecualikan
+		$data['libur_info']     = null;
+		$data['kelas_off']      = [];
+		$data['belum_presensi'] = collect();
+
+		$libur      = HariLibur::with('kelas:id,kelas')->whereDate('tanggal', $tgl)->get();
+		$liburUmum  = $libur->first(fn ($l) => $l->kelas->isEmpty());
+
+		if ($liburUmum) {
+			$data['libur_info'] = 'Hari libur: '.$liburUmum->ketarangan;
+		} elseif (\Carbon\Carbon::parse($tgl)->isWeekend()) {
+			$data['libur_info'] = 'Akhir pekan';
+		} else {
+			$kelasOff = $libur->flatMap->kelas->unique('id');
+			$data['kelas_off'] = $kelasOff->sortBy('kelas')->pluck('kelas')->all();
+			$data['belum_presensi'] = PresensiHarian::belum_presensi($id_semester, $tgl, $kelasOff->pluck('id')->all());
+		}
+
 		$this->log($request, 'melihat halaman grafik '.$this->title);
 		return view('PresensiHarian::presensiharian', array_merge($data, ['title' => $this->title]));
 	}

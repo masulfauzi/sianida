@@ -76,4 +76,23 @@ class PresensiHarian extends Model
             ->get();
     }
 
+    public static function belum_presensi($id_semester, $tgl, array $kelasDikecualikan = [])
+    {
+        return DB::table('pesertadidik as pd')
+            ->join('siswa as s', 'pd.id_siswa', '=', 's.id')
+            ->join('kelas as k', 'pd.id_kelas', '=', 'k.id')
+            ->leftJoin('presensi_harian as ph', function ($join) use ($tgl) {
+                $join->on('ph.id_siswa', '=', 'pd.id_siswa')
+                     ->whereDate('ph.tgl', $tgl)
+                     ->whereNull('ph.deleted_at');
+            })
+            ->where('pd.id_semester', $id_semester)
+            ->whereNull('pd.deleted_at')
+            ->whereNull('ph.id')
+            ->when($kelasDikecualikan, fn ($q) => $q->whereNotIn('k.id', $kelasDikecualikan))
+            ->orderBy('k.kelas')
+            ->orderBy('s.nama_siswa')
+            ->get(['s.id as id_siswa', 's.nama_siswa', 's.nis', 'k.id as id_kelas', 'k.kelas']);
+    }
+
 }
