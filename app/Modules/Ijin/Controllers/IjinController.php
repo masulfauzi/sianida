@@ -162,12 +162,20 @@ class IjinController extends Controller
 
     public function reject(Request $request, Ijin $ijin)
     {
+        $this->validate($request, [
+            'alasan_tolak' => 'required|string|max:1000',
+        ], [
+            'alasan_tolak.required' => 'Alasan penolakan wajib diisi.',
+            'alasan_tolak.max'      => 'Alasan penolakan maksimal 1000 karakter.',
+        ]);
+
         $status = StatusIjin::where('status_ijin', 'Ditolak')->first();
         if (! $status) {
             return back()->with('message_error', 'Status "Ditolak" belum ada di tabel status_ijin.');
         }
 
         $ijin->id_status_ijin = $status->id;
+        $ijin->alasan_tolak   = trim($request->input('alasan_tolak'));
         $ijin->updated_by     = Auth::id();
         $ijin->save();
 

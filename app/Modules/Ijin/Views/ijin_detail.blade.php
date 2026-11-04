@@ -51,6 +51,9 @@
                             <div class='col-lg-2'><p>Tgl Mulai</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->tgl_mulai }}</p></div>
                             <div class='col-lg-2'><p>Tgl Selesai</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->tgl_selesai }}</p></div>
                             <div class='col-lg-2'><p>Status</p></div><div class='col-lg-10'><p class='fw-bold'>{{ $ijin->statusIjin->status_ijin }}</p></div>
+                            @if ($ijin->alasan_tolak)
+                                <div class='col-lg-2'><p>Alasan Ditolak</p></div><div class='col-lg-10'><p class='fw-bold text-danger'>{!! nl2br(e($ijin->alasan_tolak)) !!}</p></div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -111,12 +114,35 @@
                                     <i class="fa fa-check"></i> Terima
                                 </button>
                             </form>
-                            <form id="form-reject" action="{{ route('ijin.reject.update', $ijin->id) }}" method="post" class="d-inline">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalTolakIjin">
+                                <i class="fa fa-times"></i> Tolak
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="modalTolakIjin" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form id="form-reject" action="{{ route('ijin.reject.update', $ijin->id) }}" method="post" class="modal-content">
                                 @csrf
                                 @method('PATCH')
-                                <button type="button" class="btn btn-danger" onclick="confirmReject()">
-                                    <i class="fa fa-times"></i> Tolak
-                                </button>
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Tolak ajuan ijin</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Ajuan ijin <strong>{{ $ijin->siswa->nama_siswa }}</strong> akan ditolak.</p>
+                                    <label for="alasan_tolak" class="form-label">Alasan penolakan</label>
+                                    <textarea name="alasan_tolak" id="alasan_tolak" rows="4" maxlength="1000" required
+                                        class="form-control @error('alasan_tolak') is-invalid @enderror"
+                                        placeholder="Tuliskan alasan ajuan ini ditolak">{{ old('alasan_tolak') }}</textarea>
+                                    @error('alasan_tolak')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> Tolak Ijin</button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -152,19 +178,11 @@
         });
     }
 
-    function confirmReject() {
-        swal({
-            title: "Tolak ajuan ijin?",
-            text: "Ajuan ijin {{ $ijin->siswa->nama_siswa }} akan ditolak.",
-            icon: "warning",
-            buttons: { cancel: "Batal", confirm: { text: "Ya, Tolak", value: true } },
-            dangerMode: true,
-        }).then(function (confirmed) {
-            if (confirmed) {
-                document.getElementById('form-reject').submit();
-            }
+    @if ($errors->has('alasan_tolak'))
+        document.addEventListener('DOMContentLoaded', function () {
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalTolakIjin')).show();
         });
-    }
+    @endif
 
     var rotasiSurat = 0;
 

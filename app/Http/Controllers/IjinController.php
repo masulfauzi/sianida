@@ -29,6 +29,7 @@ class IjinController extends Controller
                 'ijin.tgl_selesai as end_date',
                 'ijin.lama_ijin',
                 'status_ijin.status_ijin',
+                'ijin.alasan_tolak',
                 'ijin.created_at'
             )
             ->orderBy('ijin.created_at', 'desc')
