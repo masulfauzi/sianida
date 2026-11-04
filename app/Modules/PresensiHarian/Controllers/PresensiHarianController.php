@@ -43,11 +43,12 @@ class PresensiHarianController extends Controller
 		$data['chart_xii'] = $this->buildChartData('XII', $id_semester, $tgl);
 
 		// Siswa belum presensi; kelas yang OFF (hari libur per kelas) dikecualikan
+		$daftarTingkat          = ['X', 'XI', 'XII'];
 		$data['libur_info']     = null;
-		$data['kelas_off']      = [];
-		$data['belum_presensi'] = collect();
+		$data['kelas_off']      = array_fill_keys($daftarTingkat, []);
+		$data['belum_presensi'] = array_fill_keys($daftarTingkat, collect());
 
-		$libur      = HariLibur::with('kelas:id,kelas')->whereDate('tanggal', $tgl)->get();
+		$libur      = HariLibur::with('kelas.tingkat')->whereDate('tanggal', $tgl)->get();
 		$liburUmum  = $libur->first(fn ($l) => $l->kelas->isEmpty());
 
 		if ($liburUmum) {
@@ -56,8 +57,14 @@ class PresensiHarianController extends Controller
 			$data['libur_info'] = 'Akhir pekan';
 		} else {
 			$kelasOff = $libur->flatMap->kelas->unique('id');
-			$data['kelas_off'] = $kelasOff->sortBy('kelas')->pluck('kelas')->all();
-			$data['belum_presensi'] = PresensiHarian::belum_presensi($id_semester, $tgl, $kelasOff->pluck('id')->all());
+			foreach ($kelasOff->sortBy('kelas')->groupBy(fn ($k) => $k->tingkat->tingkat ?? '-') as $tingkat => $list) {
+				$data['kelas_off'][$tingkat] = $list->pluck('kelas')->all();
+			}
+
+			$belum = PresensiHarian::belum_presensi($id_semester, $tgl, $kelasOff->pluck('id')->all())->groupBy('tingkat');
+			foreach ($daftarTingkat as $tingkat) {
+				$data['belum_presensi'][$tingkat] = $belum->get($tingkat, collect())->values();
+			}
 		}
 
 		$this->log($request, 'melihat halaman grafik '.$this->title);

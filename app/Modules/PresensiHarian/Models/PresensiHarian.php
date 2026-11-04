@@ -81,6 +81,7 @@ class PresensiHarian extends Model
         return DB::table('pesertadidik as pd')
             ->join('siswa as s', 'pd.id_siswa', '=', 's.id')
             ->join('kelas as k', 'pd.id_kelas', '=', 'k.id')
+            ->join('tingkat as t', 'k.id_tingkat', '=', 't.id')
             ->leftJoin('presensi_harian as ph', function ($join) use ($tgl) {
                 $join->on('ph.id_siswa', '=', 'pd.id_siswa')
                      ->whereDate('ph.tgl', $tgl)
@@ -92,7 +93,7 @@ class PresensiHarian extends Model
             ->when($kelasDikecualikan, fn ($q) => $q->whereNotIn('k.id', $kelasDikecualikan))
             ->orderBy('k.kelas')
             ->orderBy('s.nama_siswa')
-            ->get(['s.id as id_siswa', 's.nama_siswa', 's.nis', 'k.id as id_kelas', 'k.kelas']);
+            ->get(['s.id as id_siswa', 's.nama_siswa', 's.nis', 'k.id as id_kelas', 'k.kelas', 't.tingkat']);
     }
 
 }

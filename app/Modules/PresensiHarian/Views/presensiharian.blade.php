@@ -40,88 +40,24 @@
             </div>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">Siswa Belum Presensi &mdash; {{ \Carbon\Carbon::parse($tgl)->translatedFormat('d F Y') }}</h6>
-                        @unless ($libur_info)
-                            <span class="badge bg-danger">{{ $belum_presensi->count() }} siswa</span>
-                        @endunless
-                    </div>
-                    <div class="card-body">
-                        @if ($libur_info)
-                            <div class="alert alert-light-info mb-0">{{ $libur_info }} &mdash; tidak ada presensi yang perlu dicek.</div>
-                        @else
-                            @if (count($kelas_off))
-                                <p class="text-muted small mb-2">Kelas OFF (tidak ditampilkan): {{ implode(', ', $kelas_off) }}</p>
-                            @endif
-
-                            @if ($belum_presensi->isEmpty())
-                                <p class="mb-0"><i>Semua siswa sudah presensi.</i></p>
-                            @else
-                                <div class="row g-2 mb-2">
-                                    <div class="col-md-4">
-                                        <select id="filter-belum-kelas" class="form-select form-select-sm">
-                                            <option value="">Semua kelas</option>
-                                            @foreach ($belum_presensi->pluck('kelas', 'id_kelas')->unique() as $idKelas => $namaKelas)
-                                                <option value="{{ $idKelas }}">{{ $namaKelas }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input type="text" id="filter-belum-nama" class="form-control form-control-sm" placeholder="Cari nama siswa">
-                                    </div>
-                                    <div class="col-md-4 text-md-end small text-muted pt-1" id="filter-belum-info"></div>
-                                </div>
-                                <div style="max-height:400px; overflow-y:auto">
-                                    <table class="table table-sm table-bordered mb-0" id="tabel-belum-presensi">
-                                        <thead style="position:sticky; top:0; z-index:1" class="table-light">
-                                            <tr>
-                                                <th style="width:60px">No</th>
-                                                <th>Nama Siswa</th>
-                                                <th>NIS</th>
-                                                <th>Kelas</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($belum_presensi as $i => $s)
-                                                <tr data-kelas="{{ $s->id_kelas }}" data-nama="{{ strtolower($s->nama_siswa) }}">
-                                                    <td class="no-urut">{{ $i + 1 }}</td>
-                                                    <td>{{ $s->nama_siswa }}</td>
-                                                    <td>{{ $s->nis }}</td>
-                                                    <td>{{ $s->kelas }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @endif
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header"><h6>Grafik Kehadiran Kelas X</h6></div>
-                    <div class="card-body"><div id="chart-x"></div></div>
+            @foreach (['X', 'XI', 'XII'] as $tingkat)
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header"><h6>Kelas {{ $tingkat }} &mdash; {{ \Carbon\Carbon::parse($tgl)->translatedFormat('d F Y') }}</h6></div>
+                        <div class="card-body">
+                            <div id="chart-{{ strtolower($tingkat) }}"></div>
+                            <hr>
+                            @include('PresensiHarian::presensiharian_belum_presensi', [
+                                'tingkat'   => $tingkat,
+                                'list'      => $belum_presensi[$tingkat],
+                                'kelasOff'  => $kelas_off[$tingkat] ?? [],
+                                'liburInfo' => $libur_info,
+                            ])
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header"><h6>Grafik Kehadiran Kelas XI</h6></div>
-                    <div class="card-body"><div id="chart-xi"></div></div>
-                </div>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header"><h6>Grafik Kehadiran Kelas XII</h6></div>
-                    <div class="card-body"><div id="chart-xii"></div></div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </section>
 
@@ -160,11 +96,11 @@
         chart.render();
     }
 
-    function filterBelumPresensi() {
-        var tabel = document.getElementById('tabel-belum-presensi');
+    function filterBelumPresensi(wrapper) {
+        var tabel = wrapper.querySelector('.tabel-belum-presensi');
         if (!tabel) return;
-        var kelas = document.getElementById('filter-belum-kelas').value;
-        var nama = document.getElementById('filter-belum-nama').value.trim().toLowerCase();
+        var kelas = wrapper.querySelector('.filter-belum-kelas').value;
+        var nama = wrapper.querySelector('.filter-belum-nama').value.trim().toLowerCase();
         var rows = tabel.querySelectorAll('tbody tr');
         var no = 0;
         rows.forEach(function (row) {
@@ -172,15 +108,17 @@
             row.style.display = cocok ? '' : 'none';
             if (cocok) row.querySelector('.no-urut').textContent = ++no;
         });
-        document.getElementById('filter-belum-info').textContent = 'Menampilkan ' + no + ' dari ' + rows.length + ' siswa';
+        wrapper.querySelector('.filter-belum-info').textContent = 'Menampilkan ' + no + ' dari ' + rows.length + ' siswa';
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        if (document.getElementById('tabel-belum-presensi')) {
-            document.getElementById('filter-belum-kelas').addEventListener('change', filterBelumPresensi);
-            document.getElementById('filter-belum-nama').addEventListener('input', filterBelumPresensi);
-            filterBelumPresensi();
-        }
+        document.querySelectorAll('.belum-presensi-wrapper').forEach(function (wrapper) {
+            if (!wrapper.querySelector('.tabel-belum-presensi')) return;
+            var jalankan = function () { filterBelumPresensi(wrapper); };
+            wrapper.querySelector('.filter-belum-kelas').addEventListener('change', jalankan);
+            wrapper.querySelector('.filter-belum-nama').addEventListener('input', jalankan);
+            jalankan();
+        });
 
         renderBarChart('#chart-x',   @json($chart_x));
         renderBarChart('#chart-xi',  @json($chart_xi));
