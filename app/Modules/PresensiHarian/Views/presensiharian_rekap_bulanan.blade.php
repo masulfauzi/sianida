@@ -7,8 +7,8 @@
     .rekap-table .sticky-nama { position: sticky; z-index: 2; background-color: #fff; }
     .rekap-table thead .sticky-no,
     .rekap-table thead .sticky-nama { z-index: 3; }
-    .rekap-table .sticky-no { left: 0; width: 48px; min-width: 48px; max-width: 48px; }
-    .rekap-table .sticky-nama { left: 48px; min-width: 200px; box-shadow: 2px 0 0 #dee2e6; }
+    .rekap-table .sticky-no { left: 0; width: 60px; min-width: 60px; max-width: 60px; white-space: nowrap; }
+    .rekap-table .sticky-nama { left: 60px; min-width: 200px; box-shadow: 2px 0 0 #dee2e6; }
     .theme-dark .rekap-table .sticky-no,
     .theme-dark .rekap-table .sticky-nama { background-color: #1e1e2d; }
 </style>
