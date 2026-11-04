@@ -45,7 +45,7 @@
                             <tr data-kelas="{{ $s->id_kelas }}" data-nama="{{ strtolower($s->nama_siswa) }}">
                                 <td class="no-urut">{{ $i + 1 }}</td>
                                 <td>
-                                    <a href="#" class="link-primary link-detail-siswa" data-url="{{ route('presensiharian.siswa.detail', $s->id_siswa) }}">{{ $s->nama_siswa }}</a>
+                                    <a href="#" class="link-primary link-detail-siswa" data-url="{{ route('presensiharian.siswa.detail.show', $s->id_siswa) }}">{{ $s->nama_siswa }}</a>
                                 </td>
                                 <td>{{ $s->nis }}</td>
                                 <td>{{ $s->kelas }}</td>
