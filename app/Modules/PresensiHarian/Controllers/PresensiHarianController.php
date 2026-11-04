@@ -12,6 +12,7 @@ use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Modules\Kelas\Models\Kelas;
 use App\Modules\Pesertadidik\Models\Pesertadidik;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
@@ -458,6 +459,46 @@ class PresensiHarianController extends Controller
 		$text = 'menghapus '.$this->title;//.' '.$presensiharian->what;
 		$this->log($request, $text, ['presensiharian.id' => $presensiharian->id]);
 		return back()->with('message_success', 'Presensi Harian berhasil dihapus!');
+	}
+
+	public function detail_siswa(Request $request, Siswa $siswa)
+	{
+		$kelas = DB::table('pesertadidik as pd')
+			->join('kelas as k', 'pd.id_kelas', '=', 'k.id')
+			->where('pd.id_siswa', $siswa->id)
+			->where('pd.id_semester', get_semester('active_semester_id'))
+			->whereNull('pd.deleted_at')
+			->value('k.kelas');
+
+		$presensiTerakhir = DB::table('presensi_harian as ph')
+			->leftJoin('statuskehadiran as sk', 'ph.id_status_kehadiran', '=', 'sk.id')
+			->where('ph.id_siswa', $siswa->id)
+			->whereNull('ph.deleted_at')
+			->orderByDesc('ph.tgl')
+			->first(['ph.tgl', 'sk.status_kehadiran']);
+
+		$this->log($request, 'melihat detail siswa dari '.$this->title, ['siswa.id' => $siswa->id]);
+
+		return response()->json([
+			'nama_siswa'        => $siswa->nama_siswa,
+			'nis'               => $siswa->nis,
+			'nisn'              => $siswa->nisn,
+			'nik'               => $siswa->nik,
+			'kelas'             => $kelas,
+			'jenis_kelamin'     => $siswa->jeniskelamin->jeniskelamin ?? null,
+			'agama'             => $siswa->agama->agama ?? null,
+			'tempat_lahir'      => $siswa->tempat_lahir,
+			'tgl_lahir'         => $siswa->tgl_lahir ? date('d-m-Y', strtotime($siswa->tgl_lahir)) : null,
+			'no_hp'             => $siswa->no_hp,
+			'alamat'            => $siswa->alamat,
+			'nama_ayah'         => $siswa->nama_ayah,
+			'nama_ibu'          => $siswa->nama_ibu,
+			'foto_url'          => $siswa->foto ? asset('foto_profil/'.$siswa->foto) : null,
+			'presensi_terakhir' => $presensiTerakhir
+				? date('d-m-Y', strtotime($presensiTerakhir->tgl)).' ('.($presensiTerakhir->status_kehadiran ?? '-').')'
+				: null,
+			'url_profil'        => route('siswa.show', $siswa->id),
+		]);
 	}
 
 }

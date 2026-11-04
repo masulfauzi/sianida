@@ -61,6 +61,44 @@
         </div>
     </section>
 
+    <div class="modal fade" id="modalDetailSiswa" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detail Siswa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center py-4" data-detail-state="loading">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <div class="mt-2 text-muted">Memuat data...</div>
+                    </div>
+                    <div class="alert alert-light-danger mb-0" data-detail-state="error" style="display:none">Gagal memuat data siswa.</div>
+                    <div class="row" data-detail-state="content" style="display:none">
+                        <div class="col-md-3 mb-3 text-center" data-detail-foto-wrapper>
+                            <img src="" alt="Foto siswa" class="img-fluid rounded" data-detail-foto>
+                        </div>
+                        <div class="col" data-detail-biodata>
+                            <table class="table table-sm mb-0">
+                                @foreach (['nama_siswa' => 'Nama', 'nis' => 'NIS', 'nisn' => 'NISN', 'nik' => 'NIK', 'kelas' => 'Kelas', 'jenis_kelamin' => 'Jenis Kelamin', 'agama' => 'Agama', 'ttl' => 'Tempat, Tanggal Lahir', 'no_hp' => 'No HP', 'alamat' => 'Alamat', 'nama_ayah' => 'Nama Ayah', 'nama_ibu' => 'Nama Ibu', 'presensi_terakhir' => 'Presensi Terakhir'] as $field => $label)
+                                    <tr>
+                                        <td width="180">{{ $label }}</td>
+                                        <td width="10">:</td>
+                                        <td data-detail-field="{{ $field }}"></td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-primary" data-detail-profil style="display:none">Lihat profil lengkap</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
 
@@ -110,6 +148,56 @@
         });
         wrapper.querySelector('.filter-belum-info').textContent = 'Menampilkan ' + no + ' dari ' + rows.length + ' siswa';
     }
+
+    function tampilkanDetailSiswa(url) {
+        var modalEl = document.getElementById('modalDetailSiswa');
+        var setState = function (state) {
+            modalEl.querySelectorAll('[data-detail-state]').forEach(function (el) {
+                el.style.display = el.dataset.detailState === state ? '' : 'none';
+            });
+        };
+        var profil = modalEl.querySelector('[data-detail-profil]');
+
+        setState('loading');
+        profil.style.display = 'none';
+        modalEl.querySelectorAll('[data-detail-field]').forEach(function (el) { el.textContent = ''; });
+        bootstrap.Modal.getOrCreateInstance(modalEl).show();
+
+        fetch(url, { headers: { 'Accept': 'application/json' } })
+            .then(function (res) {
+                if (!res.ok) throw new Error(res.status);
+                return res.json();
+            })
+            .then(function (d) {
+                d.ttl = [d.tempat_lahir, d.tgl_lahir].filter(Boolean).join(', ');
+                modalEl.querySelectorAll('[data-detail-field]').forEach(function (el) {
+                    el.textContent = d[el.dataset.detailField] || '-';
+                });
+
+                var foto = modalEl.querySelector('[data-detail-foto]');
+                var fotoWrapper = modalEl.querySelector('[data-detail-foto-wrapper]');
+                if (d.foto_url) {
+                    foto.src = d.foto_url;
+                    foto.alt = 'Foto ' + d.nama_siswa;
+                    fotoWrapper.style.display = '';
+                } else {
+                    foto.removeAttribute('src');
+                    fotoWrapper.style.display = 'none';
+                }
+
+                profil.href = d.url_profil;
+                profil.style.display = '';
+                setState('content');
+            })
+            .catch(function () { setState('error'); });
+    }
+
+    document.addEventListener('click', function (e) {
+        var link = e.target.closest('.link-detail-siswa');
+        if (!link) return;
+        e.preventDefault();
+        tampilkanDetailSiswa(link.dataset.url);
+    });
 
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.belum-presensi-wrapper').forEach(function (wrapper) {
