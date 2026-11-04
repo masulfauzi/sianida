@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Modules\HariLibur\Models\HariLibur;
 use App\Modules\PresensiHarian\Models\PresensiHarian;
 use App\Modules\Presensi\Models\Presensi;
 use App\Modules\Semester\Models\Semester;
@@ -171,7 +172,7 @@ class PresensiController extends Controller
      *     path="/api/presensi/{userId}/{currentmonth}/{currentyear}",
      *     tags={"Presensi"},
      *     summary="Ambil rekap presensi harian siswa per bulan",
-     *     description="Mengembalikan status presensi siswa untuk setiap hari pada bulan dan tahun yang diminta.",
+     *     description="Mengembalikan status presensi siswa untuk setiap hari pada bulan dan tahun yang diminta. Tanggal tanpa presensi yang jatuh pada Sabtu/Minggu atau hari libur yang berlaku untuk kelas siswa dikembalikan dengan status OFF.",
      *     security={{"sanctum":{}}},
      *     @OA\Parameter(name="userId", in="path", required=true, description="ID siswa", @OA\Schema(type="integer")),
      *     @OA\Parameter(name="currentmonth", in="path", required=true, description="Bulan (1-12)", @OA\Schema(type="integer")),
@@ -188,7 +189,8 @@ class PresensiController extends Controller
      *                 @OA\Items(
      *                     @OA\Property(property="tgl", type="string", format="date", example="2026-08-31"),
      *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="status", type="string", example="Tidak Hadir")
+     *                     @OA\Property(property="status", type="string", example="Tidak Hadir", description="Status kehadiran, 'Tidak Hadir', atau 'OFF'"),
+     *                     @OA\Property(property="keterangan", type="string", nullable=true, example="Akhir pekan", description="Alasan OFF (keterangan hari libur atau 'Akhir pekan'); null jika bukan OFF")
      *                 )
      *             )
      *         )
@@ -221,12 +223,35 @@ class PresensiController extends Controller
                 ->keyBy('tgl');
 
             // Get the number of days in the current month
-            $daysInMonth = \Carbon\Carbon::create($currentyear, $currentmonth, 1)->daysInMonth;
+            $awalBulan   = \Carbon\Carbon::create($currentyear, $currentmonth, 1);
+            $daysInMonth = $awalBulan->daysInMonth;
+            $akhirBulan  = $awalBulan->copy()->endOfMonth();
+
+            // Kelas siswa pada semester yang beririsan dengan bulan ini (bisa lebih dari satu semester)
+            $penempatan = DB::table('pesertadidik')
+                ->join('semester', 'pesertadidik.id_semester', '=', 'semester.id')
+                ->where('pesertadidik.id_siswa', $siswaId)
+                ->where('semester.tgl_mulai', '<=', $akhirBulan->toDateString())
+                ->where('semester.tgl_selesai', '>=', $awalBulan->toDateString())
+                ->get(['pesertadidik.id_kelas', 'semester.tgl_mulai', 'semester.tgl_selesai']);
+
+            $kelasPada = function ($date) use ($penempatan) {
+                $p = $penempatan->first(fn ($p) => $p->tgl_mulai <= $date && $p->tgl_selesai >= $date);
+                return $p->id_kelas ?? null;
+            };
+
+            // Hari libur bulan ini; tanpa kelas = libur semua kelas, dengan kelas = OFF hanya untuk kelas tersebut
+            $hariLibur = HariLibur::with('kelas:id')
+                ->whereYear('tanggal', $currentyear)
+                ->whereMonth('tanggal', $currentmonth)
+                ->get()
+                ->groupBy(fn ($libur) => \Carbon\Carbon::parse($libur->tanggal)->format('Y-m-d'));
 
             // Create response for all days in the month
             $presensiHarian = collect();
             for ($day = 1; $day <= $daysInMonth; $day++) {
-                $date = \Carbon\Carbon::create($currentyear, $currentmonth, $day)->format('Y-m-d');
+                $tanggal = \Carbon\Carbon::create($currentyear, $currentmonth, $day);
+                $date    = $tanggal->format('Y-m-d');
 
                 if (isset($presensiRecords[$date])) {
                     $record = $presensiRecords[$date];
@@ -235,14 +260,33 @@ class PresensiController extends Controller
                         'tgl'        => $date,
                         'created_at' => $record->created_at,
                         'status'     => $record->status_kehadiran,
+                        'keterangan' => null,
                     ]);
-                } else {
-                    $presensiHarian->push([
-                        'tgl'        => $date,
-                        'created_at' => null,
-                        'status'     => 'Tidak Hadir',
-                    ]);
+                    continue;
                 }
+
+                $idKelas = $kelasPada($date);
+                $libur   = collect($hariLibur[$date] ?? [])->first(
+                    fn ($l) => $l->kelas->isEmpty() || ($idKelas && $l->kelas->contains('id', $idKelas))
+                );
+
+                if ($libur) {
+                    $status     = 'OFF';
+                    $keterangan = $libur->ketarangan;
+                } elseif ($tanggal->isWeekend()) {
+                    $status     = 'OFF';
+                    $keterangan = 'Akhir pekan';
+                } else {
+                    $status     = 'Tidak Hadir';
+                    $keterangan = null;
+                }
+
+                $presensiHarian->push([
+                    'tgl'        => $date,
+                    'created_at' => null,
+                    'status'     => $status,
+                    'keterangan' => $keterangan,
+                ]);
             }
 
             return response()->json([
