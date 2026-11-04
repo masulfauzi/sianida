@@ -1,6 +1,18 @@
 @extends('layouts.app')
 
 @section('page-css')
+<style>
+    .surat-rotate-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 520px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+    }
+    #surat-img { max-height: 500px; max-width: 100%; transition: transform .2s; }
+</style>
 @endsection
 
 @section('main')
@@ -62,11 +74,21 @@
                                     </a>
                                 </div>
                             @else
-                                <img src="{{ asset('surat_ijin/' . $ijin->surat) }}"
-                                     alt="Surat Keterangan"
-                                     class="img-fluid"
-                                     style="max-height: 500px; border: 1px solid #dee2e6; border-radius: 4px;">
+                                <div class="surat-rotate-wrapper">
+                                    <img src="{{ asset('surat_ijin/' . $ijin->surat) }}"
+                                         alt="Surat Keterangan"
+                                         id="surat-img">
+                                </div>
                                 <div class="mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="putarSurat(-90)">
+                                        <i class="fa fa-undo"></i> Putar kiri
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="putarSurat(90)">
+                                        <i class="fa fa-redo"></i> Putar kanan
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="resetSurat()">
+                                        Reset
+                                    </button>
                                     <a href="{{ asset('surat_ijin/' . $ijin->surat) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
                                         <i class="fa fa-external-link-alt"></i> Buka di tab baru
                                     </a>
@@ -142,6 +164,30 @@
                 document.getElementById('form-reject').submit();
             }
         });
+    }
+
+    var rotasiSurat = 0;
+
+    function terapkanRotasiSurat() {
+        var img = document.getElementById('surat-img');
+        if (!img) return;
+        var wrapper = img.parentElement;
+        var miring = Math.abs(rotasiSurat % 180) === 90;
+
+        img.style.transform = 'rotate(' + rotasiSurat + 'deg)';
+        // Saat diputar 90°/270°, lebar dan tinggi gambar tertukar, jadi batas ukurannya ikut ditukar
+        img.style.maxWidth = miring ? '500px' : '';
+        img.style.maxHeight = miring ? wrapper.clientWidth + 'px' : '';
+    }
+
+    function putarSurat(delta) {
+        rotasiSurat = (rotasiSurat + delta) % 360;
+        terapkanRotasiSurat();
+    }
+
+    function resetSurat() {
+        rotasiSurat = 0;
+        terapkanRotasiSurat();
     }
 </script>
 @endsection
