@@ -1,6 +1,17 @@
 @extends('layouts.app')
 
 @section('page-css')
+<style>
+    .rekap-table { border-collapse: separate; border-spacing: 0; }
+    .rekap-table .sticky-no,
+    .rekap-table .sticky-nama { position: sticky; z-index: 2; background-color: #fff; }
+    .rekap-table thead .sticky-no,
+    .rekap-table thead .sticky-nama { z-index: 3; }
+    .rekap-table .sticky-no { left: 0; width: 48px; min-width: 48px; max-width: 48px; }
+    .rekap-table .sticky-nama { left: 48px; min-width: 200px; box-shadow: 2px 0 0 #dee2e6; }
+    .theme-dark .rekap-table .sticky-no,
+    .theme-dark .rekap-table .sticky-nama { background-color: #1e1e2d; }
+</style>
 @endsection
 
 @section('main')
@@ -65,11 +76,11 @@
                 </a>
             </div>
             <div class="card-body table-responsive">
-                <table class="table table-bordered table-sm text-center">
+                <table class="table table-bordered table-sm text-center rekap-table">
                     <thead>
                         <tr>
-                            <th rowspan="2" style="white-space:nowrap">No</th>
-                            <th rowspan="2" class="text-start" style="min-width:180px">Nama Siswa</th>
+                            <th rowspan="2" class="sticky-no" style="white-space:nowrap">No</th>
+                            <th rowspan="2" class="text-start sticky-nama">Nama Siswa</th>
                             <th colspan="{{ $jumlah_hari }}">Tanggal</th>
                             <th rowspan="2" class="table-success">Hadir</th>
                             <th rowspan="2" class="table-warning">Sakit</th>
@@ -89,8 +100,8 @@
                     <tbody>
                         @forelse ($siswa as $i => $s)
                             <tr>
-                                <td>{{ $i + 1 }}</td>
-                                <td class="text-start">
+                                <td class="sticky-no">{{ $i + 1 }}</td>
+                                <td class="text-start sticky-nama">
                                     <a href="#" class="link-primary" data-bs-toggle="modal" data-bs-target="#modalDetailSiswa{{ $s->id_siswa }}">{{ $s->nama_siswa }}</a>
                                 </td>
                                 @for ($d = 1; $d <= $jumlah_hari; $d++)
