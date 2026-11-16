@@ -37,9 +37,9 @@
                             </form>
                         </div>
                         <div class="col-md-8 text-md-end mt-2 mt-md-0">
-                            @foreach ($ringkasan as $tingkat => $r)
+                            @foreach ($ringkasan as $namaTingkat => $r)
                                 <span class="badge {{ $r['total'] && $r['sudah'] === $r['total'] ? 'bg-success' : 'bg-light-secondary text-dark' }} me-1">
-                                    Kelas {{ $tingkat }}: {{ $r['sudah'] }}/{{ $r['total'] }} sudah
+                                    Kelas {{ $namaTingkat }}: {{ $r['sudah'] }}/{{ $r['total'] }} sudah
                                 </span>
                             @endforeach
                         </div>

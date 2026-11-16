@@ -29,8 +29,6 @@ class SetupUjianSoalMenu extends Command
 
     public function handle()
     {
-        $this->setupMonitoring();
-
         $module  = 'ujiansoal';
         $roleId  = $this->option('role-id') ?: self::ROLE_GURU_ID;
 
@@ -48,6 +46,8 @@ class SetupUjianSoalMenu extends Command
             $this->error("Gagal membuat/menemukan menu '{$module}'.");
             return self::FAILURE;
         }
+
+        $this->setupMonitoring($menu);
 
         $role = Role::find($roleId);
         if (! $role) {
@@ -77,24 +77,32 @@ class SetupUjianSoalMenu extends Command
     }
 
     /**
-     * Menu "Monitoring Bank Soal Ujian" (route ujiansoalmonitoring.index) khusus admin.
-     * Menu::createByModule() memberi akses penuh ke Super Admin; di sini ditambah akses baca untuk role Admin.
-     * Role Guru sengaja tidak diberi akses.
+     * Monitoring Bank Soal Ujian (route ujiansoal.monitoring.index).
+     *
+     * Hak akses route ini mengikuti menu "ujiansoal" (AuthorizeRequest membaca segmen pertama
+     * nama route), jadi siapa pun yang punya read di "ujiansoal" - termasuk Guru - bisa membukanya.
+     * Di sini: role Admin diberi read di "ujiansoal" (tanpa show_menu, supaya menu Bank Soal milik
+     * guru tidak muncul di sidebar admin), dan menu sidebar terpisah "ujiansoalmonitoring" yang
+     * menunjuk ke route monitoring ditampilkan untuk Admin.
      */
-    private function setupMonitoring()
+    private function setupMonitoring(Menu $menuUjianSoal)
     {
-        $module = 'ujiansoalmonitoring';
+        $module  = 'ujiansoalmonitoring';
+        $routing = 'ujiansoal.monitoring.index';
 
         $menu = Menu::where('module', $module)->first();
         if (! $menu) {
+            // createByModule() mengambil parent_id dari config laralag.dict.menu_referensi yang bisa kosong;
+            // taruh menu monitoring satu grup dengan menu Bank Soal Ujian.
+            config(['laralag.dict.menu_referensi' => $menuUjianSoal->parent_id]);
             Menu::createByModule($module);
             $menu = Menu::where('module', $module)->first();
-            $menu->menu = 'Monitoring Bank Soal Ujian';
-            $menu->save();
-            $this->info("Menu '{$module}' dibuat (akses penuh otomatis ke role Super Admin).");
-        } else {
-            $this->info("Menu '{$module}' sudah ada, lanjut cek privilege.");
+            $this->info("Menu sidebar '{$module}' dibuat.");
         }
+        $menu->menu    = 'Monitoring Bank Soal Ujian';
+        $menu->routing = $routing;
+        $menu->save();
+        $this->info("Menu sidebar '{$module}' menunjuk ke route '{$routing}'.");
 
         $admin = Role::where('role', 'Admin')->first();
         if (! $admin) {
@@ -102,21 +110,36 @@ class SetupUjianSoalMenu extends Command
             return;
         }
 
-        $priv = Privilege::where('id_menu', $menu->id)->where('id_role', $admin->id)->first();
+        // Tampilkan menu monitoring di sidebar admin
+        $privMenu = $this->privilegeFor($menu, $admin);
+        $privMenu->read      = 1;
+        $privMenu->show      = 1;
+        $privMenu->show_menu = 1;
+        $privMenu->save();
+
+        // Izin membuka route ujiansoal.monitoring.index
+        $privAkses = $this->privilegeFor($menuUjianSoal, $admin);
+        $privAkses->read = 1;
+        $privAkses->save();
+
+        $this->info("Role 'Admin' bisa membuka monitoring (read di 'ujiansoal', menu '{$module}' tampil di sidebar).");
+    }
+
+    private function privilegeFor(Menu $menu, Role $role)
+    {
+        $priv = Privilege::where('id_menu', $menu->id)->where('id_role', $role->id)->first();
         if (! $priv) {
-            $priv          = new Privilege();
-            $priv->id_menu = $menu->id;
-            $priv->id_role = $admin->id;
-            $priv->create  = 0;
-            $priv->update  = 0;
-            $priv->delete  = 0;
+            $priv            = new Privilege();
+            $priv->id_menu   = $menu->id;
+            $priv->id_role   = $role->id;
+            $priv->create    = 0;
+            $priv->read      = 0;
+            $priv->show      = 0;
+            $priv->update    = 0;
+            $priv->delete    = 0;
+            $priv->show_menu = 0;
         }
 
-        $priv->read      = 1;
-        $priv->show      = 1;
-        $priv->show_menu = 1;
-        $priv->save();
-
-        $this->info("Role 'Admin' diberi akses baca ke menu '{$module}'.");
+        return $priv;
     }
 }

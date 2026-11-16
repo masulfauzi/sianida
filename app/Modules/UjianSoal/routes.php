@@ -20,8 +20,9 @@ Route::controller(UjianBankSoalController::class)->middleware(['web', 'auth'])->
     Route::get('/ujian-bank-soal/{bankSoal}/export', 'export')->name('export.index');
 });
 
-// Monitoring untuk admin, sengaja memakai prefix nama route sendiri (menu "ujiansoalmonitoring")
-// supaya hak aksesnya terpisah dari menu "ujiansoal" yang dimiliki guru.
+// Monitoring upload bank soal. Hak aksesnya mengikuti menu "ujiansoal" (read), jadi Guru juga bisa
+// membukanya; Admin diberi read di "ujiansoal" + menu sidebar "ujiansoalmonitoring" oleh
+// command ujiansoal:setup-menu.
 Route::get('/ujian-bank-soal-monitoring', [UjianBankSoalController::class, 'monitoring'])
     ->middleware(['web', 'auth'])
     ->name('ujiansoal.monitoring.index');
