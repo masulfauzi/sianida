@@ -29,7 +29,7 @@
                 <div class="card-body">
                     <div class="row align-items-center mb-3">
                         <div class="col-md-4">
-                            <form action="{{ route('ujiansoalmonitoring.index') }}" method="get">
+                            <form action="{{ route('ujiansoal.monitoring.index') }}" method="get">
                                 <div class="form-group has-icon-left position-relative mb-0">
                                     <input type="text" class="form-control" value="{{ $search }}" name="search" placeholder="Cari mapel">
                                     <div class="form-control-icon"><i class="fa fa-search"></i></div>
