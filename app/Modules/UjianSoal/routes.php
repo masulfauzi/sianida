@@ -24,7 +24,7 @@ Route::controller(UjianBankSoalController::class)->middleware(['web', 'auth'])->
 // supaya hak aksesnya terpisah dari menu "ujiansoal" yang dimiliki guru.
 Route::get('/ujian-bank-soal-monitoring', [UjianBankSoalController::class, 'monitoring'])
     ->middleware(['web', 'auth'])
-    ->name('ujiansoalmonitoring.index');
+    ->name('ujiansoal.monitoring.index');
 
 Route::controller(UjianSoalController::class)->middleware(['web', 'auth'])->name('ujiansoal.soal.')->group(function () {
     Route::get('/ujian-bank-soal/{bankSoal}/soal', 'index')->name('index');
