@@ -20,6 +20,12 @@ Route::controller(UjianBankSoalController::class)->middleware(['web', 'auth'])->
     Route::get('/ujian-bank-soal/{bankSoal}/export', 'export')->name('export.index');
 });
 
+// Monitoring untuk admin, sengaja memakai prefix nama route sendiri (menu "ujiansoalmonitoring")
+// supaya hak aksesnya terpisah dari menu "ujiansoal" yang dimiliki guru.
+Route::get('/ujian-bank-soal-monitoring', [UjianBankSoalController::class, 'monitoring'])
+    ->middleware(['web', 'auth'])
+    ->name('ujiansoalmonitoring.index');
+
 Route::controller(UjianSoalController::class)->middleware(['web', 'auth'])->name('ujiansoal.soal.')->group(function () {
     Route::get('/ujian-bank-soal/{bankSoal}/soal', 'index')->name('index');
     Route::get('/ujian-bank-soal/{bankSoal}/soal/create', 'create')->name('create');
