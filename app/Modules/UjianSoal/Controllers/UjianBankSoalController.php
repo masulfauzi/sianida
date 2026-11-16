@@ -3,6 +3,7 @@ namespace App\Modules\UjianSoal\Controllers;
 
 use App\Helpers\Logger;
 use App\Http\Controllers\Controller;
+use App\Modules\Jurusan\Models\Jurusan;
 use App\Modules\Log\Models\Log;
 use App\Modules\Mapel\Models\Mapel;
 use App\Modules\Tingkat\Models\Tingkat;
@@ -45,7 +46,7 @@ class UjianBankSoalController extends Controller
             $query->where('nama_bank_soal', 'like', "%$search%");
         }
 
-        $data['data'] = $query->with(['mapel', 'tingkat'])->orderByDesc('created_at')->paginate(10)->withQueryString();
+        $data['data'] = $query->with(['mapel', 'tingkat', 'jurusan'])->orderByDesc('created_at')->paginate(10)->withQueryString();
 
         $this->log($request, 'melihat halaman manajemen data ' . $this->title);
         return view('UjianSoal::ujian_bank_soal', array_merge($data, ['title' => $this->title]));
@@ -55,11 +56,13 @@ class UjianBankSoalController extends Controller
     {
         $ref_mapel   = Mapel::all()->sortBy('mapel')->pluck('mapel', 'id');
         $ref_tingkat = $this->refTingkat();
+        $ref_jurusan = $this->refJurusan();
 
         $data['forms'] = [
             'nama_bank_soal' => ['Nama Bank Soal', Form::text("nama_bank_soal", old("nama_bank_soal"), ["class" => "form-control", "placeholder" => "mis. PAS Matematika X Ganjil 2026"])],
             'id_mapel'       => ['Mapel', Form::select("id_mapel", $ref_mapel, old("id_mapel"), ["class" => "form-control select2"])],
             'id_tingkat'     => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, old("id_tingkat"), ["class" => "form-control", "placeholder" => "-- Pilih Tingkat --"])],
+            'id_jurusan'     => ['Jurusan', Form::select("id_jurusan", $ref_jurusan, old("id_jurusan"), ["class" => "form-control", "placeholder" => "-- Pilih Jurusan --"])],
             'deskripsi'      => ['Deskripsi', Form::textarea("deskripsi", old("deskripsi"), ["class" => "form-control"])],
         ];
 
@@ -75,6 +78,7 @@ class UjianBankSoalController extends Controller
         $bankSoal->nama_bank_soal = $request->input('nama_bank_soal');
         $bankSoal->id_mapel       = $request->input('id_mapel');
         $bankSoal->id_tingkat     = $request->input('id_tingkat');
+        $bankSoal->id_jurusan     = $request->input('id_jurusan');
         $bankSoal->id_semester    = get_semester('active_semester_id');
         $bankSoal->deskripsi      = $request->input('deskripsi');
         $bankSoal->id_guru        = session('id_guru');
@@ -94,12 +98,14 @@ class UjianBankSoalController extends Controller
 
         $ref_mapel   = Mapel::all()->sortBy('mapel')->pluck('mapel', 'id');
         $ref_tingkat = $this->refTingkat();
+        $ref_jurusan = $this->refJurusan();
 
         $data['bankSoal'] = $bankSoal;
         $data['forms']    = [
             'nama_bank_soal' => ['Nama Bank Soal', Form::text("nama_bank_soal", $bankSoal->nama_bank_soal, ["class" => "form-control"])],
             'id_mapel'       => ['Mapel', Form::select("id_mapel", $ref_mapel, $bankSoal->id_mapel, ["class" => "form-control select2"])],
             'id_tingkat'     => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, old("id_tingkat", $bankSoal->id_tingkat), ["class" => "form-control", "placeholder" => "-- Pilih Tingkat --"])],
+            'id_jurusan'     => ['Jurusan', Form::select("id_jurusan", $ref_jurusan, old("id_jurusan", $bankSoal->id_jurusan), ["class" => "form-control", "placeholder" => "-- Pilih Jurusan --"])],
             'deskripsi'      => ['Deskripsi', Form::textarea("deskripsi", $bankSoal->deskripsi, ["class" => "form-control"])],
         ];
 
@@ -117,6 +123,7 @@ class UjianBankSoalController extends Controller
         $bankSoal->nama_bank_soal = $request->input('nama_bank_soal');
         $bankSoal->id_mapel       = $request->input('id_mapel');
         $bankSoal->id_tingkat     = $request->input('id_tingkat');
+        $bankSoal->id_jurusan     = $request->input('id_jurusan');
         $bankSoal->deskripsi      = $request->input('deskripsi');
         // Bank soal lama (sebelum ada kolom semester) diisi semester aktif saat pertama kali diedit
         $bankSoal->id_semester    = $bankSoal->id_semester ?: get_semester('active_semester_id');
@@ -167,6 +174,7 @@ class UjianBankSoalController extends Controller
                 $join->on('s.id_bank_soal', '=', 'b.id')->whereNull('s.deleted_at');
             })
             ->leftJoin('guru as g', 'b.id_guru', '=', 'g.id')
+            ->leftJoin('jurusan as j', 'b.id_jurusan', '=', 'j.id')
             ->where('b.id_semester', $idSemester)
             ->whereNotNull('b.id_tingkat')
             ->whereNotNull('b.id_mapel')
@@ -178,7 +186,11 @@ class UjianBankSoalController extends Controller
                 DB::raw('COUNT(DISTINCT b.id) as jumlah_bank'),
                 DB::raw('COUNT(s.id) as jumlah_soal'),
                 DB::raw('GROUP_CONCAT(DISTINCT g.nama ORDER BY g.nama SEPARATOR ", ") as nama_guru'),
+                DB::raw('GROUP_CONCAT(DISTINCT j.jurusan ORDER BY j.jurusan SEPARATOR "||") as nama_jurusan'),
             ])
+            ->each(function ($r) {
+                $r->jurusan = $r->nama_jurusan ? explode('||', $r->nama_jurusan) : [];
+            })
             ->keyBy(fn ($r) => $r->id_mapel . '|' . $r->id_tingkat);
 
         $namaMapel = $diajarkan->pluck('mapel', 'id_mapel')
@@ -229,12 +241,23 @@ class UjianBankSoalController extends Controller
             ->pluck('tingkat', 'id');
     }
 
+    /**
+     * "Semua Jurusan" (untuk mapel umum) ditaruh paling atas, sisanya urut nama.
+     */
+    private function refJurusan()
+    {
+        return Jurusan::all()
+            ->sortBy(fn ($j) => ($j->jurusan === 'Semua Jurusan' ? '0' : '1') . $j->jurusan)
+            ->pluck('jurusan', 'id');
+    }
+
     private function rules()
     {
         return [
             'nama_bank_soal' => 'required|string|max:255',
             'id_mapel'       => 'nullable|exists:mapel,id',
             'id_tingkat'     => 'required|exists:tingkat,id',
+            'id_jurusan'     => 'required|exists:jurusan,id',
             'deskripsi'      => 'nullable|string',
         ];
     }

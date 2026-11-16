@@ -50,6 +50,7 @@
                                     <td>Nama Bank Soal</td>
                                     <td>Mapel</td>
                                     <td>Tingkat</td>
+                                    <td>Jurusan</td>
                                     <td>Jumlah Soal</td>
                                     <td>Status</td>
                                     <th width="30%">Aksi</th>
@@ -67,6 +68,13 @@
                                                 {{ $item->tingkat->tingkat }}
                                             @else
                                                 <span class="badge bg-warning text-dark" title="Edit bank soal untuk mengisi tingkat">Belum diisi</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($item->jurusan)
+                                                {{ $item->jurusan->jurusan }}
+                                            @else
+                                                <span class="badge bg-warning text-dark" title="Edit bank soal untuk mengisi jurusan">Belum diisi</span>
                                             @endif
                                         </td>
                                         <td>{{ $item->soal()->count() }}</td>
@@ -91,7 +99,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center"><i>No data.</i></td>
+                                        <td colspan="8" class="text-center"><i>No data.</i></td>
                                     </tr>
                                 @endforelse
                             </tbody>

@@ -69,6 +69,13 @@
                                                        title="{{ $sel['detail']->jumlah_soal }} soal oleh {{ $sel['detail']->nama_guru ?: '-' }}"></i>
                                                     <div class="small text-muted">
                                                         {{ $sel['detail']->jumlah_soal }} soal
+                                                        @if (count($sel['detail']->jurusan))
+                                                            <div class="my-1">
+                                                                @foreach ($sel['detail']->jurusan as $namaJurusan)
+                                                                    <span class="badge bg-light-primary text-wrap mb-1">{{ $namaJurusan }}</span>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
                                                         @if ($sel['detail']->nama_guru)
                                                             <br>{{ $sel['detail']->nama_guru }}
                                                         @endif
@@ -91,7 +98,8 @@
                     </div>
 
                     <div class="small text-muted mt-2">
-                        <i class="fa fa-check-circle text-success"></i> Sudah ada bank soal berisi minimal 1 soal &nbsp;
+                        <i class="fa fa-check-circle text-success"></i> Sudah ada bank soal berisi minimal 1 soal
+                        (<span class="badge bg-light-primary">label</span> = jurusan yang sudah upload) &nbsp;
                         <i class="fa fa-times-circle text-danger"></i> Belum ada soal &nbsp;
                         <span>&ndash;</span> Mapel tidak diajarkan di tingkat tersebut
                     </div>

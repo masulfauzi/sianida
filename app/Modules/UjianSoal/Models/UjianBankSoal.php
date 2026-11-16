@@ -3,6 +3,7 @@ namespace App\Modules\UjianSoal\Models;
 
 use App\Helpers\UsesUuid;
 use App\Modules\Guru\Models\Guru;
+use App\Modules\Jurusan\Models\Jurusan;
 use App\Modules\Mapel\Models\Mapel;
 use App\Modules\Semester\Models\Semester;
 use App\Modules\Tingkat\Models\Tingkat;
@@ -31,6 +32,11 @@ class UjianBankSoal extends Model
     public function tingkat()
     {
         return $this->belongsTo(Tingkat::class, 'id_tingkat', 'id');
+    }
+
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class, 'id_jurusan', 'id');
     }
 
     public function semester()
