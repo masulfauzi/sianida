@@ -71,6 +71,7 @@
                                         </td>
                                         <td>
                                             {!! button('ujiansoal.soal.index', 'Soal', $item->id) !!}
+                                            {!! button('ujiansoal.soal.preview.show', 'Pratinjau', $item->id) !!}
                                             {!! button('ujiansoal.edit', '', $item->id) !!}
                                             @if ($item->status !== 'final')
                                                 {!! button('ujiansoal.final.update', 'Final', $item->id) !!}

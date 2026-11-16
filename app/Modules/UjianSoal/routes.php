@@ -23,6 +23,7 @@ Route::controller(UjianBankSoalController::class)->middleware(['web', 'auth'])->
 Route::controller(UjianSoalController::class)->middleware(['web', 'auth'])->name('ujiansoal.soal.')->group(function () {
     Route::get('/ujian-bank-soal/{bankSoal}/soal', 'index')->name('index');
     Route::get('/ujian-bank-soal/{bankSoal}/soal/create', 'create')->name('create');
+    Route::get('/ujian-bank-soal/{bankSoal}/soal/preview', 'preview')->name('preview.show');
     Route::post('/ujian-bank-soal/{bankSoal}/soal', 'store')->name('store');
     Route::get('/ujian-bank-soal/{bankSoal}/soal/{soal}/edit', 'edit')->name('edit');
     Route::patch('/ujian-bank-soal/{bankSoal}/soal/{soal}', 'update')->name('update');

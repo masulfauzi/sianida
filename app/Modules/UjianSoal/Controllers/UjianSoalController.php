@@ -50,6 +50,23 @@ class UjianSoalController extends Controller
         return view('UjianSoal::ujian_soal', array_merge($data, ['title' => $this->title]));
     }
 
+    /**
+     * Pratinjau soal dengan tampilan yang meniru halaman pengerjaan siswa di aplikasi ujian.
+     */
+    public function preview(Request $request, UjianBankSoal $bankSoal)
+    {
+        $this->authorizeOwner($bankSoal);
+
+        $data['bankSoal'] = $bankSoal->load('mapel');
+        $data['data']     = $bankSoal->soal()->get();
+
+        $no = (int) $request->query('no');
+        $data['startIndex'] = max(0, (int) $data['data']->search(fn ($s) => (int) $s->no_soal === $no));
+
+        $this->log($request, 'melihat pratinjau soal', ['ujian_bank_soal.id' => $bankSoal->id]);
+        return view('UjianSoal::ujian_soal_preview', array_merge($data, ['title' => $this->title]));
+    }
+
     public function create(Request $request, UjianBankSoal $bankSoal)
     {
         $this->authorizeOwner($bankSoal);

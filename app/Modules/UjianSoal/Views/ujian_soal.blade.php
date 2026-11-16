@@ -33,6 +33,11 @@
                         <a href="{{ route('ujiansoal.index') }}" class="btn btn-sm btn-secondary">
                             <i class="fa fa-arrow-left"></i> Kembali ke Bank Soal
                         </a>
+                        @if ($data->isNotEmpty() && can('ujiansoal.soal.preview.show'))
+                            <a href="{{ route('ujiansoal.soal.preview.show', $bankSoal->id) }}" class="btn btn-sm btn-info">
+                                <i class="fa fa-eye"></i> Pratinjau Soal
+                            </a>
+                        @endif
                     </div>
                     <div class="col-3">
                         {!! button('ujiansoal.soal.create', 'Soal', $bankSoal->id) !!}
@@ -65,6 +70,11 @@
                                     <td>{{ \Illuminate\Support\Str::limit(strip_tags($item->soal), 80) }}</td>
                                     <td>{{ $item->kunci }}</td>
                                     <td>
+                                        @if (can('ujiansoal.soal.preview.show'))
+                                            <a href="{{ route('ujiansoal.soal.preview.show', [$bankSoal->id, 'no' => $item->no_soal]) }}" class="btn btn-sm icon btn-outline-info" title="Pratinjau soal ini">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        @endif
                                         {!! button('ujiansoal.soal.edit', '', [$bankSoal->id, $item->id]) !!}
                                         {!! button('ujiansoal.soal.destroy', 'Soal', [$bankSoal->id, $item->id]) !!}
                                     </td>
