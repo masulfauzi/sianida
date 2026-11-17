@@ -8,6 +8,7 @@ use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Presensi extends Model
 {
@@ -31,6 +32,78 @@ class Presensi extends Model
     public function statuskehadiran()
     {
         return $this->belongsTo(Statuskehadiran::class, "id_statuskehadiran", "id");
+    }
+
+    /**
+     * Peta status presensi harian (kode pendek) -> status presensi jurnal.
+     * Terlambat datang ke sekolah tetap dianggap hadir di jam pelajaran.
+     */
+    public const PETA_STATUS_HARIAN = ['H' => 'H', 'T' => 'H', 'S' => 'S', 'I' => 'I', 'A' => 'A'];
+
+    /** Status jurnal untuk siswa yang belum punya presensi harian pada tanggal tsb. */
+    public const STATUS_TANPA_PRESENSI_HARIAN = 'A';
+
+    /**
+     * Buat presensi jurnal untuk seluruh peserta didik kelas, dengan status
+     * mengikuti presensi harian siswa pada tanggal pembelajaran.
+     *
+     * @return int jumlah baris presensi yang dibuat
+     */
+    public static function buatDariPresensiHarian(
+        string $idJurnal,
+        string $idKelas,
+        string $idSemester,
+        string $tgl,
+        ?string $createdBy = null,
+        bool $kecualikanMagang = false
+    ): int {
+        $idStatus = DB::table('statuskehadiran')
+            ->whereNull('deleted_at')
+            ->pluck('id', 'status_kehadiran_pendek');
+
+        $pesertadidik = DB::table('pesertadidik')
+            ->where('id_kelas', $idKelas)
+            ->where('id_semester', $idSemester)
+            ->whereNull('deleted_at')
+            ->when($kecualikanMagang, fn ($q) => $q->where('is_magang', '0'))
+            ->get(['id', 'id_siswa']);
+
+        if ($pesertadidik->isEmpty()) {
+            return 0;
+        }
+
+        // Rekaman terbaru menang (approve ijin bisa membuat lebih dari satu baris per hari).
+        $statusHarian = DB::table('presensi_harian as ph')
+            ->join('statuskehadiran as sk', 'ph.id_status_kehadiran', '=', 'sk.id')
+            ->whereIn('ph.id_siswa', $pesertadidik->pluck('id_siswa')->filter()->unique()->values())
+            ->whereDate('ph.tgl', $tgl)
+            ->whereNull('ph.deleted_at')
+            ->orderBy('ph.created_at')
+            ->get(['ph.id_siswa', 'sk.status_kehadiran_pendek'])
+            ->pluck('status_kehadiran_pendek', 'id_siswa');
+
+        $now  = now()->toDateTimeString();
+        $rows = [];
+        foreach ($pesertadidik as $pd) {
+            $kodeHarian = $statusHarian[$pd->id_siswa] ?? null;
+            $kodeJurnal = self::PETA_STATUS_HARIAN[$kodeHarian] ?? self::STATUS_TANPA_PRESENSI_HARIAN;
+
+            $rows[] = [
+                'id'                 => (string) Str::uuid(),
+                'id_jurnal'          => $idJurnal,
+                'id_pesertadidik'    => $pd->id,
+                'id_statuskehadiran' => $idStatus[$kodeJurnal] ?? null,
+                'created_by'         => $createdBy,
+                'created_at'         => $now,
+                'updated_at'         => $now,
+            ];
+        }
+
+        foreach (array_chunk($rows, 500) as $chunk) {
+            DB::table('presensi')->insert($chunk);
+        }
+
+        return count($rows);
     }
 
     public static function get_presensi_by_idjurnal($id_jurnal)

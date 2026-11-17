@@ -51,7 +51,7 @@ class PresensiController extends Controller
         if ($data_siswa->count() == 0) {
             //dd("sampe sini");
 
-            $this->insert_presensi_by_idkelas($jurnal->id_kelas, $jurnal->id, get_semester('active_semester_id'));
+            $this->insert_presensi_by_idkelas($jurnal->id_kelas, $jurnal->id, get_semester('active_semester_id'), $jurnal->tgl_pembelajaran);
         }
 
         $data['siswa']  = Presensi::get_presensi_by_idjurnal($jurnal->id);
@@ -77,22 +77,17 @@ class PresensiController extends Controller
         return redirect()->route('presensi.jurnal.index', $request->get('id_jurnal'))->with('message_success', 'Presensi berhasil disimpan!');
     }
 
-    public function insert_presensi_by_idkelas($id_kelas, $id_jurnal, $id_semester)
+    public function insert_presensi_by_idkelas($id_kelas, $id_jurnal, $id_semester, $tgl)
     {
-        $siswa = Pesertadidik::get_pd_by_idkelas($id_kelas, $id_semester);
-
-        foreach ($siswa as $data) {
-            $data_presensi = [
-                'id'                 => Str::uuid(),
-                'id_jurnal'          => $id_jurnal,
-                'id_pesertadidik'    => $data->id,
-                'id_statuskehadiran' => '5cb7e9bc-79dc-4deb-8bd2-77930dbca9a3',
-                'created_by'         => Auth::id(),
-                'created_at'         => Carbon::now()->toDateTimeString(),
-            ];
-
-            Presensi::insert_presensi($data_presensi);
-        }
+        // Status awal mengikuti presensi harian siswa pada tanggal pembelajaran.
+        Presensi::buatDariPresensiHarian(
+            $id_jurnal,
+            $id_kelas,
+            $id_semester,
+            Carbon::parse($tgl)->toDateString(),
+            Auth::id(),
+            true
+        );
     }
 
     public function create(Request $request)

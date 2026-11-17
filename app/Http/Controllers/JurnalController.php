@@ -2,10 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Modules\Jurnal\Models\Jurnal;
-use App\Modules\Pesertadidik\Models\Pesertadidik;
 use App\Modules\Presensi\Models\Presensi;
 use App\Modules\Semester\Models\Semester;
-use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -94,21 +92,22 @@ class JurnalController extends Controller
                 ], 404);
             }
 
-            $pesertadidik = Pesertadidik::where('id_kelas', $request->input('id_kelas'))->where('id_semester', $semesterAktif->id)->get();
-            // dd($pesertadidik->count());
-            $statuskehadiran = Statuskehadiran::where('status_kehadiran_pendek', 'H')->first();
-
             $data['id_semester'] = $semesterAktif->id;
 
-            $jurnal = Jurnal::create($data);
+            // Presensi jurnal mengikuti presensi harian siswa pada tanggal pembelajaran.
+            $jurnal = DB::transaction(function () use ($data, $semesterAktif, $request) {
+                $jurnal = Jurnal::create($data);
 
-            foreach ($pesertadidik as $pd) {
-                Presensi::create([
-                    'id_jurnal'          => $jurnal->id,
-                    'id_pesertadidik'    => $pd->id,
-                    'id_statuskehadiran' => $statuskehadiran->id,
-                ]);
-            }
+                Presensi::buatDariPresensiHarian(
+                    $jurnal->id,
+                    $jurnal->id_kelas,
+                    $semesterAktif->id,
+                    date('Y-m-d', strtotime($jurnal->tgl_pembelajaran)),
+                    optional($request->user())->id
+                );
+
+                return $jurnal;
+            });
 
             return response()->json([
                 'success' => true,
