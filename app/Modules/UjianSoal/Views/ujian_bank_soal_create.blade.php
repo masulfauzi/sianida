@@ -26,7 +26,7 @@
             </h6>
             <div class="card-body">
                 @include('include.flash')
-                <form class="form form-horizontal" action="{{ route('ujiansoal.store') }}" method="POST">
+                <form class="form form-horizontal" action="{{ route('ujiansoal.store') }}" method="POST" enctype="multipart/form-data">
                     <div class="form-body">
                         @csrf
                         @foreach ($forms as $key => $value)
@@ -36,6 +36,9 @@
                                 </div>
                                 <div class="col-md-9 form-group">
                                     {{ $value[1] }}
+                                    @isset($value[2])
+                                        <small class="text-muted d-block mt-1">{{ $value[2] }}</small>
+                                    @endisset
                                     @error($key)
                                         <div class="text-danger">
                                             {{ $message }}

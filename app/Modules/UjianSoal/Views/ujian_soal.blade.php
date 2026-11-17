@@ -45,6 +45,20 @@
                 </div>
                 @include('include.flash')
 
+                @if (! $bankSoal->file_kisi_kisi)
+                    <div class="alert alert-warning d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <span><i class="fa fa-exclamation-triangle"></i> Kisi-kisi belum diunggah. Soal baru bisa diinput setelah kisi-kisi diunggah.</span>
+                        <a href="{{ route('ujiansoal.edit', $bankSoal->id) }}" class="btn btn-sm btn-warning">
+                            <i class="fa fa-upload"></i> Unggah Kisi-kisi
+                        </a>
+                    </div>
+                @else
+                    <p class="mb-2">
+                        <i class="fa fa-file-alt"></i> Kisi-kisi:
+                        <a href="{{ asset(\App\Modules\UjianSoal\Controllers\UjianBankSoalController::FOLDER_KISI_KISI . '/' . $bankSoal->file_kisi_kisi) }}" target="_blank">Lihat kisi-kisi</a>
+                    </p>
+                @endif
+
                 @if ($bankSoal->status === 'final')
                     <div class="alert alert-info">
                         Bank soal ini sudah <b>final</b>. Soal masih bisa diubah, tapi export perlu diulang kalau ada perubahan.

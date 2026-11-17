@@ -13,6 +13,7 @@ use Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
@@ -23,6 +24,8 @@ class UjianBankSoalController extends Controller
     use Logger;
     protected $log;
     protected $title = "Bank Soal Ujian";
+
+    public const FOLDER_KISI_KISI = 'uploads/kisi_kisi_ujian';
 
     public function __construct(Log $log)
     {
@@ -64,6 +67,7 @@ class UjianBankSoalController extends Controller
             'id_tingkat'     => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, old("id_tingkat"), ["class" => "form-control", "placeholder" => "-- Pilih Tingkat --"])],
             'id_jurusan'     => ['Jurusan', Form::select("id_jurusan", $ref_jurusan, old("id_jurusan"), ["class" => "form-control", "placeholder" => "-- Pilih Jurusan --"])],
             'deskripsi'      => ['Deskripsi', Form::textarea("deskripsi", old("deskripsi"), ["class" => "form-control"])],
+            'file_kisi_kisi' => ['Kisi-kisi', $this->inputKisiKisi(), 'Wajib. Format PDF, Word, atau Excel, maksimal 10 MB.'],
         ];
 
         $this->log($request, 'membuka form tambah ' . $this->title);
@@ -72,7 +76,7 @@ class UjianBankSoalController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, $this->rules());
+        $this->validate($request, $this->rules(), $this->pesanValidasi());
 
         $bankSoal                 = new UjianBankSoal();
         $bankSoal->nama_bank_soal = $request->input('nama_bank_soal');
@@ -83,6 +87,7 @@ class UjianBankSoalController extends Controller
         $bankSoal->deskripsi      = $request->input('deskripsi');
         $bankSoal->id_guru        = session('id_guru');
         $bankSoal->status         = 'draft';
+        $this->simpanKisiKisi($request, $bankSoal);
 
         $bankSoal->created_by = Auth::id();
         $bankSoal->save();
@@ -107,6 +112,9 @@ class UjianBankSoalController extends Controller
             'id_tingkat'     => ['Tingkat', Form::select("id_tingkat", $ref_tingkat, old("id_tingkat", $bankSoal->id_tingkat), ["class" => "form-control", "placeholder" => "-- Pilih Tingkat --"])],
             'id_jurusan'     => ['Jurusan', Form::select("id_jurusan", $ref_jurusan, old("id_jurusan", $bankSoal->id_jurusan), ["class" => "form-control", "placeholder" => "-- Pilih Jurusan --"])],
             'deskripsi'      => ['Deskripsi', Form::textarea("deskripsi", $bankSoal->deskripsi, ["class" => "form-control"])],
+            'file_kisi_kisi' => ['Kisi-kisi', $this->inputKisiKisi(), $bankSoal->file_kisi_kisi
+                ? new HtmlString('File saat ini: <a href="' . e($this->urlKisiKisi($bankSoal->file_kisi_kisi)) . '" target="_blank">' . e($bankSoal->file_kisi_kisi) . '</a>. Biarkan kosong jika tidak diganti.')
+                : new HtmlString('<span class="text-danger">Kisi-kisi belum diunggah. Wajib diunggah sebelum menginput soal.</span>')],
         ];
 
         $text = 'membuka form edit ' . $this->title;
@@ -118,7 +126,7 @@ class UjianBankSoalController extends Controller
     {
         $this->authorizeOwner($bankSoal);
 
-        $this->validate($request, $this->rules());
+        $this->validate($request, $this->rules($bankSoal), $this->pesanValidasi());
 
         $bankSoal->nama_bank_soal = $request->input('nama_bank_soal');
         $bankSoal->id_mapel       = $request->input('id_mapel');
@@ -127,6 +135,7 @@ class UjianBankSoalController extends Controller
         $bankSoal->deskripsi      = $request->input('deskripsi');
         // Bank soal lama (sebelum ada kolom semester) diisi semester aktif saat pertama kali diedit
         $bankSoal->id_semester    = $bankSoal->id_semester ?: get_semester('active_semester_id');
+        $this->simpanKisiKisi($request, $bankSoal);
 
         $bankSoal->updated_by = Auth::id();
         $bankSoal->save();
@@ -251,15 +260,66 @@ class UjianBankSoalController extends Controller
             ->pluck('jurusan', 'id');
     }
 
-    private function rules()
+    /**
+     * Kisi-kisi wajib saat membuat bank soal, dan saat mengedit bank soal yang belum punya kisi-kisi.
+     */
+    private function rules(?UjianBankSoal $bankSoal = null)
     {
+        $kisiWajib = ! $bankSoal || ! $bankSoal->file_kisi_kisi;
+
         return [
             'nama_bank_soal' => 'required|string|max:255',
             'id_mapel'       => 'nullable|exists:mapel,id',
             'id_tingkat'     => 'required|exists:tingkat,id',
             'id_jurusan'     => 'required|exists:jurusan,id',
             'deskripsi'      => 'nullable|string',
+            'file_kisi_kisi' => [$kisiWajib ? 'required' : 'nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx', 'max:10240'],
         ];
+    }
+
+    private function pesanValidasi()
+    {
+        return [
+            'file_kisi_kisi.required' => 'Kisi-kisi wajib diunggah.',
+            'file_kisi_kisi.mimes'    => 'Kisi-kisi harus berupa file PDF, Word (doc/docx), atau Excel (xls/xlsx).',
+            'file_kisi_kisi.max'      => 'Ukuran file kisi-kisi maksimal 10 MB.',
+        ];
+    }
+
+    private function inputKisiKisi()
+    {
+        return Form::file('file_kisi_kisi', ['class' => 'form-control', 'accept' => '.pdf,.doc,.docx,.xls,.xlsx']);
+    }
+
+    private function urlKisiKisi(string $file)
+    {
+        return asset(self::FOLDER_KISI_KISI . '/' . $file);
+    }
+
+    /**
+     * Pindahkan file kisi-kisi yang diunggah ke public/uploads/kisi_kisi_ujian (pola sama dengan Soal TKA),
+     * hapus file lama bila diganti. Tidak melakukan apa pun jika tidak ada file yang diunggah.
+     */
+    private function simpanKisiKisi(Request $request, UjianBankSoal $bankSoal)
+    {
+        if (! $request->hasFile('file_kisi_kisi')) {
+            return;
+        }
+
+        $folder = public_path(self::FOLDER_KISI_KISI);
+        if (! file_exists($folder)) {
+            mkdir($folder, 0777, true);
+        }
+
+        $file     = $request->file('file_kisi_kisi');
+        $namaFile = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . strtolower($file->getClientOriginalExtension());
+        $file->move($folder, $namaFile);
+
+        if ($bankSoal->file_kisi_kisi && file_exists($folder . '/' . $bankSoal->file_kisi_kisi)) {
+            @unlink($folder . '/' . $bankSoal->file_kisi_kisi);
+        }
+
+        $bankSoal->file_kisi_kisi = $namaFile;
     }
 
     /**
@@ -271,7 +331,7 @@ class UjianBankSoalController extends Controller
         $this->authorizeOwner($bankSoal);
 
         if ($bankSoal->soal()->count() === 0) {
-            return back()->with('message_error', 'Bank soal belum punya soal, tidak bisa dijadikan final.');
+            return back()->with('message_danger', 'Bank soal belum punya soal, tidak bisa dijadikan final.');
         }
 
         $bankSoal->status     = 'final';

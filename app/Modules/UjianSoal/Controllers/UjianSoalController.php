@@ -33,6 +33,20 @@ class UjianSoalController extends Controller
         abort_unless($bankSoal->id_guru === session('id_guru'), 403, 'Anda tidak berhak mengakses bank soal ini.');
     }
 
+    /**
+     * Soal baru hanya boleh diinput setelah kisi-kisi bank soal diunggah.
+     * Mengembalikan redirect ke form edit bank soal bila belum ada, atau null bila sudah.
+     */
+    private function pastikanKisiKisi(UjianBankSoal $bankSoal)
+    {
+        if ($bankSoal->file_kisi_kisi) {
+            return null;
+        }
+
+        return redirect()->route('ujiansoal.edit', $bankSoal->id)
+            ->with('message_danger', 'Unggah kisi-kisi terlebih dahulu sebelum menginput soal.');
+    }
+
     private function authorizeSoal(UjianBankSoal $bankSoal, UjianSoal $soal)
     {
         $this->authorizeOwner($bankSoal);
@@ -70,6 +84,9 @@ class UjianSoalController extends Controller
     public function create(Request $request, UjianBankSoal $bankSoal)
     {
         $this->authorizeOwner($bankSoal);
+        if ($redirect = $this->pastikanKisiKisi($bankSoal)) {
+            return $redirect;
+        }
 
         $data['bankSoal']   = $bankSoal;
         $data['soal']       = null;
@@ -82,6 +99,9 @@ class UjianSoalController extends Controller
     public function store(Request $request, UjianBankSoal $bankSoal)
     {
         $this->authorizeOwner($bankSoal);
+        if ($redirect = $this->pastikanKisiKisi($bankSoal)) {
+            return $redirect;
+        }
 
         $data = $this->validateSoal($request, $bankSoal);
 

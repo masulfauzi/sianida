@@ -51,6 +51,7 @@
                                     <td>Mapel</td>
                                     <td>Tingkat</td>
                                     <td>Jurusan</td>
+                                    <td>Kisi-kisi</td>
                                     <td>Jumlah Soal</td>
                                     <td>Status</td>
                                     <th width="30%">Aksi</th>
@@ -77,6 +78,15 @@
                                                 <span class="badge bg-warning text-dark" title="Edit bank soal untuk mengisi jurusan">Belum diisi</span>
                                             @endif
                                         </td>
+                                        <td>
+                                            @if ($item->file_kisi_kisi)
+                                                <a href="{{ asset(\App\Modules\UjianSoal\Controllers\UjianBankSoalController::FOLDER_KISI_KISI . '/' . $item->file_kisi_kisi) }}" target="_blank" title="Lihat kisi-kisi">
+                                                    <i class="fa fa-file-download"></i> Lihat
+                                                </a>
+                                            @else
+                                                <span class="badge bg-warning text-dark" title="Edit bank soal untuk mengunggah kisi-kisi">Belum diunggah</span>
+                                            @endif
+                                        </td>
                                         <td>{{ $item->soal()->count() }}</td>
                                         <td>
                                             @if ($item->status === 'final')
@@ -99,7 +109,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center"><i>No data.</i></td>
+                                        <td colspan="9" class="text-center"><i>No data.</i></td>
                                     </tr>
                                 @endforelse
                             </tbody>
