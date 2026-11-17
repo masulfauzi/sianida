@@ -52,7 +52,7 @@
                 <div class="flex items-center gap-2 mb-1">
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold uppercase tracking-wide">
                         <span class="material-symbols-outlined text-[14px]">visibility</span>
-                        Mode Pratinjau Guru
+                        {{ $mode['label'] }}
                     </span>
                     @if ($bankSoal->status === 'final')
                         <span class="px-2.5 py-1 rounded-full bg-secondary-container/30 text-on-secondary-container text-[10px] font-bold uppercase tracking-wide">Final</span>
@@ -61,17 +61,22 @@
                     @endif
                 </div>
                 <h2 class="text-xl md:text-2xl font-bold text-on-surface truncate">{{ $bankSoal->nama_bank_soal }}</h2>
-                <p class="text-slate-500 text-sm mt-0.5">{{ $bankSoal->mapel->mapel ?? '-' }} &middot; {{ $total }} soal</p>
+                <p class="text-slate-500 text-sm mt-0.5">
+                    {{ $bankSoal->mapel->mapel ?? '-' }} &middot; {{ $total }} soal
+                    @if ($mode['tampil_guru'])
+                        &middot; Guru: {{ $bankSoal->guru->nama ?? '-' }}
+                    @endif
+                </p>
             </div>
             <div class="flex items-center gap-2 md:gap-3 shrink-0 flex-wrap">
                 <label class="flex items-center gap-2 px-3 py-2 rounded-xl border-2 border-slate-200 cursor-pointer select-none text-sm font-bold text-slate-600 hover:border-slate-300">
                     <input type="checkbox" id="toggle-kunci" class="w-4 h-4 accent-[#006c49]">
                     Tampilkan kunci jawaban
                 </label>
-                <a href="{{ route('ujiansoal.soal.index', $bankSoal->id) }}"
+                <a href="{{ $mode['url_kembali'] }}"
                    class="px-4 py-2 md:py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-2 text-sm">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-                    Kembali ke Daftar Soal
+                    {{ $mode['teks_kembali'] }}
                 </a>
             </div>
         </div>

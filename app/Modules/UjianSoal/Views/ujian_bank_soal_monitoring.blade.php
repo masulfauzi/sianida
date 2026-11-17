@@ -4,6 +4,8 @@
 @endsection
 
 @section('main')
+    {{-- Helper can() selalu true, jadi baca privilege langsung (sama dengan yang dicek AuthorizeRequest) --}}
+    @php $bisaPratinjau = (int) (session('privileges')['ujiansoalmonitoring']['show'] ?? 0) === 1; @endphp
     <div class="page-heading">
         <div class="page-title">
             <div class="row mb-2">
@@ -69,16 +71,23 @@
                                                        title="{{ $sel['detail']->jumlah_soal }} soal oleh {{ $sel['detail']->nama_guru ?: '-' }}"></i>
                                                     <div class="small text-muted">
                                                         {{ $sel['detail']->jumlah_soal }} soal
-                                                        @if (count($sel['detail']->jurusan))
-                                                            <div class="my-1">
-                                                                @foreach ($sel['detail']->jurusan as $namaJurusan)
-                                                                    <span class="badge bg-light-primary text-wrap mb-1">{{ $namaJurusan }}</span>
-                                                                @endforeach
+                                                    </div>
+                                                    <div class="small text-start mt-1">
+                                                        @foreach ($sel['detail']->bank as $bank)
+                                                            @php
+                                                                $teks = ($bank->jurusan ?: 'Jurusan belum diisi') . ' · ' . ($bank->nama_guru ?: '-') . ' · ' . $bank->jumlah_soal . ' soal';
+                                                            @endphp
+                                                            <div class="mb-1">
+                                                                @if ($bisaPratinjau)
+                                                                    <a href="{{ route('ujiansoalmonitoring.preview.show', $bank->id) }}" target="_blank"
+                                                                       title="Pratinjau: {{ $bank->nama_bank_soal }}">
+                                                                        <i class="fa fa-eye"></i> {{ $teks }}
+                                                                    </a>
+                                                                @else
+                                                                    <span class="text-muted" title="{{ $bank->nama_bank_soal }}">{{ $teks }}</span>
+                                                                @endif
                                                             </div>
-                                                        @endif
-                                                        @if ($sel['detail']->nama_guru)
-                                                            <br>{{ $sel['detail']->nama_guru }}
-                                                        @endif
+                                                        @endforeach
                                                     </div>
                                                 @elseif ($sel['status'] === 'belum')
                                                     <i class="fa fa-times-circle text-danger fs-4" title="Belum ada soal"></i>
@@ -99,7 +108,7 @@
 
                     <div class="small text-muted mt-2">
                         <i class="fa fa-check-circle text-success"></i> Sudah ada bank soal berisi minimal 1 soal
-                        (<span class="badge bg-light-primary">label</span> = jurusan yang sudah upload) &nbsp;
+                        (daftar di bawahnya: jurusan · guru · jumlah soal@if ($bisaPratinjau), klik <i class="fa fa-eye"></i> untuk pratinjau@endif) &nbsp;
                         <i class="fa fa-times-circle text-danger"></i> Belum ada soal &nbsp;
                         <span>&ndash;</span> Mapel tidak diajarkan di tingkat tersebut
                     </div>

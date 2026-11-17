@@ -177,8 +177,8 @@ class UjianBankSoalController extends Controller
             ->distinct()
             ->get(['m.id as id_mapel', 'm.mapel', 'k.id_tingkat']);
 
-        // Bank soal semester aktif yang sudah berisi minimal 1 soal
-        $terisi = DB::table('ujian_bank_soal as b')
+        // Bank soal semester aktif yang sudah berisi minimal 1 soal, satu baris per bank soal
+        $bankTerisi = DB::table('ujian_bank_soal as b')
             ->join('ujian_soal as s', function ($join) {
                 $join->on('s.id_bank_soal', '=', 'b.id')->whereNull('s.deleted_at');
             })
@@ -188,19 +188,28 @@ class UjianBankSoalController extends Controller
             ->whereNotNull('b.id_tingkat')
             ->whereNotNull('b.id_mapel')
             ->whereNull('b.deleted_at')
-            ->groupBy('b.id_mapel', 'b.id_tingkat')
+            ->groupBy('b.id', 'b.nama_bank_soal', 'b.id_mapel', 'b.id_tingkat')
             ->get([
+                'b.id',
+                'b.nama_bank_soal',
                 'b.id_mapel',
                 'b.id_tingkat',
-                DB::raw('COUNT(DISTINCT b.id) as jumlah_bank'),
+                DB::raw('MAX(g.nama) as nama_guru'),
+                DB::raw('MAX(j.jurusan) as jurusan'),
                 DB::raw('COUNT(s.id) as jumlah_soal'),
-                DB::raw('GROUP_CONCAT(DISTINCT g.nama ORDER BY g.nama SEPARATOR ", ") as nama_guru'),
-                DB::raw('GROUP_CONCAT(DISTINCT j.jurusan ORDER BY j.jurusan SEPARATOR "||") as nama_jurusan'),
-            ])
-            ->each(function ($r) {
-                $r->jurusan = $r->nama_jurusan ? explode('||', $r->nama_jurusan) : [];
-            })
-            ->keyBy(fn ($r) => $r->id_mapel . '|' . $r->id_tingkat);
+            ]);
+
+        // Ringkasan per mapel|tingkat untuk sel tabel, berikut daftar bank soal untuk tautan pratinjau
+        $terisi = $bankTerisi
+            ->sortBy(fn ($b) => ($b->jurusan ?? '') . ($b->nama_guru ?? ''))
+            ->groupBy(fn ($b) => $b->id_mapel . '|' . $b->id_tingkat)
+            ->map(fn ($list) => (object) [
+                'id_mapel'    => $list->first()->id_mapel,
+                'jumlah_soal' => $list->sum('jumlah_soal'),
+                'jurusan'     => $list->pluck('jurusan')->filter()->unique()->sort()->values()->all(),
+                'nama_guru'   => $list->pluck('nama_guru')->filter()->unique()->sort()->implode(', '),
+                'bank'        => $list->values(),
+            ]);
 
         $namaMapel = $diajarkan->pluck('mapel', 'id_mapel')
             ->union(Mapel::whereIn('id', $terisi->pluck('id_mapel'))->pluck('mapel', 'id'));

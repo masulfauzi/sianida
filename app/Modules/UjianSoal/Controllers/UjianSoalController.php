@@ -71,13 +71,39 @@ class UjianSoalController extends Controller
     {
         $this->authorizeOwner($bankSoal);
 
-        $data['bankSoal'] = $bankSoal->load('mapel');
+        $this->log($request, 'melihat pratinjau soal', ['ujian_bank_soal.id' => $bankSoal->id]);
+        return $this->renderPreview($request, $bankSoal, [
+            'label'       => 'Mode Pratinjau Guru',
+            'url_kembali' => route('ujiansoal.soal.index', $bankSoal->id),
+            'teks_kembali'=> 'Kembali ke Daftar Soal',
+            'tampil_guru' => false,
+        ]);
+    }
+
+    /**
+     * Pratinjau untuk admin dari halaman monitoring. Tidak ada cek pemilik: aksesnya sudah dibatasi
+     * oleh privilege menu "ujiansoalmonitoring" lewat nama route (lihat routes.php).
+     */
+    public function previewMonitoring(Request $request, UjianBankSoal $bankSoal)
+    {
+        $this->log($request, 'melihat pratinjau soal dari monitoring', ['ujian_bank_soal.id' => $bankSoal->id]);
+        return $this->renderPreview($request, $bankSoal, [
+            'label'       => 'Mode Pratinjau Admin',
+            'url_kembali' => route('ujiansoal.monitoring.index'),
+            'teks_kembali'=> 'Kembali ke Monitoring',
+            'tampil_guru' => true,
+        ]);
+    }
+
+    private function renderPreview(Request $request, UjianBankSoal $bankSoal, array $mode)
+    {
+        $data['bankSoal'] = $bankSoal->load(['mapel', 'guru']);
         $data['data']     = $bankSoal->soal()->get();
+        $data['mode']     = $mode;
 
         $no = (int) $request->query('no');
         $data['startIndex'] = max(0, (int) $data['data']->search(fn ($s) => (int) $s->no_soal === $no));
 
-        $this->log($request, 'melihat pratinjau soal', ['ujian_bank_soal.id' => $bankSoal->id]);
         return view('UjianSoal::ujian_soal_preview', array_merge($data, ['title' => $this->title]));
     }
 

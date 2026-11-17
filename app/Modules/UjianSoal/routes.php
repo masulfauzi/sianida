@@ -27,6 +27,13 @@ Route::get('/ujian-bank-soal-monitoring', [UjianBankSoalController::class, 'moni
     ->middleware(['web', 'auth'])
     ->name('ujiansoal.monitoring.index');
 
+// Pratinjau soal dari halaman monitoring (bank soal milik guru mana pun). Prefix nama route
+// "ujiansoalmonitoring." disengaja: AuthorizeRequest lalu memakai privilege menu
+// "ujiansoalmonitoring" (Super Admin & Admin), bukan "ujiansoal" yang juga dimiliki Guru.
+Route::get('/ujian-bank-soal-monitoring/{bankSoal}/preview', [UjianSoalController::class, 'previewMonitoring'])
+    ->middleware(['web', 'auth'])
+    ->name('ujiansoalmonitoring.preview.show');
+
 Route::controller(UjianSoalController::class)->middleware(['web', 'auth'])->name('ujiansoal.soal.')->group(function () {
     Route::get('/ujian-bank-soal/{bankSoal}/soal', 'index')->name('index');
     Route::get('/ujian-bank-soal/{bankSoal}/soal/create', 'create')->name('create');
