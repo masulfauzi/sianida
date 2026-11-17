@@ -5,7 +5,10 @@
 
 @section('main')
     {{-- Helper can() selalu true, jadi baca privilege langsung (sama dengan yang dicek AuthorizeRequest) --}}
-    @php $bisaPratinjau = (int) (session('privileges')['ujiansoalmonitoring']['show'] ?? 0) === 1; @endphp
+    @php
+        $bisaPratinjau = (int) (session('privileges')['ujiansoalmonitoring']['show'] ?? 0) === 1;
+        $bisaImport    = (int) (session('privileges')['ujiansoalmonitoring']['create'] ?? 0) === 1;
+    @endphp
     <div class="page-heading">
         <div class="page-title">
             <div class="row mb-2">
@@ -25,8 +28,13 @@
 
         <section class="section">
             <div class="card">
-                <h6 class="card-header">
-                    Status Upload Soal Ujian &mdash; Semester {{ $semester ?: '-' }}
+                <h6 class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <span>Status Upload Soal Ujian &mdash; Semester {{ $semester ?: '-' }}</span>
+                    @if ($bisaImport)
+                        <a href="{{ route('ujiansoalmonitoring.import.create') }}" class="btn btn-sm btn-success">
+                            <i class="fa fa-file-excel"></i> Import Soal Excel
+                        </a>
+                    @endif
                 </h6>
                 <div class="card-body">
                     <div class="row align-items-center mb-3">

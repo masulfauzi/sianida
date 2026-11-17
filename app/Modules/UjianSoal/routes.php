@@ -2,6 +2,7 @@
 
 use App\Modules\UjianSoal\Controllers\UjianBankSoalController;
 use App\Modules\UjianSoal\Controllers\UjianSoalController;
+use App\Modules\UjianSoal\Controllers\UjianSoalImportController;
 use Illuminate\Support\Facades\Route;
 
 // Nama route di modul ini SELALU diakhiri salah satu dari
@@ -26,6 +27,13 @@ Route::controller(UjianBankSoalController::class)->middleware(['web', 'auth'])->
 Route::get('/ujian-bank-soal-monitoring', [UjianBankSoalController::class, 'monitoring'])
     ->middleware(['web', 'auth'])
     ->name('ujiansoal.monitoring.index');
+
+// Import soal dari Excel (khusus admin, privilege menu "ujiansoalmonitoring": create).
+// Didaftarkan sebelum route {bankSoal}/preview.
+Route::controller(UjianSoalImportController::class)->middleware(['web', 'auth'])->name('ujiansoalmonitoring.import.')->group(function () {
+    Route::get('/ujian-bank-soal-monitoring/import', 'create')->name('create');
+    Route::post('/ujian-bank-soal-monitoring/import', 'store')->name('store');
+});
 
 // Pratinjau soal dari halaman monitoring (bank soal milik guru mana pun). Prefix nama route
 // "ujiansoalmonitoring." disengaja: AuthorizeRequest lalu memakai privilege menu

@@ -114,6 +114,7 @@ class SetupUjianSoalMenu extends Command
         $privMenu = $this->privilegeFor($menu, $admin);
         $privMenu->read      = 1;
         $privMenu->show      = 1;
+        $privMenu->create    = 1; // import soal dari Excel (ujiansoalmonitoring.import.*)
         $privMenu->show_menu = 1;
         $privMenu->save();
 
@@ -122,7 +123,7 @@ class SetupUjianSoalMenu extends Command
         $privAkses->read = 1;
         $privAkses->save();
 
-        $this->info("Role 'Admin' bisa membuka monitoring (read di 'ujiansoal', menu '{$module}' tampil di sidebar).");
+        $this->info("Role 'Admin' bisa membuka monitoring & import soal Excel (read di 'ujiansoal', menu '{$module}' tampil di sidebar).");
     }
 
     private function privilegeFor(Menu $menu, Role $role)
