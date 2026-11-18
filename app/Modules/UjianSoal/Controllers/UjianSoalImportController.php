@@ -185,11 +185,24 @@ class UjianSoalImportController extends Controller
             $baris = $i + 2; // +1 header, +1 karena Excel mulai dari 1
             $ambil = fn ($key) => trim((string) ($row[$idx[$key]] ?? ''));
 
-            if ($ambil('soal') === '') {
-                continue; // baris kosong
+            // Lewati hanya baris yang benar-benar kosong (mis. sisa baris di akhir sheet).
+            // Kolom Soal boleh kosong (soal bergambar), yang wajib adalah No Soal.
+            $barisKosong = true;
+            foreach (array_merge(array_values($idx), $idxFile) as $p) {
+                if (trim((string) ($row[$p] ?? '')) !== '') {
+                    $barisKosong = false;
+                    break;
+                }
+            }
+            if ($barisKosong) {
+                continue;
             }
 
             $noMentah = $ambil('no');
+            if ($noMentah === '') {
+                $errors[] = "Baris {$baris}: No Soal wajib diisi.";
+                continue;
+            }
             if (! preg_match('/^\d+(\.0+)?$/', $noMentah) || (int) $noMentah < 1) {
                 $errors[] = "Baris {$baris}: No Soal \"{$noMentah}\" harus bilangan bulat ≥ 1.";
                 continue;

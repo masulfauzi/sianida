@@ -108,6 +108,7 @@
                 </div>
                 <ul class="mb-0">
                     <li>Semua soal diimport sebagai <strong>pilihan ganda</strong> dengan satu jawaban (A–E).</li>
+                    <li><strong>No Soal wajib diisi.</strong> Kolom Soal boleh kosong (mis. soal bergambar), soal tetap diimport.</li>
                     <li>Jika bank soal sudah punya soal dengan nomor yang sama, isinya diperbarui. Soal lain di bank tidak berubah.</li>
                     <li>Jika satu nomor muncul lebih dari sekali di file, yang dipakai baris terakhir.</li>
                     <li>Kolom Jenis dan file1/file2/fileA–fileE diabaikan. Gambar diunggah manual lewat edit soal.</li>
