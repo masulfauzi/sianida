@@ -6,6 +6,7 @@ use App\Http\Controllers\IjinController;
 use App\Http\Controllers\IjinKeluarKelasController;
 use App\Http\Controllers\IjinSholatController;
 use App\Http\Controllers\JenisIjinKelasController;
+use App\Http\Controllers\FcmTokenController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\MapelController;
@@ -89,6 +90,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jurnal', [JurnalController::class, 'store']);
     Route::get('/jurnal/kelas/{idKelas}', [JurnalController::class, 'perKelas']);
     Route::get('/jurnal/{id}', [JurnalController::class, 'show']);
+
+    // Push notification (token perangkat FCM)
+    Route::post('/fcm-token', [FcmTokenController::class, 'store']);
+    Route::delete('/fcm-token', [FcmTokenController::class, 'destroy']);
 
     // Kelas API endpoints
     Route::get('/kelas', [KelasController::class, 'index']);

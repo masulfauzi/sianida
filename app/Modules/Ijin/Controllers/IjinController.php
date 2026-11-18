@@ -10,11 +10,13 @@ use App\Modules\Siswa\Models\Siswa;
 use App\Modules\PresensiHarian\Models\PresensiHarian;
 use App\Modules\Statuskehadiran\Models\Statuskehadiran;
 use App\Modules\StatusIjin\Models\StatusIjin;
+use App\Services\FcmService;
 use Carbon\Carbon;
 use Form;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log as LogFacade;
 
 class IjinController extends Controller
 {
@@ -156,6 +158,8 @@ class IjinController extends Controller
             }
         }
 
+        $this->notifySiswa($ijin, true);
+
         $this->log($request, 'menerima ajuan ' . $this->title, ['ijin.id' => $ijin->id]);
         return redirect()->route('ijin.index')->with('message_success', 'Ajuan ijin diterima!');
     }
@@ -178,6 +182,8 @@ class IjinController extends Controller
         $ijin->alasan_tolak   = trim($request->input('alasan_tolak'));
         $ijin->updated_by     = Auth::id();
         $ijin->save();
+
+        $this->notifySiswa($ijin, false);
 
         $this->log($request, 'menolak ajuan ' . $this->title, ['ijin.id' => $ijin->id]);
         return redirect()->route('ijin.index')->with('message_success', 'Ajuan ijin ditolak!');
@@ -219,6 +225,7 @@ class IjinController extends Controller
         ]);
 
         $ijin                 = Ijin::find($id);
+        $statusLama           = $ijin->id_status_ijin;
         $ijin->id_jenis_ijin  = $request->input("id_jenis_ijin");
         $ijin->id_siswa       = $request->input("id_siswa");
         $ijin->id_status_ijin = $request->input("id_status_ijin");
@@ -229,9 +236,40 @@ class IjinController extends Controller
         $ijin->updated_by = Auth::id();
         $ijin->save();
 
+        // Notifikasi hanya jika status BERUBAH menjadi Disetujui / Ditolak lewat form edit.
+        if ($ijin->id_status_ijin !== $statusLama) {
+            $namaStatus = StatusIjin::where('id', $ijin->id_status_ijin)->value('status_ijin');
+            if (in_array($namaStatus, ['Disetujui', 'Ditolak'], true)) {
+                $this->notifySiswa($ijin, $namaStatus === 'Disetujui');
+            }
+        }
+
         $text = 'mengedit ' . $this->title; //.' '.$ijin->what;
         $this->log($request, $text, ['ijin.id' => $ijin->id]);
         return redirect()->route('ijin.index')->with('message_success', 'Ijin berhasil diubah!');
+    }
+
+    /**
+     * Push notification status ijin ke semua perangkat siswa (FCM, channel "status_izin").
+     * Jangan cantumkan alasan_tolak / NISN / nama siswa: notifikasi tampil di lock screen.
+     * Kegagalan pengiriman tidak boleh menggagalkan approve/reject.
+     */
+    protected function notifySiswa(Ijin $ijin, bool $disetujui): void
+    {
+        try {
+            $tgl = Carbon::parse($ijin->tgl_mulai)->locale('id')->translatedFormat('j F Y');
+            FcmService::sendToSiswa(
+                $ijin->id_siswa,
+                $disetujui ? 'Izin disetujui' : 'Izin ditolak',
+                $disetujui
+                    ? "Pengajuan izinmu untuk {$tgl} telah disetujui."
+                    : 'Pengajuan izinmu ditolak. Buka aplikasi untuk melihat alasannya.',
+                ['type' => 'ijin', 'id' => $ijin->id],
+                'status_izin'
+            );
+        } catch (\Throwable $e) {
+            LogFacade::warning('Notifikasi ijin gagal: ' . $e->getMessage());
+        }
     }
 
     public function destroy(Request $request, $id)
