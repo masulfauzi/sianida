@@ -37,4 +37,9 @@ return [
         'credentials' => env('FIREBASE_CREDENTIALS'),
     ],
 
+    'ujian_sso' => [
+        'secret' => env('UJIAN_SSO_SECRET'),
+        'ttl'    => 60, // detik
+    ],
+
 ];

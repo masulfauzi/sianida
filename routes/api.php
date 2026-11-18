@@ -13,6 +13,7 @@ use App\Http\Controllers\MapelController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PresensiSholatController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\UjianSsoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,6 +44,9 @@ Route::get('/siswa/nisn', [SiswaController::class, 'siswaByNisn']);
 
 // Pencarian siswa berdasarkan nama - tanpa middleware
 Route::get('/siswa/cari', [SiswaController::class, 'cariSiswa']);
+
+// SSO Ujian Online: dipanggil server ujian (ujian-back) dengan header X-SSO-Secret, bukan oleh siswa
+Route::post('/ujian/sso-verify', [UjianSsoController::class, 'verify'])->middleware('throttle:60,1');
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
@@ -94,6 +98,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Push notification (token perangkat FCM)
     Route::post('/fcm-token', [FcmTokenController::class, 'store']);
     Route::delete('/fcm-token', [FcmTokenController::class, 'destroy']);
+
+    // SSO Ujian Online: kode sekali pakai (60 detik) untuk login otomatis situs ujian
+    Route::post('/ujian/sso-code', [UjianSsoController::class, 'code'])->middleware('throttle:10,1');
 
     // Kelas API endpoints
     Route::get('/kelas', [KelasController::class, 'index']);
