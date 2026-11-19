@@ -135,7 +135,7 @@ class UjianSoalController extends Controller
         $soal->id_bank_soal   = $bankSoal->id;
         $soal->no_soal        = $data['no_soal'];
         $soal->jenis          = $data['jenis'];
-        $soal->soal           = $data['soal'];
+        $soal->soal           = $data['soal'] ?? '';
         $soal->opsi_a         = $data['opsi_a'];
         $soal->opsi_b         = $data['opsi_b'];
         $soal->opsi_c         = $data['opsi_c'];
@@ -172,7 +172,7 @@ class UjianSoalController extends Controller
 
         $soal->no_soal = $data['no_soal'];
         $soal->jenis   = $data['jenis'];
-        $soal->soal    = $data['soal'];
+        $soal->soal    = $data['soal'] ?? '';
         $soal->opsi_a  = $data['opsi_a'];
         $soal->opsi_b  = $data['opsi_b'];
         $soal->opsi_c  = $data['opsi_c'];
@@ -236,7 +236,7 @@ class UjianSoalController extends Controller
                     ->ignore($soal?->id),
             ],
             'jenis'       => ['required', Rule::in([UjianSoal::JENIS_PG, UjianSoal::JENIS_PGK, UjianSoal::JENIS_BS])],
-            'soal'        => ['required', 'string'],
+            'soal'        => ['nullable', 'string'], // boleh kosong: soal bisa berupa gambar saja
             'opsi_a'      => ['nullable', 'string'],
             'opsi_b'      => ['nullable', 'string'],
             'opsi_c'      => ['nullable', 'string'],
