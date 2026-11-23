@@ -14,6 +14,7 @@ use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\PresensiSholatController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UjianSsoController;
+use App\Http\Controllers\UjianSyncController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +48,9 @@ Route::get('/siswa/cari', [SiswaController::class, 'cariSiswa']);
 
 // SSO Ujian Online: dipanggil server ujian (ujian-back) dengan header X-SSO-Secret, bukan oleh siswa
 Route::post('/ujian/sso-verify', [UjianSsoController::class, 'verify'])->middleware('throttle:60,1');
+
+// Sinkronisasi data siswa ke Ujian Online: dipanggil ujian-back dengan header X-Ujian-Secret
+Route::get('/ujian/siswa', [UjianSyncController::class, 'siswa'])->middleware('throttle:10,1');
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {

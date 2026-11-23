@@ -42,4 +42,8 @@ return [
         'ttl'    => 60, // detik
     ],
 
+    'ujian_sync' => [
+        'secret' => env('UJIAN_SYNC_SECRET'),
+    ],
+
 ];
