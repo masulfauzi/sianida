@@ -134,8 +134,9 @@ class UjianSyncController extends Controller
     }
 
     /**
-     * GET /api/ujian/bank-soal
-     * Header: X-Ujian-Secret. Semua bank soal semester aktif (semua status) beserta soalnya.
+     * GET /api/ujian/bank-soal[?tanpa_soal=1]
+     * Header: X-Ujian-Secret. Semua bank soal semester aktif (semua status).
+     * tanpa_soal=1: hanya data bank (untuk daftar pilihan), tanpa isi soal.
      */
     public function bankSoal(Request $request)
     {
@@ -147,20 +148,89 @@ class UjianSyncController extends Controller
         if (! $semester) {
             return response()->json(['message' => 'Semester aktif tidak ditemukan'], 404);
         }
-        $semesterDetail = DB::table('semester')
-            ->select('id', 'semester', 'tgl_mulai', 'tgl_selesai')
-            ->where('id', $semester->id)
-            ->first();
 
-        $banks = DB::table('ujian_bank_soal AS b')
+        $banks = $this->queryBank()
+            ->where('b.id_semester', $semester->id)
+            ->orderBy('b.nama_bank_soal')
+            ->get();
+
+        if ($request->boolean('tanpa_soal')) {
+            $jumlah = DB::table('ujian_soal')
+                ->select('id_bank_soal', DB::raw('COUNT(*) AS jml'))
+                ->whereIn('id_bank_soal', $banks->pluck('id'))
+                ->whereNull('deleted_at')
+                ->groupBy('id_bank_soal')
+                ->pluck('jml', 'id_bank_soal');
+
+            $data = $banks->map(fn ($b) => $this->formatBank($b, null, (int) ($jumlah[$b->id] ?? 0)))->values();
+            $totalSoal = $data->sum('jumlah_soal');
+        } else {
+            $soalPerBank = $this->querySoal($banks->pluck('id'))->groupBy('id_bank_soal');
+            $data = $banks->map(fn ($b) => $this->formatBank($b, $soalPerBank[$b->id] ?? collect()))->values();
+            $totalSoal = $data->sum('jumlah_soal');
+        }
+
+        Log::info('ujian-sync: bank soal diambil', [
+            'ip'         => $request->ip(),
+            'tanpa_soal' => $request->boolean('tanpa_soal'),
+            'total_bank' => $data->count(),
+            'total_soal' => $totalSoal,
+        ]);
+
+        return response()->json([
+            'semester'     => $this->semesterDetail($semester->id),
+            'generated_at' => now()->toIso8601String(),
+            'total_bank'   => $data->count(),
+            'total_soal'   => $totalSoal,
+            'bank_soal'    => $data,
+        ]);
+    }
+
+    /**
+     * GET /api/ujian/bank-soal/{id}
+     * Header: X-Ujian-Secret. Satu bank soal (semua status, tidak dibatasi semester aktif) beserta soalnya.
+     */
+    public function bankSoalDetail(Request $request, string $id)
+    {
+        if ($tolak = $this->tolakJikaSecretSalah($request)) {
+            return $tolak;
+        }
+        if (strlen($id) !== 36) {
+            return response()->json(['message' => 'ID bank soal tidak valid'], 422);
+        }
+
+        $bank = $this->queryBank()->where('b.id', $id)->first();
+        if (! $bank) {
+            return response()->json(['message' => 'Bank soal tidak ditemukan'], 404);
+        }
+
+        $data = $this->formatBank($bank, $this->querySoal([$bank->id]));
+
+        Log::info('ujian-sync: satu bank soal diambil', [
+            'ip'         => $request->ip(),
+            'id_bank'    => $bank->id,
+            'total_soal' => $data['jumlah_soal'],
+        ]);
+
+        return response()->json([
+            'semester'     => $this->semesterDetail($bank->id_semester),
+            'generated_at' => now()->toIso8601String(),
+            'bank_soal'    => $data,
+        ]);
+    }
+
+    /** Query dasar bank soal (tidak terhapus) beserta nama relasinya. */
+    private function queryBank()
+    {
+        return DB::table('ujian_bank_soal AS b')
             ->leftJoin('mapel AS m', 'm.id', '=', 'b.id_mapel')
             ->leftJoin('tingkat AS t', 't.id', '=', 'b.id_tingkat')
             ->leftJoin('jurusan AS j', 'j.id', '=', 'b.id_jurusan')
             ->leftJoin('guru AS g', 'g.id', '=', 'b.id_guru')
-            ->where('b.id_semester', $semester->id)
             ->whereNull('b.deleted_at')
             ->select(
                 'b.id',
+                'b.id_semester',
                 'b.nama_bank_soal',
                 'b.status',
                 'b.deskripsi',
@@ -169,13 +239,14 @@ class UjianSyncController extends Controller
                 't.tingkat',
                 'j.jurusan AS nama_jurusan',
                 'g.nama AS nama_guru'
-            )
-            ->orderBy('b.nama_bank_soal')
-            ->get();
+            );
+    }
 
-        // Semua soal diambil sekali lalu dikelompokkan per bank (hindari N+1).
-        $soalPerBank = DB::table('ujian_soal')
-            ->whereIn('id_bank_soal', $banks->pluck('id'))
+    /** Semua soal (tidak terhapus) dari bank-bank yang diberikan, urut no_soal. */
+    private function querySoal($idBank)
+    {
+        return DB::table('ujian_soal')
+            ->whereIn('id_bank_soal', $idBank)
             ->whereNull('deleted_at')
             ->select(
                 'id', 'id_bank_soal', 'no_soal', 'jenis', 'soal',
@@ -183,65 +254,66 @@ class UjianSyncController extends Controller
                 'gambar_soal', 'gambar_a', 'gambar_b', 'gambar_c', 'gambar_d', 'gambar_e'
             )
             ->orderBy('no_soal')
-            ->get()
-            ->groupBy('id_bank_soal');
+            ->get();
+    }
 
+    /**
+     * Format satu bank untuk response.
+     * $soal = collection soal (bank dengan soal), atau null (tanpa_soal) dengan $jumlahSoal dari COUNT.
+     */
+    private function formatBank($b, $soal, int $jumlahSoal = 0): array
+    {
         $s = fn ($v) => $v === null ? '' : (string) $v;
-        $totalSoal = 0;
 
-        $data = $banks->map(function ($b) use ($soalPerBank, $s, &$totalSoal) {
-            $soal = ($soalPerBank[$b->id] ?? collect())->map(function ($q) use ($s) {
-                $bs = $q->jenis === 'bs';
-                return [
-                    'id'          => $q->id,
-                    'no_soal'     => (int) $q->no_soal,
-                    'jenis'       => $s($q->jenis),
-                    'soal'        => $s($q->soal),
-                    'opsi_a'      => $s($q->opsi_a),
-                    'opsi_b'      => $s($q->opsi_b),
-                    'opsi_c'      => $s($q->opsi_c),
-                    'opsi_d'      => $bs ? '' : $s($q->opsi_d),
-                    'opsi_e'      => $bs ? '' : $s($q->opsi_e),
-                    'kunci'       => $s($q->kunci),
-                    'gambar_soal' => $s($q->gambar_soal),
-                    'gambar_a'    => $s($q->gambar_a),
-                    'gambar_b'    => $s($q->gambar_b),
-                    'gambar_c'    => $s($q->gambar_c),
-                    'gambar_d'    => $bs ? '' : $s($q->gambar_d),
-                    'gambar_e'    => $bs ? '' : $s($q->gambar_e),
-                ];
-            })->values();
+        $data = [
+            'id'             => $b->id,
+            'nama_bank_soal' => $s($b->nama_bank_soal),
+            'status'         => $s($b->status),
+            'deskripsi'      => $s($b->deskripsi),
+            'id_mapel'       => $b->id_mapel,
+            'nama_mapel'     => $b->nama_mapel,
+            'tingkat'        => $b->tingkat,
+            'nama_jurusan'   => $b->nama_jurusan,
+            'nama_guru'      => $b->nama_guru,
+            'jumlah_soal'    => $jumlahSoal,
+        ];
 
-            $totalSoal += $soal->count();
+        if ($soal === null) {
+            return $data;
+        }
 
+        $data['soal'] = $soal->map(function ($q) use ($s) {
+            $bs = $q->jenis === 'bs';
             return [
-                'id'             => $b->id,
-                'nama_bank_soal' => $s($b->nama_bank_soal),
-                'status'         => $s($b->status),
-                'deskripsi'      => $s($b->deskripsi),
-                'id_mapel'       => $b->id_mapel,
-                'nama_mapel'     => $b->nama_mapel,
-                'tingkat'        => $b->tingkat,
-                'nama_jurusan'   => $b->nama_jurusan,
-                'nama_guru'      => $b->nama_guru,
-                'jumlah_soal'    => $soal->count(),
-                'soal'           => $soal,
+                'id'          => $q->id,
+                'no_soal'     => (int) $q->no_soal,
+                'jenis'       => $s($q->jenis),
+                'soal'        => $s($q->soal),
+                'opsi_a'      => $s($q->opsi_a),
+                'opsi_b'      => $s($q->opsi_b),
+                'opsi_c'      => $s($q->opsi_c),
+                'opsi_d'      => $bs ? '' : $s($q->opsi_d),
+                'opsi_e'      => $bs ? '' : $s($q->opsi_e),
+                'kunci'       => $s($q->kunci),
+                'gambar_soal' => $s($q->gambar_soal),
+                'gambar_a'    => $s($q->gambar_a),
+                'gambar_b'    => $s($q->gambar_b),
+                'gambar_c'    => $s($q->gambar_c),
+                'gambar_d'    => $bs ? '' : $s($q->gambar_d),
+                'gambar_e'    => $bs ? '' : $s($q->gambar_e),
             ];
         })->values();
+        $data['jumlah_soal'] = $data['soal']->count();
 
-        Log::info('ujian-sync: bank soal diambil', [
-            'ip'         => $request->ip(),
-            'total_bank' => $data->count(),
-            'total_soal' => $totalSoal,
-        ]);
+        return $data;
+    }
 
-        return response()->json([
-            'semester'     => $semesterDetail,
-            'generated_at' => now()->toIso8601String(),
-            'total_bank'   => $data->count(),
-            'total_soal'   => $totalSoal,
-            'bank_soal'    => $data,
-        ]);
+    private function semesterDetail($idSemester)
+    {
+        return DB::table('semester')
+            ->select('id', 'semester', 'tgl_mulai', 'tgl_selesai')
+            ->where('id', $idSemester)
+            ->first();
     }
 
     /** Cek header X-Ujian-Secret. Mengembalikan response 401, atau null jika valid. */

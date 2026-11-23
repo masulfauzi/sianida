@@ -49,11 +49,15 @@ Route::get('/siswa/cari', [SiswaController::class, 'cariSiswa']);
 // SSO Ujian Online: dipanggil server ujian (ujian-back) dengan header X-SSO-Secret, bukan oleh siswa
 Route::post('/ujian/sso-verify', [UjianSsoController::class, 'verify'])->middleware('throttle:60,1');
 
+// Throttle sinkron diberi prefix agar tiap endpoint punya counter sendiri (default: satu counter per IP).
 // Sinkronisasi data siswa ke Ujian Online: dipanggil ujian-back dengan header X-Ujian-Secret
-Route::get('/ujian/siswa', [UjianSyncController::class, 'siswa'])->middleware('throttle:10,1');
+Route::get('/ujian/siswa', [UjianSyncController::class, 'siswa'])->middleware('throttle:10,1,ujian-siswa');
 
 // Sinkronisasi bank soal ke Ujian Online: dipanggil ujian-back dengan header X-Ujian-Secret
-Route::get('/ujian/bank-soal', [UjianSyncController::class, 'bankSoal'])->middleware('throttle:10,1');
+Route::get('/ujian/bank-soal', [UjianSyncController::class, 'bankSoal'])->middleware('throttle:10,1,ujian-bank-soal');
+
+// Satu bank soal (untuk sinkron per bank di Ujian Online)
+Route::get('/ujian/bank-soal/{id}', [UjianSyncController::class, 'bankSoalDetail'])->middleware('throttle:30,1,ujian-bank-soal-detail');
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
