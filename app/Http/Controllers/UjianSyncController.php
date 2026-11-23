@@ -238,6 +238,7 @@ class UjianSyncController extends Controller
                 'm.mapel AS nama_mapel',
                 't.tingkat',
                 'j.jurusan AS nama_jurusan',
+                'j.singkatan AS singkatan_jurusan',
                 'g.nama AS nama_guru'
             );
     }
@@ -265,11 +266,20 @@ class UjianSyncController extends Controller
     {
         $s = fn ($v) => $v === null ? '' : (string) $v;
 
-        // Nama bank bisa sama antar tingkat (mis. "ASAS BAHASA JAWA" untuk X dan XI), jadi di Ujian Online
-        // nama selalu diberi akhiran tingkat. Data di sianida tidak diubah.
-        $nama = trim($s($b->nama_bank_soal));
+        // Nama bank bisa sama antar tingkat/jurusan (mis. "ASAS BAHASA JAWA" untuk X dan XI), jadi di Ujian Online
+        // nama diberi akhiran tingkat dan singkatan jurusan, mis. " - Kelas XI AKL". Jurusan "Semua Jurusan" (NA)
+        // tidak ditulis. Data di sianida tidak diubah.
+        $akhiran = [];
         if ($b->tingkat !== null && $b->tingkat !== '') {
-            $nama .= ' - Kelas ' . $b->tingkat;
+            $akhiran[] = 'Kelas ' . $b->tingkat;
+        }
+        $singkatan = trim($s($b->singkatan_jurusan));
+        if ($singkatan !== '' && strtoupper($singkatan) !== 'NA' && $b->nama_jurusan !== 'Semua Jurusan') {
+            $akhiran[] = $singkatan;
+        }
+        $nama = trim($s($b->nama_bank_soal));
+        if ($akhiran) {
+            $nama .= ' - ' . implode(' ', $akhiran);
         }
 
         $data = [
