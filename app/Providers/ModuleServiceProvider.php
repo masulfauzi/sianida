@@ -36,11 +36,9 @@ class ModuleServiceProvider extends ServiceProvider
             // load views
             $viewdir = $module . '/Views';
             if (is_dir($viewdir)) {
-                if (env('OS') == 'linux') {
-                    $modulename = @end(explode("/", $module));
-                } else {
-                    $modulename = @end(explode("\\", $module));
-                }
+                // basename() menangani "/" dan "\" sehingga tidak bergantung env('OS'),
+                // yang bernilai null setelah `php artisan config:cache`.
+                $modulename = basename($module);
                 $this->loadViewsFrom($viewdir, $modulename);
             }
         }
