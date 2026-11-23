@@ -52,6 +52,9 @@ Route::post('/ujian/sso-verify', [UjianSsoController::class, 'verify'])->middlew
 // Sinkronisasi data siswa ke Ujian Online: dipanggil ujian-back dengan header X-Ujian-Secret
 Route::get('/ujian/siswa', [UjianSyncController::class, 'siswa'])->middleware('throttle:10,1');
 
+// Sinkronisasi bank soal ke Ujian Online: dipanggil ujian-back dengan header X-Ujian-Secret
+Route::get('/ujian/bank-soal', [UjianSyncController::class, 'bankSoal'])->middleware('throttle:10,1');
+
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
