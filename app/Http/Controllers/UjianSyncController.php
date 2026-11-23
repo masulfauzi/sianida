@@ -265,9 +265,16 @@ class UjianSyncController extends Controller
     {
         $s = fn ($v) => $v === null ? '' : (string) $v;
 
+        // Nama bank bisa sama antar tingkat (mis. "ASAS BAHASA JAWA" untuk X dan XI), jadi di Ujian Online
+        // nama selalu diberi akhiran tingkat. Data di sianida tidak diubah.
+        $nama = trim($s($b->nama_bank_soal));
+        if ($b->tingkat !== null && $b->tingkat !== '') {
+            $nama .= ' - Kelas ' . $b->tingkat;
+        }
+
         $data = [
             'id'             => $b->id,
-            'nama_bank_soal' => $s($b->nama_bank_soal),
+            'nama_bank_soal' => $nama,
             'status'         => $s($b->status),
             'deskripsi'      => $s($b->deskripsi),
             'id_mapel'       => $b->id_mapel,
